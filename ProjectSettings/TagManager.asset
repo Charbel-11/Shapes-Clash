@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Bullet
+  - Shield
+  - Shadow
+  - BulletP1
+  - BulletP2
+  - DrainingHands
+  - Laser
+  - Steel
+  - Fire
+  - Fountain
+  - Portal
+  - Assist
+  - Ice
+  - Drag Canvas
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - PostProcessing
+  - Ignore
+  - Player1
+  - Player2
+  - Player1Above
+  - Player1Straight
+  - Player1Below
+  - Player2Above
+  - Player2Straight
+  - Player2Below
+  - Player1StraightBelow
+  - Player2StraightBelow
+  - Player1StraightAbove
+  - Player2StraightAbove
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0

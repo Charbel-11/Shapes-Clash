@@ -1,0 +1,35 @@
+C:\Users\Lenovo\source\repos\ShapeGameServerMultiThreaded\ShapeGameServer\ShapeGameServer\bin\Release\ShapeGameServer.exe.config
+C:\Users\Lenovo\source\repos\ShapeGameServerMultiThreaded\ShapeGameServer\ShapeGameServer\bin\Release\ShapeGameServer.exe
+C:\Users\Lenovo\source\repos\ShapeGameServerMultiThreaded\ShapeGameServer\ShapeGameServer\bin\Release\ShapeGameServer.pdb
+C:\Users\Lenovo\source\repos\ShapeGameServerMultiThreaded\ShapeGameServer\ShapeGameServer\bin\Release\KG Buffer.dll
+C:\Users\Lenovo\source\repos\ShapeGameServerMultiThreaded\ShapeGameServer\ShapeGameServer\bin\Release\MySql.Data.dll
+C:\Users\Lenovo\source\repos\ShapeGameServerMultiThreaded\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\source\repos\ShapeGameServerMultiThreaded\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.csproj.CopyComplete
+C:\Users\Lenovo\source\repos\ShapeGameServerMultiThreaded\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.exe
+C:\Users\Lenovo\source\repos\ShapeGameServerMultiThreaded\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.pdb
+C:\Users\Lenovo\source\repos\ShapeGameServerMultiThreaded\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.csprojAssemblyReference.cache
+C:\Users\PC\Desktop\ShapeGameServer\ShapeGameServer\bin\Release\ShapeGameServer.exe.config
+C:\Users\PC\Desktop\ShapeGameServer\ShapeGameServer\bin\Release\ShapeGameServer.exe
+C:\Users\PC\Desktop\ShapeGameServer\ShapeGameServer\bin\Release\ShapeGameServer.pdb
+C:\Users\PC\Desktop\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.csprojAssemblyReference.cache
+C:\Users\PC\Desktop\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.csproj.CoreCompileInputs.cache
+C:\Users\PC\Desktop\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.csproj.CopyComplete
+C:\Users\PC\Desktop\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.exe
+C:\Users\PC\Desktop\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.pdb
+C:\Users\Lenovo\source\repos\ShapeGameServerMultiThreaded\ShapeGameServer\bin\Release\ShapeGameServer.exe.config
+C:\Users\Lenovo\source\repos\ShapeGameServerMultiThreaded\ShapeGameServer\bin\Release\ShapeGameServer.exe
+C:\Users\Lenovo\source\repos\ShapeGameServerMultiThreaded\ShapeGameServer\bin\Release\ShapeGameServer.pdb
+C:\Users\Lenovo\source\repos\ShapeGameServerMultiThreaded\ShapeGameServer\obj\Release\ShapeGameServer.csprojAssemblyReference.cache
+C:\Users\Lenovo\source\repos\ShapeGameServerMultiThreaded\ShapeGameServer\obj\Release\ShapeGameServer.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\source\repos\ShapeGameServerMultiThreaded\ShapeGameServer\obj\Release\ShapeGameServer.csproj.CopyComplete
+C:\Users\Lenovo\source\repos\ShapeGameServerMultiThreaded\ShapeGameServer\obj\Release\ShapeGameServer.exe
+C:\Users\Lenovo\source\repos\ShapeGameServerMultiThreaded\ShapeGameServer\obj\Release\ShapeGameServer.pdb
+C:\Users\Lenovo\Desktop\Shape Game\V53\ShapeGameServer\ShapeGameServer\bin\Release\ShapeGameServer.exe.config
+C:\Users\Lenovo\Desktop\Shape Game\V53\ShapeGameServer\ShapeGameServer\bin\Release\ShapeGameServer.exe
+C:\Users\Lenovo\Desktop\Shape Game\V53\ShapeGameServer\ShapeGameServer\bin\Release\ShapeGameServer.pdb
+C:\Users\Lenovo\Desktop\Shape Game\V53\ShapeGameServer\ShapeGameServer\bin\Release\MySql.Data.dll
+C:\Users\Lenovo\Desktop\Shape Game\V53\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.csprojAssemblyReference.cache
+C:\Users\Lenovo\Desktop\Shape Game\V53\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\Desktop\Shape Game\V53\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.csproj.CopyComplete
+C:\Users\Lenovo\Desktop\Shape Game\V53\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.exe
+C:\Users\Lenovo\Desktop\Shape Game\V53\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.pdb
