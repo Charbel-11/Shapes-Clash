@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Login : MonoBehaviour
 {
-    [SerializeField] InputField username;
+    [SerializeField] InputField username;   //Codes start with '/'
     public Button But;
     public GameObject constraints;
     public GameObject alreadyTaken;
@@ -15,19 +15,12 @@ public class Login : MonoBehaviour
     public void LoginAccount()
     {
         But.interactable = false;
-        if (username.text == string.Empty)
+        if (username.text == string.Empty || username.text == "N")
         {
-            //Debug.Log("Please Enter a Username");
             But.interactable = true;
             return;
         }
-        else if (username.text == "N")
-        {
-            //Debug.Log("Invalid Username, please enter another one");
-            But.interactable = true;
-            return;
-        }
-        else if (!CheckUsername(username.text) && username.text[0] != '/')
+        else if (username.text.Length > 12 || (!CheckUsername(username.text) && username.text[0] != '/'))
         {
             showConstraints();
             return;
@@ -37,7 +30,6 @@ public class Login : MonoBehaviour
 
     private bool CheckUsername(string username)
     {
-        if (username.Length > 12) { return false; }
         foreach(char c in username)
         {
             if (!(char.IsLetterOrDigit(c)))

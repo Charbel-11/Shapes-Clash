@@ -62,6 +62,8 @@ public class ShapesButton : MonoBehaviour
         {
             gameObject.GetComponent<Button>().interactable = false;
             gameObject.GetComponentInChildren<Text>().text = "Need to reach " + neededPP + " prestige points";
+            gameObject.GetComponentInChildren<Text>().rectTransform.anchorMax = new Vector2(0.9f, 0.9f);
+            gameObject.transform.Find("Coin").GetComponent<Image>().enabled = false;
         }
         else if (state == 1)
         {
@@ -69,22 +71,31 @@ public class ShapesButton : MonoBehaviour
 
             gameObject.GetComponent<Button>().interactable = true;
             gameObject.GetComponent<Image>().color = new Color(0f, 0.85f, 0f);
-            gameObject.GetComponentInChildren<Text>().text = "Buy " + price.ToString();
-            gameObject.GetComponentInChildren<Text>().color = new Color(1f, 1f, 1f);
+            Text childText = gameObject.GetComponentInChildren<Text>();
+            childText.text = "Buy " + price.ToString();
+            childText.color = new Color(1f, 1f, 1f);
+            childText.rectTransform.anchorMax = new Vector2(0.7f, 0.9f);
+            gameObject.transform.Find("Coin").GetComponent<Image>().enabled = true;
         }
         else if (state == 2)
         {
             gameObject.GetComponent<Button>().interactable = true;
             gameObject.GetComponent<Image>().color = new Color(1f, 1f, 1f);
-            gameObject.GetComponentInChildren<Text>().text = "Choose";
-            gameObject.GetComponentInChildren<Text>().color = new Color(0f, 0f, 0f);
+            Text childText = gameObject.GetComponentInChildren<Text>();
+            childText.text = "Choose";
+            childText.color = new Color(0f, 0f, 0f);
+            childText.rectTransform.anchorMax = new Vector2(0.9f, 0.9f);
+            gameObject.transform.Find("Coin").GetComponent<Image>().enabled = false;
         }
         else if (state == 3)
         {
             gameObject.GetComponent<Button>().interactable = false;
             gameObject.GetComponent<Image>().color = ShapeConstants.selectedColor;
-            gameObject.GetComponentInChildren<Text>().text = "Chosen";
-            gameObject.GetComponentInChildren<Text>().color = new Color(1f, 1f, 1f);
+            Text childText = gameObject.GetComponentInChildren<Text>();
+            childText.text = "Chosen";
+            childText.color = new Color(1f, 1f, 1f);
+            childText.rectTransform.anchorMax = new Vector2(0.9f, 0.9f);
+            gameObject.transform.Find("Coin").GetComponent<Image>().enabled = false;
         }
     }
 

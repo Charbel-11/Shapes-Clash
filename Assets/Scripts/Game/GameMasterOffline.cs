@@ -944,15 +944,13 @@ public class GameMasterOffline : GameMaster
 
             #region TutorialStuff
             TutorialTexts[0].text = "Welcome To Shapes Clash ! We are thankful that you decided to give our game a try, and we hope you'll enjoy it!\n" +
-                "First, in case you ever delete the game and want to recover your account, you're going to need to following recovery Code : "+PlayerPrefs.GetString("SecretCode")+"\n" +
-                "Save the code in a sure place, because if you forget it, there is no other way to recover your account. You can also find the code in the settings tab in the main menu.\n"+
-                        "Now, here's a little tutorial to introduce you to our game, you can skip ahead anytime by clicking the 'Skip Tutorial' Button on your top right.";
+                "Here's a little tutorial to introduce you to our game, you can skip ahead anytime by clicking the 'Skip Tutorial' Button on your top right.";
             TutorialTexts[0].transform.parent.gameObject.SetActive(true);
             ContinueButtons[0].interactable = true;
             yield return new WaitUntil(() => Continue);
             Continue = false;
             TutorialTexts[0].text = "Shapes Clash's main gamemode is 1v1, where 2 Players battle it out for glory!\n"+
-                "Each player chooses a Shape to represent him in battle and then chooses the Shape's abilities.\n" +
+                "Each player chooses a Shape to represent them in battle and then chooses the Shape's abilities.\n" +
                 "Shapes use many abilities to attack , defend or put themselves in an advantageous position";
             ContinueButtons[0].interactable = true;
             yield return new WaitUntil(() => Continue);
@@ -1020,10 +1018,10 @@ public class GameMasterOffline : GameMaster
             Hands[0].gameObject.SetActive(false);
             Attacks[0].interactable = false;
             TutorialTexts[0].transform.parent.gameObject.SetActive(true);
-            TutorialTexts[0].text = "Ouf, that was quite an attack by your opponent! You launched a straight attack, and your opponent launched an attack " +
+            TutorialTexts[0].text = "That was quite an attack by your opponent! You launched a straight attack, and your opponent launched an attack " +
                 "from Above, resulting in both of you dealing damage independently!\n" +
-                "However, his attack was stronger, dealing more damage.\n" +
-                "The attack he used is called Toxic Hammer and is a specific ability for the sphere!\n" +
+                "However, their attack was stronger, dealing more damage.\n" +
+                "The attack they used is called Toxic Hammer and is a specific ability for the sphere!\n" +
                 "Let's fight back now, shall we?";
             ContinueButtons[0].interactable = true;
             yield return new WaitUntil(() => Continue);
@@ -1039,9 +1037,9 @@ public class GameMasterOffline : GameMaster
             Hands[0].gameObject.SetActive(false);
             AbilitiesCanvas1[5].interactable = false;
             TutorialTexts[0].transform.parent.gameObject.SetActive(true);
-            TutorialTexts[0].text = "Well that was quite an attack! The Attack you just used is called Cube Sealing and is an attack from below specific only to the " +
+            TutorialTexts[0].text = "Well that was quite an attack! You just used \"Cube Sealing\"; it is an attack from below specific only to the " +
                 "Cube.\nHowever what makes this attack so special is that it also has a defensive component!\nIt defends you against straight attacks from your opponent " +
-                "while also dishing damage from Below!\nThe ability your opponent used is called Poisonous Air and boosts his attack for next round!";
+                "while also dishing damage from Below!\nThe ability your opponent used is called Poisonous Air and boosts their attack for next round!";
             ContinueButtons[0].interactable = true;
             yield return new WaitUntil(() => Continue);
             Continue = false;
@@ -1057,7 +1055,7 @@ public class GameMasterOffline : GameMaster
             Attacks[0].interactable = false;
             TutorialTexts[0].transform.parent.gameObject.SetActive(true);
             TutorialTexts[0].text = "And here's why boosting abilities are so useful.\nThey allowed your opponent to power up their own weak attack by 15 " +
-                "and therefore overpower your own attack which would have normally nullified his.\n" +
+                "and therefore overpower your own attack which would have normally nullified theirs.\n" +
                 "This is all you need to know about attacking! Let's focus on defense now!";
             ContinueButtons[0].interactable = true;
             yield return new WaitUntil(() => Continue);
@@ -1141,7 +1139,9 @@ public class GameMasterOffline : GameMaster
             TutorialTexts[0].text = "WOW, that was quite a finish. The Ability you used just now is your majestic ability.\nEach Shape has two of them and must " +
                 "choose which one to bring to battle. The difference between the two is that one can be escaped from above and one from below, so choose wisely!\nYour majestic ability will make your opponent unable to move and deal massive damage unless he escapes or uses his own majestic ability." +
                 "It however costs a lot of EP.\n" +
-                "Don't forget to check out the shop and buy some new abilities! Always try to have at least one attack for each direction." +
+                "Don't forget to check out the shop and buy some new abilities! Always try to have at least one attack for each direction.\n" +
+                "Finally, in case you ever delete the game and want to recover your account, you're going to need to following recovery Code : " + PlayerPrefs.GetString("SecretCode") + "\n" +
+                "Save the code in a sure place, because if you forget it, there is no other way to recover your account. You can also find the code in the settings tab in the main menu.\n" +
                 "Congratulations on completing the Tutorial, we look forward to seeing you dominate in Shapes Clash!";
             ContinueButtons[0].interactable = true;
             yield return new WaitUntil(() => Continue);

@@ -304,6 +304,9 @@ public class ChestSlot : MonoBehaviour {
         int dCost = Timeleft / 120000;
         int curDiamonds = ValuesChange.diamonds;
 
+        print(dCost);
+        print(curDiamonds);
+
         if (curDiamonds < dCost)
         {
             MenuManager.ShowMessage("You don't have enough resources");
