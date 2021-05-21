@@ -621,6 +621,8 @@ public class ShopManager : MonoBehaviour
         DiamondsPricesText[0].text = IAPManager.GetProducePriceFromStore("d10");
         DiamondsPricesText[1].text = IAPManager.GetProducePriceFromStore("d25");
         DiamondsPricesText[2].text = IAPManager.GetProducePriceFromStore("d50");
+        DiamondsPricesText[3].text = IAPManager.GetProducePriceFromStore("d100");
+        DiamondsPricesText[4].text = IAPManager.GetProducePriceFromStore("d200");
     }
     public void addDiamonds(int addedD)
     {

@@ -23,6 +23,8 @@ public class Purchaser : MonoBehaviour, IStoreListener
     public static string D10 = "d10";
     public static string D25 = "d25";
     public static string D50 = "d50";
+    public static string D100 = "d100";
+    public static string D200 = "d200";
 
     private ShopManager SM;
 
@@ -51,6 +53,8 @@ public class Purchaser : MonoBehaviour, IStoreListener
         builder.AddProduct(D10, ProductType.Consumable);
         builder.AddProduct(D25, ProductType.Consumable);
         builder.AddProduct(D50, ProductType.Consumable);
+        builder.AddProduct(D100, ProductType.Consumable);
+        builder.AddProduct(D200, ProductType.Consumable);
 
         // Kick off the remainder of the set-up with an asynchrounous call, passing the configuration 
         // and this class' instance. Expect a response either in OnInitialized or OnInitializeFailed.
@@ -87,6 +91,13 @@ public class Purchaser : MonoBehaviour, IStoreListener
     public void Buy50D()
     {
         BuyProductID(D50);
+    }
+
+    public void Buy100D() {
+        BuyProductID(D100);
+    }
+    public void Buy200D() {
+        BuyProductID(D200);
     }
 
     public string GetProducePriceFromStore(string id)
@@ -205,6 +216,14 @@ public class Purchaser : MonoBehaviour, IStoreListener
         {
             Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
             SM.addDiamonds(50);
+        }
+        else if (String.Equals(args.purchasedProduct.definition.id, D100, StringComparison.Ordinal)) {
+            Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
+            SM.addDiamonds(100);
+        }
+        else if (String.Equals(args.purchasedProduct.definition.id, D200, StringComparison.Ordinal)) {
+            Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
+            SM.addDiamonds(200);
         }
         else
         {
