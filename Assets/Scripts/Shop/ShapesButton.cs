@@ -19,7 +19,6 @@ public class ShapesButton : MonoBehaviour
     {
         SM = GameObject.Find("Shop Manager").GetComponent<ShopManager>();
         price = ShopManager.shapePrices[Index];
-        coin = ShopManager.coins;
     }
 
     //Done with the SM first
@@ -113,13 +112,11 @@ public class ShapesButton : MonoBehaviour
         else if (state == 1)
         {
             price = ShopManager.shapePrices[Index];
-            coin = ShopManager.coins;
 
-            if (coin >= price)
+            if (ShopManager.getCoins() >= price)
             {
                 prevIdx = ShopManager.selectedShapeIndex;
-                coin -= price;
-                PlayerPrefs.SetInt("Gold", coin);
+                ShopManager.addCoins(-price);
                 ShopManager.selectedShapeIndex = Index;
                 PlayerPrefs.SetInt("ShapeSelectedID", Index);
 
@@ -147,11 +144,10 @@ public class ShapesButton : MonoBehaviour
 
     public void revertChanges()
     {
-        coin += price;
+        ShopManager.addCoins(price);
         ShopManager.selectedShapeIndex = prevIdx;
         ShopManager.shapeLvls[Index] = 0;
 
-        PlayerPrefs.SetInt("Gold", coin);
         PlayerPrefs.SetInt("ShapeSelectedID", Index);
         PlayerPrefsX.SetIntArray("Level", ShopManager.shapeLvls);
         PlayerPrefs.Save();

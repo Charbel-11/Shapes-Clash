@@ -9,38 +9,27 @@ public class BuyCoins : MonoBehaviour
     //Set in ShopManager
     public int price;       
     public int reward;      
-
-    private int curDiamonds, curCoins;
     private ShopManager SM;
 
     public void onClick()
     {
         SM = GameObject.Find("Shop Manager").GetComponent<ShopManager>();
-        curDiamonds = ShopManager.diamonds;
-        curCoins = ShopManager.coins;
 
-        if (curDiamonds >= price)
+        if (ShopManager.getDiamonds() >= price)
         {
-            curDiamonds -= price;
-            curCoins += reward;
-
-            PlayerPrefs.SetInt("Diamonds", curDiamonds);
-            PlayerPrefs.SetInt("Gold", curCoins);
-            PlayerPrefs.Save();
+            ShopManager.addCoins(reward);
+            ShopManager.addDiamonds(-price);
+            ShopManager.saveChanges();
 
             try { ClientTCP.PACKAGE_AdReward(-1); }
             catch (Exception)
             {
-                curDiamonds += price;
-                curCoins -= reward;
-                PlayerPrefs.SetInt("Diamonds", curDiamonds);
-                PlayerPrefs.SetInt("Gold", curCoins);
-                PlayerPrefs.Save();
+                ShopManager.addCoins(-reward);
+                ShopManager.addDiamonds(+price);
+                ShopManager.saveChanges();
                 SM.showError();
                 return;
             }
-
-            SM.updateBotBar();
         }
     }
 }

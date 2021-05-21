@@ -2111,7 +2111,7 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Another device is already logged into this account. Please log out before
-    loggin in again.
+    logging in again.
 --- !u!222 &1060918765
 CanvasRenderer:
   m_ObjectHideFlags: 0

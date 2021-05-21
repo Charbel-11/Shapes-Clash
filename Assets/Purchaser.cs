@@ -205,25 +205,25 @@ public class Purchaser : MonoBehaviour, IStoreListener
         if (String.Equals(args.purchasedProduct.definition.id, D10, StringComparison.Ordinal))
         {
             Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
-            SM.addDiamonds(10);
+            SM.addBoughtDiamonds(10);
         }
         else if (String.Equals(args.purchasedProduct.definition.id, D25, StringComparison.Ordinal))
         {
             Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
-            SM.addDiamonds(25);
+            SM.addBoughtDiamonds(25);
         }
         else if (String.Equals(args.purchasedProduct.definition.id, D50, StringComparison.Ordinal))
         {
             Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
-            SM.addDiamonds(50);
+            SM.addBoughtDiamonds(50);
         }
         else if (String.Equals(args.purchasedProduct.definition.id, D100, StringComparison.Ordinal)) {
             Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
-            SM.addDiamonds(100);
+            SM.addBoughtDiamonds(100);
         }
         else if (String.Equals(args.purchasedProduct.definition.id, D200, StringComparison.Ordinal)) {
             Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
-            SM.addDiamonds(200);
+            SM.addBoughtDiamonds(200);
         }
         else
         {

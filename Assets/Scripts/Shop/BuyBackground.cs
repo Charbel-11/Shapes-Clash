@@ -9,7 +9,6 @@ public class BuyBackground : MonoBehaviour {
     
     private int state;      // 0 level not enough, 1 to buy, 2 to choose, 3 chosen
     private int price;
-    private int coin;
 
     private ShopManager SM;
 
@@ -17,7 +16,6 @@ public class BuyBackground : MonoBehaviour {
     {
         SM = GameObject.Find("Shop Manager").GetComponent<ShopManager>();
         price = ShopManager.BckgdPrices[Index];
-        coin = ShopManager.coins;
     }
 
     void updateState()
@@ -107,14 +105,12 @@ public class BuyBackground : MonoBehaviour {
         else if (state == 1)
         {
             price = ShopManager.BckgdPrices[Index];
-            coin = ShopManager.coins;
 
-            if (coin >= price)
+            if (ShopManager.getCoins() >= price)
             {
                 int prevBck = ShopManager.selectedBckgd;
 
-                coin -= price;
-                PlayerPrefs.SetInt("Gold", coin);
+                ShopManager.addCoins(-price);
                 ShopManager.selectedBckgd = Index;
                 PlayerPrefs.SetInt("BckgdID", Index);
 
@@ -130,10 +126,9 @@ public class BuyBackground : MonoBehaviour {
                 }
                 catch (Exception)
                 {
-                    coin += price;
+                    ShopManager.addCoins(price);
                     ShopManager.selectedBckgd = prevBck;
                     ShopManager.unlockedBckgd[Index] = 0;
-                    PlayerPrefs.SetInt("Gold", coin);
                     PlayerPrefs.SetInt("BckgdID", prevBck);
                     PlayerPrefsX.SetIntArray("Backgrounds", ShopManager.unlockedBckgd);
                     PlayerPrefs.Save();

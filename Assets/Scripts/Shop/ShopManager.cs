@@ -13,10 +13,10 @@ public class ShopManager : MonoBehaviour
     // Bot Bar
     public Sprite[] ShapeXP;
 
-    public static int coins;
-    public static int redBolts;
-    public static int diamonds;
-    private GameObject botBar;
+    private static int coins;
+    private static int redBolts;
+    private static int diamonds;
+    private static GameObject botBar;
 
     // SHAPES
     public GameObject Shapes;
@@ -70,6 +70,8 @@ public class ShopManager : MonoBehaviour
     public GameObject commonInfoEmote;
     public GameObject emoteName;
     public GameObject commonEmoteContainer;
+    public Button backEmote;
+    public Button mainMenuEmote;
 
     private GameObject playerE;
 
@@ -94,6 +96,35 @@ public class ShopManager : MonoBehaviour
     public GameObject[] CoinPanels;
     public Purchaser IAPManager;
     public Text[] DiamondsPricesText;
+
+    public static int getCoins() {
+        return coins;
+    }
+    public static int getRedBolts() {
+        return redBolts;
+    }
+    public static int getDiamonds() {
+        return diamonds;
+    }
+    public static void addCoins(int add) {
+        coins += add;
+        PlayerPrefs.SetInt("Gold", coins);
+        botBar.transform.Find("Coins").GetComponentInChildren<Text>().text = coins.ToString();
+    }
+    public static void addRedBolts(int add) {
+        redBolts += add;
+        PlayerPrefs.SetInt("Redbolts", redBolts);
+        botBar.transform.Find("Red Bolts").GetComponentInChildren<Text>().text = redBolts.ToString();
+    }
+    public static void addDiamonds(int add) {
+        diamonds += add;
+        PlayerPrefs.SetInt("Diamonds", diamonds);
+        botBar.transform.Find("Diamonds").GetComponentInChildren<Text>().text = diamonds.ToString();
+    }
+    public static void saveChanges() {
+        PlayerPrefs.Save();
+    }
+
 
     private void Awake()
     {
@@ -527,7 +558,8 @@ public class ShopManager : MonoBehaviour
     //EMOTES
     public void ShowAnimation(int ID)
     {
-        canChange = false;
+        canChange = false; 
+        backEmote.enabled = false; mainMenuEmote.enabled = false;
         selectedShapeIndex = PlayerPrefs.GetInt("ShapeSelectedID");
          
         for (int i = 0; i < 4; i++)
@@ -550,14 +582,15 @@ public class ShopManager : MonoBehaviour
         yield return new WaitForSeconds(.1f);
         playerE.GetComponent<Animator>().SetInteger("EID", ID);
         yield return new WaitForSeconds(1f);
+        playerE.GetComponent<Animator>().SetInteger("EID", -1);
+        yield return new WaitForSeconds(.1f);
         canChange = true;
+        backEmote.enabled = true; mainMenuEmote.enabled = true;
     }
 
-    // TODO: could change parameters, i.e. get diamonds from a saved array
-    public void updateEmoteButton(int cID, int cdiamonds)
+    public void updateEmoteButton(int cID)
     {
-        buyEmote.ID = cID; buyEmote.diamonds = cdiamonds;
-        buyEmote.updateText();
+       buyEmote.updateText(cID);
     }
     public void initialEmoteState()
     {
@@ -624,12 +657,9 @@ public class ShopManager : MonoBehaviour
         DiamondsPricesText[3].text = IAPManager.GetProducePriceFromStore("d100");
         DiamondsPricesText[4].text = IAPManager.GetProducePriceFromStore("d200");
     }
-    public void addDiamonds(int addedD)
+    public void addBoughtDiamonds(int addedD)
     {
-        diamonds = PlayerPrefs.GetInt("Diamonds");
-        diamonds += addedD;
-        PlayerPrefs.SetInt("Diamonds", diamonds);
-        updateBotBar();
+        addDiamonds(addedD);
 
         try { ClientTCP.PACKAGE_AdReward(-1); }
         catch (Exception) { showError(); }

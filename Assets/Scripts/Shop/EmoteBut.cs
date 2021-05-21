@@ -7,8 +7,6 @@ public class EmoteBut : MonoBehaviour
 {
     public int ID;
     public bool common;
-    public int coinsCost;       //TODO: Add coins cost panel if needed
-    public int diamondsCost;
 
     public bool unlocked;
     public bool highlighted;
@@ -47,7 +45,7 @@ public class EmoteBut : MonoBehaviour
 
         gameObject.GetComponent<Image>().color = new Color(1f, 1f, 0f);
         SM.goOfSelectedEmote = gameObject;
-        SM.updateEmoteButton(ID, diamondsCost);
+        SM.updateEmoteButton(ID);
         SM.emoteName.GetComponent<Text>().text = pName;
         SM.ShowAnimation(ID);
         if (SM.panelOpen == 1) { SM.commonInfoEmote.gameObject.SetActive(true); }

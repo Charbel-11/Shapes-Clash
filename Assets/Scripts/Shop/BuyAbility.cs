@@ -106,14 +106,12 @@ public class BuyAbility : MonoBehaviour
 
     private void onClick()
     {
-        curCoins = ShopManager.coins;
-        curRedBolts = ShopManager.redBolts;
         passive = SM.goOfSelectedAbBut.GetComponentInParent<Ability>().passive;
 
-        if (curCoins >= coinCost && curRedBolts >= redBoltCost && level < 3)
+        if (ShopManager.getCoins() >= coinCost && ShopManager.getRedBolts() >= redBoltCost && level < 3)
         {
-            curCoins -= coinCost;
-            curRedBolts -= redBoltCost;
+            ShopManager.addCoins(-coinCost);
+            ShopManager.addRedBolts(-redBoltCost);
             if (direct3) { level = 3; }
             else { level++; }
 
@@ -134,12 +132,7 @@ public class BuyAbility : MonoBehaviour
                 ShopManager.shapeExp[ShopManager.selectedShapeIndex] += toAdd;
             }
 
-            PlayerPrefs.SetInt("Gold", curCoins);
-            PlayerPrefs.SetInt("Redbolts", curRedBolts);
             PlayerPrefsX.SetIntArray("XP", ShopManager.shapeExp);
-
-            ShopManager.coins = curCoins;
-            ShopManager.redBolts = curRedBolts;
 
             if (passive)
             {
@@ -196,8 +189,8 @@ public class BuyAbility : MonoBehaviour
 
     public void revertChanges()
     {
-        curCoins += coinCost;
-        curRedBolts += redBoltCost;
+        ShopManager.addCoins(coinCost);
+        ShopManager.addRedBolts(redBoltCost);
 
         int toAdd = 0;
         if (level == 1) { toAdd = 50; }
@@ -218,13 +211,7 @@ public class BuyAbility : MonoBehaviour
         {
             ShopManager.shapeExp[ShopManager.selectedShapeIndex] -= toAdd;
         }
-
-        PlayerPrefs.SetInt("Gold", curCoins);
-        PlayerPrefs.SetInt("Redbolts", curRedBolts);
         PlayerPrefsX.SetIntArray("XP", ShopManager.shapeExp);
-
-        ShopManager.coins = curCoins;
-        ShopManager.redBolts = curRedBolts;
 
         if (passive)
         {

@@ -9,7 +9,6 @@ public class BuySkin : MonoBehaviour {
 
     private int state;      // 0 level not enough, 1 to buy, 2 to choose, 3 chosen
     private int price;
-    private int coin;
 
     private ShopManager SM;
 
@@ -17,7 +16,6 @@ public class BuySkin : MonoBehaviour {
     {
         SM = GameObject.Find("Shop Manager").GetComponent<ShopManager>();
         price = ShopManager.SkinPrices[Index];
-        coin = ShopManager.coins;
     }
 
     void updateState()
@@ -107,14 +105,12 @@ public class BuySkin : MonoBehaviour {
         else if (state == 1)
         {
             price = ShopManager.SkinPrices[Index];
-            coin = ShopManager.coins;
 
-            if (coin >= price)
+            if (ShopManager.getCoins() >= price)
             {
                 int prevSkin = ShopManager.selectedSkin;
 
-                coin -= price;
-                PlayerPrefs.SetInt("Gold", coin);
+                ShopManager.addCoins(-price);
                 ShopManager.selectedSkin = Index;
                 PlayerPrefs.SetInt("SkinID", Index);
 
@@ -129,10 +125,9 @@ public class BuySkin : MonoBehaviour {
                 }
                 catch(Exception)
                 {
-                    coin += price;
+                    ShopManager.addCoins(price);
                     ShopManager.selectedSkin = prevSkin;
                     ShopManager.unlockedSkins[Index] = 0;
-                    PlayerPrefs.SetInt("Gold", coin);
                     PlayerPrefs.SetInt("SkinID", prevSkin);
                     PlayerPrefsX.SetIntArray("SkinsUnlockedAr", ShopManager.unlockedSkins);
                     PlayerPrefs.Save();

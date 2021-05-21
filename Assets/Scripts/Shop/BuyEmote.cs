@@ -7,40 +7,35 @@ using UnityEngine.UI;
 public class BuyEmote : MonoBehaviour
 {
     public int ID;
-    public int coins;
-    public int diamonds;
-
-    private int curCoins;
-    private int curDiamonds;
+    private int coins;
+    private int diamonds;
+    private Button but;
 
     private ShopManager SM;
 
     private void Start()
     {
         SM = GameObject.Find("Shop Manager").GetComponent<ShopManager>();
+
+        but = gameObject.GetComponent<Button>();
+        but.onClick.AddListener(buy);
     }
 
+    //First 4 emotes cost coins, the other cost diamonds
     void buy()
     {
-        coins = 0;
-        diamonds = ShopManager.EmotesPrice[ID];
+        if (ID < 4) { coins = ShopManager.EmotesPrice[ID]; diamonds = 0; }
+        else { diamonds = ShopManager.EmotesPrice[ID]; coins = 0; }
 
-        curCoins = ShopManager.coins;
-        curDiamonds = ShopManager.diamonds;
-
-        if (curCoins >= coins && curDiamonds >= diamonds)
+        if (ShopManager.getCoins() >= coins && ShopManager.getDiamonds() >= diamonds)
         {
-            curCoins -= coins; curDiamonds -= diamonds;
-            ShopManager.coins = curCoins;
-            ShopManager.diamonds = curDiamonds;
+            ShopManager.addCoins(-coins); ShopManager.addDiamonds(-diamonds);
             ShopManager.EmotesUnlock[ID] = 1;
 
-            PlayerPrefs.SetInt("Gold", curCoins);
-            PlayerPrefs.SetInt("Diamonds", curDiamonds);
             PlayerPrefsX.SetIntArray("EmotesUnlockedAr", ShopManager.EmotesUnlock);
             PlayerPrefs.Save();
 
-            updateText();
+            updateText(ID);
             SM.goOfSelectedEmote.GetComponent<EmoteBut>().updateState();
 
             if (SM.goOfSelectedEmote.GetComponent<EmoteBut>().common)
@@ -85,38 +80,40 @@ public class BuyEmote : MonoBehaviour
         {
             ShopManager.shapeExp[ShopManager.selectedShapeIndex] -= 50;
         }
-        curCoins += coins; curDiamonds += diamonds;
+        ShopManager.addCoins(coins); ShopManager.addDiamonds(diamonds);
         ShopManager.EmotesUnlock[ID] = 0;
 
-        PlayerPrefs.SetInt("Gold", curCoins);
-        PlayerPrefs.SetInt("Diamonds", curDiamonds);
         PlayerPrefsX.SetIntArray("XP", ShopManager.shapeExp);
         PlayerPrefsX.SetIntArray("EmotesUnlockedAr", ShopManager.EmotesUnlock);
         PlayerPrefs.Save();
-        updateText();
+        updateText(ID);
         SM.goOfSelectedEmote.GetComponent<EmoteBut>().updateState();
     }
 
-    public void updateText()
+    public void updateText(int newID)
     {
-        coins = 0;
-        diamonds = ShopManager.EmotesPrice[ID];
-
+        ID = newID;
         if (ShopManager.EmotesUnlock[ID] == 1)
         {
             gameObject.transform.Find("BText").gameObject.SetActive(false);
             gameObject.transform.Find("Buy").gameObject.SetActive(false);
-            gameObject.transform.Find("Image").gameObject.SetActive(false);
+            gameObject.transform.Find("ImageD").gameObject.SetActive(false);
+            gameObject.transform.Find("ImageC").gameObject.SetActive(false);
             gameObject.transform.Find("Bought").gameObject.SetActive(true);
 
             return;
         }
 
+        if (ID < 4) { coins = ShopManager.EmotesPrice[ID]; diamonds = 0; }
+        else { diamonds = ShopManager.EmotesPrice[ID]; coins = 0; }
+
         gameObject.transform.Find("BText").gameObject.SetActive(true);
         gameObject.transform.Find("Buy").gameObject.SetActive(true);
-        gameObject.transform.Find("Image").gameObject.SetActive(true);
+        gameObject.transform.Find("ImageD").gameObject.SetActive(ID >= 4);
+        gameObject.transform.Find("ImageC").gameObject.SetActive(ID < 4);
         gameObject.transform.Find("Bought").gameObject.SetActive(false);
 
-        gameObject.transform.Find("Buy").GetComponent<Text>().text = diamonds.ToString();
+        gameObject.transform.Find("Buy").GetComponent<Text>().text = ShopManager.EmotesPrice[ID].ToString();
+        gameObject.transform.Find("Buy").GetComponent<Text>().color = (ID >= 4 ? new Color(0.36f, 0f, 0.462f) : new Color(1f, 1f, 0f));
     }
 }
