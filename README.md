@@ -1,3 +1,4 @@
+# Shapes Clash
 Select your preferred Shape and jump into battle! 
 
 Shapes Clash is a fast paced strategic game divided into rounds where you have a few seconds to think and choose an ability to use. 
