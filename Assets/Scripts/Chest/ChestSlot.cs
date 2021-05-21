@@ -295,54 +295,32 @@ public class ChestSlot : MonoBehaviour {
         PlayerPrefsX.SetIntArray("Queue", Queue);
         OpenButton.SetActive(false);
         MenuManager.OpenIt(C, ChestObjects);
-        MenuManager.Awake();
     }
 
     //Open with diamonds without waiting
-    public void OpenNow()
-    {
+    public void OpenNow() {
         int dCost = Timeleft / 120000;
-        int curDiamonds = ValuesChange.diamonds;
 
-        print(dCost);
-        print(curDiamonds);
-
-        if (curDiamonds < dCost)
-        {
+        if (ValuesChange.getDiamonds() < dCost) {
             MenuManager.ShowMessage("You don't have enough resources");
             return;
         }
 
-        curDiamonds -= dCost; ValuesChange.diamonds = curDiamonds;
-        PlayerPrefs.SetInt("Diamonds", curDiamonds);
-
+        ValuesChange.addDiamonds(-dCost);
         try { Open(); }
-        catch (Exception)
-        {
-            curDiamonds += dCost;
-            ValuesChange.diamonds = curDiamonds;
-            PlayerPrefs.SetInt("Diamonds", curDiamonds);
-        }
+        catch (Exception) { ValuesChange.addDiamonds(dCost); }
 
-        PlayerPrefs.Save();
+        ValuesChange.saveChanges();
     }
 
     public void BuyChestSlot()
     {
-        int curCoins = ValuesChange.coins;
-        int curDiamonds = ValuesChange.diamonds;
         int[] LockedArray = PlayerPrefsX.GetIntArray("ChestSlots");
 
-        if (ChestNum < 3 && curCoins >= price)
-        {
-            curCoins -= price; ValuesChange.coins = curCoins;
-            PlayerPrefs.SetInt("Gold", curCoins);
-        }
-        else if (ChestNum == 3 && curDiamonds >= price)
-        {
-            curDiamonds -= price; ValuesChange.diamonds = curDiamonds;
-            PlayerPrefs.SetInt("Diamonds", curDiamonds);
-        }
+        if (ChestNum < 3 && ValuesChange.getCoins() >= price)
+            ValuesChange.addCoins(-price);
+        else if (ChestNum == 3 && ValuesChange.getDiamonds() >= price)
+            ValuesChange.addDiamonds(-price);
         else
         {
             MenuManager.ShowMessage("You don't have enough resources");
@@ -351,7 +329,7 @@ public class ChestSlot : MonoBehaviour {
 
         LockedArray[ChestNum] = 1;
         PlayerPrefsX.SetIntArray("ChestSlots", LockedArray);
-        PlayerPrefs.Save();
+        ValuesChange.saveChanges();
 
         try { ClientTCP.PACKAGE_ChestOpening(); }
         catch (Exception)
@@ -362,27 +340,19 @@ public class ChestSlot : MonoBehaviour {
         }
 
         Start();
-        MenuManager.Awake();
     }
     public void revertChanges1()
     {
-        int curCoins = ValuesChange.coins;
-        int curDiamonds = ValuesChange.diamonds;
         int[] LockedArray = PlayerPrefsX.GetIntArray("ChestSlots");
 
-        if (ChestNum < 3 && curCoins >= price)
-        {
-            curCoins += price; ValuesChange.coins = curCoins;
-            PlayerPrefs.SetInt("Gold", curCoins);
-        }
-        else if (ChestNum == 3 && curDiamonds >= price)
-        {
-            curDiamonds += price; ValuesChange.diamonds = curDiamonds;
-            PlayerPrefs.SetInt("Diamonds", curDiamonds);
-        }
+        if (ChestNum < 3)
+            ValuesChange.addCoins(price);
+        else if (ChestNum == 3)
+            ValuesChange.addDiamonds(price);
 
+        LockedArray[ChestNum] = 0;
         PlayerPrefsX.SetIntArray("ChestSlots", LockedArray);
-        PlayerPrefs.Save();
+        ValuesChange.saveChanges();
     }
 
     private bool Percentage(int Percent)

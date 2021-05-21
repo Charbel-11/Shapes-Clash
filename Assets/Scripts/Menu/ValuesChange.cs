@@ -10,15 +10,15 @@ public class ValuesChange : MonoBehaviour
 {
     public static bool offline;
 
-    public GameObject topBar;
+    private static GameObject topBar;
     public Sprite[] ShapeXP;
     public SelectedShape curShape;
 
     public GameObject PlayButton, RoadButton, RewardButton;
 
-    public static int coins;
-    public static int redBolts;
-    public static int diamonds;
+    private static int coins;
+    private static int redBolts;
+    private static int diamonds;
 
     public static int[] maxShapePPs;
     public static int[] shapePPs;
@@ -93,6 +93,55 @@ public class ValuesChange : MonoBehaviour
 
     public GameObject dailyrew;
     public GameObject addrew;
+
+    //Currency API
+    public static int getCoins() {
+        return coins;
+    }
+    public static int getRedBolts() {
+        return redBolts;
+    }
+    public static int getDiamonds() {
+        return diamonds;
+    }
+    public static void addCoins(int add) {
+        coins += add;
+        PlayerPrefs.SetInt("Gold", coins);
+        topBar.transform.Find("Coins").GetComponentInChildren<Text>().text = coins.ToString();
+    }
+    public static void addRedBolts(int add) {
+        redBolts += add;
+        PlayerPrefs.SetInt("Redbolts", redBolts);
+        topBar.transform.Find("Red Bolts").GetComponentInChildren<Text>().text = redBolts.ToString();
+    }
+    public static void addDiamonds(int add) {
+        diamonds += add;
+        PlayerPrefs.SetInt("Diamonds", diamonds);
+        topBar.transform.Find("Diamonds").GetComponentInChildren<Text>().text = diamonds.ToString();
+    }
+    public static void saveChanges() {
+        PlayerPrefs.Save();
+    }
+
+    private void fetchData() {
+        coins = PlayerPrefs.GetInt("Gold");
+        redBolts = PlayerPrefs.GetInt("Redbolts");
+        diamonds = PlayerPrefs.GetInt("Diamonds");
+        shapeLvls = PlayerPrefsX.GetIntArray("Level");
+        shapeExp = PlayerPrefsX.GetIntArray("XP");
+        shapePPs = PlayerPrefsX.GetIntArray("PP");
+        maxShapePPs = PlayerPrefsX.GetIntArray("MaxPP");
+
+        AbLevelArray = PlayerPrefsX.GetStringArray("AbilitiesArray");
+
+        levelStatsStr = PlayerPrefs.GetString("LevelStats");
+        levelStats = ClientHandleData.TransformToArrayShop(levelStatsStr);
+
+        trophyRoadStr = PlayerPrefs.GetString("TrophyRoad");
+        trophyRoadUnlockedStr = PlayerPrefsX.GetStringArray("TrophyRoadUnlocked");
+        trophyRoadStats = ClientHandleData.TransformToArrayShop(trophyRoadStr);
+        trophyRoadUnlocked = ClientHandleData.TransformStringArray(trophyRoadUnlockedStr);
+    }
 
     public void Awake()
     {
@@ -173,25 +222,9 @@ public class ValuesChange : MonoBehaviour
         selectedShapeIndex = PlayerPrefs.GetInt("ShapeSelectedID");    //0 for Cube, 1 for pyramid, ...
         curShape.UpdateShape();
 
-        coins = PlayerPrefs.GetInt("Gold");
-        redBolts = PlayerPrefs.GetInt("Redbolts");
-        diamonds = PlayerPrefs.GetInt("Diamonds");
-        shapeLvls = PlayerPrefsX.GetIntArray("Level");
-        shapeExp = PlayerPrefsX.GetIntArray("XP");
-        shapePPs = PlayerPrefsX.GetIntArray("PP");
-        maxShapePPs = PlayerPrefsX.GetIntArray("MaxPP");
+        fetchData();
 
-        AbLevelArray = PlayerPrefsX.GetStringArray("AbilitiesArray");
-
-        levelStatsStr = PlayerPrefs.GetString("LevelStats");
-        levelStats = ClientHandleData.TransformToArrayShop(levelStatsStr);
-
-        trophyRoadStr = PlayerPrefs.GetString("TrophyRoad");
-        trophyRoadUnlockedStr = PlayerPrefsX.GetStringArray("TrophyRoadUnlocked");
-        trophyRoadStats = ClientHandleData.TransformToArrayShop(trophyRoadStr);
-        trophyRoadUnlocked = ClientHandleData.TransformStringArray(trophyRoadUnlockedStr);
-        
-
+        topBar = gameObject.transform.parent.Find("Canvas").Find("Top Bar").gameObject;
         Transform XP = topBar.transform.Find("XP");
         Transform Shape = XP.transform.Find("Shape");
         Shape.Find("Level").GetComponent<Text>().text = shapeLvls[selectedShapeIndex].ToString();
@@ -300,9 +333,7 @@ public class ValuesChange : MonoBehaviour
         //Add The Contents To PlayerPrefs
         if (First)
         {
-            PlayerPrefs.SetInt("Gold", PlayerPrefs.GetInt("Gold") + Contents[0]);
-            PlayerPrefs.SetInt("Redbolts", PlayerPrefs.GetInt("Redbolts") + Contents[1]);
-            PlayerPrefs.SetInt("Diamonds", PlayerPrefs.GetInt("Diamonds") + Contents[2]);
+            addCoins(Contents[0]); addRedBolts(Contents[1]); addDiamonds(Contents[2]);
             string[] AbilitiesStr = PlayerPrefsX.GetStringArray("AbilitiesArray");
             for (int j = 3; j < 6; j++)
             {
@@ -339,7 +370,7 @@ public class ValuesChange : MonoBehaviour
                 PlayerPrefsX.SetIntArray("Level", ShapeLevels);
                 Chest.Shapes.sprite = Chest.ShapesSpr[Contents[7]];
             }
-            PlayerPrefs.Save();
+            saveChanges();
             ClientTCP.PACKAGE_ChestOpening();
         }
 
@@ -454,8 +485,7 @@ public class ValuesChange : MonoBehaviour
         if (notification.transform.GetChild(0).GetComponent<Text>().text == "0")
             notification.SetActive(true);
 
-        int temp;
-        Int32.TryParse(notification.transform.GetChild(0).GetComponent<Text>().text, out temp);
+        Int32.TryParse(notification.transform.GetChild(0).GetComponent<Text>().text, out int temp);
 
         notification.transform.GetChild(0).GetComponent<Text>().text = (temp + change).ToString();
 
@@ -492,13 +522,11 @@ public class ValuesChange : MonoBehaviour
     public void SetUsedP1() { usedP1 = true; }
     public void watchedFirstAd()
     {
-        PlayerPrefs.SetInt("Diamonds", PlayerPrefs.GetInt("Diamonds") + 10);
+        addDiamonds(10);
         playResourcesAnim(2);
-        topBar.transform.Find("Diamonds").GetComponentInChildren<Text>().text = PlayerPrefs.GetInt("Diamonds").ToString();
 
         int[] remaining = PlayerPrefsX.GetIntArray("AdsRem");
-        remaining1 = remaining[0];
-        remaining1--;
+        remaining1 = remaining[0] - 1;
         if (remaining1 < 0) { remaining1 = 0; }
         remaining1Text.text = remaining1.ToString() + " remaining";
 
@@ -507,29 +535,25 @@ public class ValuesChange : MonoBehaviour
 
         usedP1 = false;
 
-        PlayerPrefs.Save();
+        saveChanges();
         try { ClientTCP.PACKAGE_AdReward(timeLeftBeforeReset / 1000); }
         catch(Exception) { showError(); }
     }
 
     public void watchedSecondAd()
     {
-        PlayerPrefs.SetInt("Gold", PlayerPrefs.GetInt("Gold") + 50);
-        PlayerPrefs.SetInt("Redbolts", PlayerPrefs.GetInt("Redbolts") + 5);
+        addCoins(50); addRedBolts(5);
         playResourcesAnim(0); playResourcesAnim(1);
-        topBar.transform.Find("Coins").GetComponentInChildren<Text>().text = PlayerPrefs.GetInt("Gold").ToString();
-        topBar.transform.Find("Red Bolts").GetComponentInChildren<Text>().text = PlayerPrefs.GetInt("Redbolts").ToString();
 
         int[] remaining = PlayerPrefsX.GetIntArray("AdsRem");
-        remaining2 = remaining[1];
-        remaining2--;
+        remaining2 = remaining[1] - 1;
         if (remaining2 < 0) { remaining2 = 0; }
         remaining2Text.text = remaining2.ToString() + " remaining";
 
         remaining[1] = remaining2;
         PlayerPrefsX.SetIntArray("AdsRem", remaining);
 
-        PlayerPrefs.Save();
+        saveChanges();
         try { ClientTCP.PACKAGE_AdReward(timeLeftBeforeReset / 1000); }
         catch (Exception) { showError(); }
     }

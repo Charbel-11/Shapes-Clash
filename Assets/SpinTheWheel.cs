@@ -78,11 +78,9 @@ public class SpinTheWheel : MonoBehaviour
         {
             counter = -1;
             v.playResourcesAnim(0);
-            PlayerPrefs.SetInt("Gold", PlayerPrefs.GetInt("Gold") + wheelrewards[index][0]);
-            PlayerPrefs.Save();
-            ValuesChange.coins = PlayerPrefs.GetInt("Gold");
-            v.topBar.transform.Find("Coins").GetComponentInChildren<Text>().text = ValuesChange.coins.ToString();
+            ValuesChange.addCoins(wheelrewards[index][0]);
             PlayerPrefs.SetInt("DailyReward", 0);
+            PlayerPrefs.Save();
             ClientTCP.PACKAGE_ChestOpening(true);
         }
     }

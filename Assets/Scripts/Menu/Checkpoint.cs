@@ -94,9 +94,9 @@ public class Checkpoint : MonoBehaviour {
         redBoltsToGain = ValuesChange.trophyRoadStats[road][ID][1];
         diamondsToGain = ValuesChange.trophyRoadStats[road][ID][2];
 
-        ValuesChange.coins += coinToGain;
-        ValuesChange.redBolts += redBoltsToGain;
-        ValuesChange.diamonds += diamondsToGain;
+        ValuesChange.addCoins(coinToGain);
+        ValuesChange.addRedBolts(redBoltsToGain);
+        ValuesChange.addDiamonds(diamondsToGain);
 
         if (abID != -1)
         {
@@ -108,12 +108,9 @@ public class Checkpoint : MonoBehaviour {
         prevS = state;
         state = 2; ValuesChange.trophyRoadUnlocked[road][ID] = state; 
 
-        PlayerPrefs.SetInt("Gold", ValuesChange.coins);
-        PlayerPrefs.SetInt("Redbolts", ValuesChange.redBolts);
-        PlayerPrefs.SetInt("Diamonds", ValuesChange.diamonds);
         PlayerPrefsX.SetStringArray("AbilitiesArray", ValuesChange.AbLevelArray);
         PlayerPrefsX.SetStringArray("TrophyRoadUnlocked", ClientHandleData.TransformToString(ValuesChange.trophyRoadUnlocked).Split('-'));
-        PlayerPrefs.Save();
+        ValuesChange.saveChanges();
 
         try { ClientTCP.PACKAGE_ChestOpening(); }
         catch (Exception) { RevertClaim(); MM.showError(); return; }
@@ -136,23 +133,19 @@ public class Checkpoint : MonoBehaviour {
             MM.playResourcesAnim(2);
 
         MM.changeRoadNotification(-1);
-        MM.Awake();
     }
 
     public void RevertClaim()
     {
-        ValuesChange.coins -= coinToGain;
-        ValuesChange.redBolts -= redBoltsToGain;
-        ValuesChange.diamonds -= diamondsToGain;
+        ValuesChange.addCoins(-coinToGain);
+        ValuesChange.addRedBolts(-redBoltsToGain);
+        ValuesChange.addDiamonds(-diamondsToGain);
         if (abID != -1)
             ValuesChange.AbLevelArray[abID] = prevAbLvl.ToString();
         state = prevS; ValuesChange.trophyRoadUnlocked[road][ID] = state;
 
-        PlayerPrefs.SetInt("Gold", ValuesChange.coins);
-        PlayerPrefs.SetInt("Redbolts", ValuesChange.redBolts);
-        PlayerPrefs.SetInt("Diamonds", ValuesChange.diamonds);
         PlayerPrefsX.SetStringArray("AbilitiesArray", ValuesChange.AbLevelArray);
         PlayerPrefsX.SetStringArray("TrophyRoadUnlocked", ClientHandleData.TransformToString(ValuesChange.trophyRoadUnlocked).Split('-'));
-        PlayerPrefs.Save();
+        ValuesChange.saveChanges();
     }
 }

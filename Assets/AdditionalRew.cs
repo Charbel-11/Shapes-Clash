@@ -27,14 +27,11 @@ public class AdditionalRew : MonoBehaviour
     {
         Redeem.interactable = false;
         v.playResourcesAnim(2);
-        PlayerPrefs.SetInt("Diamonds", PlayerPrefs.GetInt("Diamonds") + Amount);        
+        ValuesChange.addDiamonds(Amount);
         int[] r = PlayerPrefsX.GetIntArray("AdditionalRewards");
         r[(int)(ConsDays / 10) - 2] = 0;
         PlayerPrefsX.SetIntArray("AdditionalRewards", r);
         PlayerPrefs.Save();
-        ValuesChange.diamonds = PlayerPrefs.GetInt("Diamonds");
-        v.topBar.transform.Find("Diamonds").GetComponentInChildren<Text>().text = ValuesChange.diamonds.ToString();
         ClientTCP.PACKAGE_ChestOpening(true);
     }
-
 }
