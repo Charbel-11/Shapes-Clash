@@ -12,7 +12,7 @@ namespace ShapeGameServer
         static string[] Alphabet = new string[26] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
         public static void NewAccount(string username)
         {
-            string Abilities = "1,1,1,1,0,1,0,0,1,0,0,0,0,0,0,1,0,1,0,0,0,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,0,1,0,0,0,1,0,0,0,0,0,0,0";
+            string Abilities = "1,1,1,1,0,1,0,0,1,0,0,0,0,0,0,1,0,1,0,1,0,1,1,1,1,0,0,1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,1,1,0,1,0,0,0,1,0,1,0,0,0,0,0";
             string Passives = "0,0,0,0,0,0,0,0";
             string Super100 = "0,0,0,0";
             string Super200 = "0,0,0,0";

@@ -18,7 +18,7 @@ class AbilitiesStoringClass
     public static int[] AbilitiesRarety = new int[AbilitiesArray.Length];
     public static int[][][] LevelStatsArray = new int[8][][];
     public static string[] NamesArray = new string[AbilitiesArray.Length];
-    public static int[] EmotesPrice = new int[5] { 100, 100, 100, 100, 100 };
+    public static int[] EmotesPrice = new int[5] { 100, 500, 500, 1000, 100 };
     public static int[] BgPrice = new int[2] { 1000, 1000 };
     public static int[] SkinPrice = new int[2] { 0, 2000 };
     public static int[] CoinPrice = new int[5] { 10, 20, 30, 40, 50 };
