@@ -9,7 +9,7 @@ public class ShapesButton : MonoBehaviour
     public int Index;       // 0 cube, 1 pyr, 2 star, 3 sphere
     public int state;      // 0 level not enough, 1 to buy, 2 to choose, 3 chosen
     public int price;
-    private int coin;
+    private int unlockedShapes;
 
     private ShopManager SM;
     private int neededPP;
@@ -39,7 +39,7 @@ public class ShapesButton : MonoBehaviour
             int thirdI = (Index + 2) % 4;
             int fourthI = (Index + 3) % 4;
 
-            int unlockedShapes = 0, maxPP = ShopManager.shapePPs[Index];
+            int maxPP = ShopManager.shapePPs[Index]; unlockedShapes = 0;
             if (ShopManager.shapeLvls[secondI] > 0) { unlockedShapes++; maxPP = ShopManager.shapePPs[secondI] > maxPP ? ShopManager.shapePPs[secondI] : maxPP; }
             if (ShopManager.shapeLvls[thirdI] > 0) { unlockedShapes++; maxPP = ShopManager.shapePPs[thirdI] > maxPP ? ShopManager.shapePPs[thirdI] : maxPP; }
             if (ShopManager.shapeLvls[fourthI] > 0) { unlockedShapes++; maxPP = ShopManager.shapePPs[fourthI] > maxPP ? ShopManager.shapePPs[fourthI] : maxPP; }
@@ -111,7 +111,7 @@ public class ShapesButton : MonoBehaviour
         }
         else if (state == 1)
         {
-            price = ShopManager.shapePrices[Index];
+            price = ShopManager.shapePrices[unlockedShapes];
 
             if (ShopManager.getCoins() >= price)
             {

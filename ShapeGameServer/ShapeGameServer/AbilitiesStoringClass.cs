@@ -13,7 +13,7 @@ class AbilitiesStoringClass
     public static int[][][] AbilitiesShopArray = new int[AbilitiesArray.Length][][];
     public static int[][][] Super100ShopArray = new int[Super100Array.Length][][];
     public static int[][][] Super200ShopArray = new int[Super200Array.Length][][];
-    public static int[] ShapePrice = { 2500, 2500, 2500, 2500 };
+    public static int[] ShapePrice = { 0, 1500, 2500, 4000 };
     public static int[] ChestSlotPrices = { 0, 1000, 10000, 500};      
     public static int[] AbilitiesRarety = new int[AbilitiesArray.Length];
     public static int[][][] LevelStatsArray = new int[8][][];
