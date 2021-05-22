@@ -28,7 +28,7 @@ public class GameMaster : MonoBehaviour
     public GameObject miniCubeEarth, miniCubeFire, miniCubeWater, miniCubeWind, MiddleRubble;
     public FallInPieces[] Rubbles;
 
-    protected bool player1TriedToAtck;
+    protected bool player1TriedToAtck, player1EscapeFromAtck;
     protected int player1OverallAttack, player1OverallDefense, player1DamageDone;
     protected int player1AtckDir, player1DefDir, player1EscapeCount;
     protected int[] player1Attack;
@@ -41,7 +41,7 @@ public class GameMaster : MonoBehaviour
     public static Animator animatorPlayer1;
     public int skin;
 
-    protected bool player2TriedToAtck;
+    protected bool player2TriedToAtck, player2EscapeFromAtck;
     protected int player2OverallAttack, player2OverallDefense, player2DamageDone;
     protected int player2AtckDir, player2DefDir, player2EscapeCount;
     protected int[] player2Attack;
@@ -53,6 +53,7 @@ public class GameMaster : MonoBehaviour
     protected int player2selfdmg;
     public static Animator animatorPlayer2;
     public int skin2;
+    protected bool sameEscape;
 
     //For the ability selection process
     protected int[] finalIDs1;
@@ -125,7 +126,7 @@ public class GameMaster : MonoBehaviour
 
     public bool FireEnergy1 = false;
     public bool FireEnergy2 = false;
-
+    
     public bool BluePlanet1 = false;
     public bool BluePlanet2 = false;
 
@@ -779,6 +780,7 @@ public class GameMaster : MonoBehaviour
 
         player1OverallAttack = player1OverallDefense = player1AtckDir = player1DefDir = player1EscapeCount = 0;
         player2OverallAttack = player2OverallDefense = player2AtckDir = player2DefDir = player2EscapeCount = 0;
+        sameEscape = true; player1EscapeFromAtck = player2EscapeFromAtck = false;
         for (int i = 0; i < 3; i++)
         {
             player1OverallAttack += player1Attack[i];
@@ -792,6 +794,10 @@ public class GameMaster : MonoBehaviour
             if (player2Attack[i] > 0) { player2AtckDir++; }
             if (player2Defense[i] > 0) { player2DefDir++; }
             if (player2EscapeFrom[i]) { player2EscapeCount++; }
+
+            if (player1EscapeFrom[i] ^ player2EscapeFrom[i]) { sameEscape = false; }
+            if (player1EscapeFrom[i] && player2Attack[i] > 0) { player1EscapeFromAtck = true; }
+            if (player2EscapeFrom[i] && player1Attack[i] > 0) { player2EscapeFromAtck = true; }
         }
         player1TriedToAtck = (player1OverallAttack > 0);
         player2TriedToAtck = (player2OverallAttack > 0);
@@ -1730,7 +1736,7 @@ public class GameMaster : MonoBehaviour
             animatorPlayer2.SetInteger("ID", -1);
             animatorPlayer2.SetBool("Scared", true);
             player2Life -= player1Attack[2];
-            AddText(FightText, p1Name + " dazzled " + p2Name + " with his magnificient attack and dealt " + player1Attack[2] + " damage to him");
+            AddText(FightText, p1Name + " dazzled " + p2Name + " with their magnificient attack and dealt " + player1Attack[2] + " damage to them");
         }
         else if ((player2ID > 100 && player2ID < 200) && player1ID < 101 && !(player1EscapeFrom[0] && player1EscapeFrom[2]))
         {
@@ -1738,7 +1744,7 @@ public class GameMaster : MonoBehaviour
             animatorPlayer1.SetInteger("ID", -1);
             animatorPlayer1.SetBool("Scared", true);
             player1Life -= player2Attack[2];
-            AddText(FightText, p2Name + " Dazzled " + p1Name + " with his magnificient attack and dealt " + player2Attack[2] + " damage to him");
+            AddText(FightText, p2Name + " Dazzled " + p1Name + " with their magnificient attack and dealt " + player2Attack[2] + " damage to them");
         }
         //Only case of escape from below
         else if ((player1ID > 100 && player1ID < 200) && player2ID < 101 && (player2EscapeFrom[0] && player2EscapeFrom[2]))
@@ -1785,7 +1791,7 @@ public class GameMaster : MonoBehaviour
 
             if (!player1TriedToAtck && !player2TriedToAtck && damageDoneTo1 == 0 && damageDoneTo2 == 0)
                 AddText(FightText, "No Attacks Recorded");
-            else if (player1TriedToAtck && player2TriedToAtck && player1OverallAttack == 0 && player2OverallAttack == 0)
+            else if (player1TriedToAtck && player2TriedToAtck && player1OverallAttack == 0 && player2OverallAttack == 0 && sameEscape)
                 AddText(FightText, "Attacks were neutralized");
             else
             {
@@ -1793,21 +1799,24 @@ public class GameMaster : MonoBehaviour
                     AddText(FightText, p1Name + " does " + damageDoneTo2 + " damage to " + p2Name);
                 else if (damageDoneTo2 > 0 && MateOn1)
                     AddText(FightText, "The mate of " + p1Name + " does " + damageDoneTo2 + " damage to " + p2Name);
-                if (player2OverallAttack == 0 && player2TriedToAtck && player1EscapeCount > 0)
+
+                if (player2OverallAttack == 0 && player2TriedToAtck && player1EscapeFromAtck)
                     AddText(FightText, p1Name + " escaped!");
-                if (player2OverallAttack == 0 && player2TriedToAtck && player1EscapeCount == 0 && damageDoneTo1 == 0)
+                if (player2OverallAttack == 0 && player2TriedToAtck && !player1EscapeFromAtck && damageDoneTo1 == 0)
                     AddText(FightText, p1Name + " defended well.");
 
                 if (player2TriedToAtck && damageDoneTo1 > 0)
                     AddText(FightText, p2Name + " does " + damageDoneTo1 + " damage to " + p1Name);
                 else if (damageDoneTo1 > 0 && MateOn2)
                     AddText(FightText, "The mate of " + p2Name + " does " + damageDoneTo1 + " damage to " + p1Name);
-                if (player1OverallAttack == 0 && player1TriedToAtck && player2EscapeCount > 0)
+
+                if (player1OverallAttack == 0 && player1TriedToAtck && player2EscapeFromAtck)
                     AddText(FightText, p2Name + " escaped!");
-                if (player1OverallAttack == 0 && player1TriedToAtck && player2EscapeCount == 0 && damageDoneTo2 == 0)
+                if (player1OverallAttack == 0 && player1TriedToAtck && !player2EscapeFromAtck && damageDoneTo2 == 0)
                     AddText(FightText, p2Name + " defended well.");
             }
         }
+
         //Aerial Strike with Eye Of Horus
         if (player1ID == 10 && player2ID == 13)
             animatorPlayer2.SetTrigger("SpecialEye");

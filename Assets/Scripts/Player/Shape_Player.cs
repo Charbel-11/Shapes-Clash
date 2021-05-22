@@ -209,7 +209,7 @@ public abstract class Shape_Player : MonoBehaviour
     {
         if (P1) { Shape_Abilities.choiceDoneP1 = newChoice; }
         else { Shape_Abilities.choiceDoneP2 = newChoice; }
-
+        
         choiceDone = newChoice;
         if (choiceDone) { GM.TryEvaluating(); }
     }
