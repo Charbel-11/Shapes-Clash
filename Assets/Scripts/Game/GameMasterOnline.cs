@@ -813,6 +813,12 @@ public class GameMasterOnline : GameMaster
             else if (playerWon == 0) { goldGained = 25; rbGained = 2; xpGained = 25; }
             else if (playerWon == 2) { goldGained = 15; xpGained = 5; }
 
+            int[] allPP = PlayerPrefsX.GetIntArray("PP");
+            int pp = allPP[shapeID1];
+            if (v2) { pp += allPP[shapeID12]; }
+            float add = UnityEngine.Random.Range(0, 1f) * pp / 2.0f;
+            goldGained += (int)add; rbGained += (int)(add / 10);
+
             int curGold = PlayerPrefs.GetInt("Gold");
             int curRB = PlayerPrefs.GetInt("Redbolts");
             int[] curXP = PlayerPrefsX.GetIntArray("XP");
