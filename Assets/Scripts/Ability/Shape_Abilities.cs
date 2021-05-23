@@ -208,6 +208,8 @@ public class Shape_Abilities : MonoBehaviour
     {
         if ((P1 && choiceDoneP1) || (!P1 && choiceDoneP2)) { return; }
 
+        print("Using ab with: " + attack[2].ToString());
+
         player.SetIdOfAnimUSed(ID);
         player.SetEPToRemove(EP_Needed);
         if (player.escapeFrom.Length != 3)

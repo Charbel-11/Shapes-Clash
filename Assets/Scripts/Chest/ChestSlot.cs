@@ -134,7 +134,7 @@ public class ChestSlot : MonoBehaviour {
                 OpenNowButton.gameObject.SetActive(true);
             }
             Timer.text = str;
-            OpenNowCost.text = (Timeleft / 120000).ToString();
+            OpenNowCost.text = (Timeleft / 240000).ToString();
 
             if (Timeleft == 0 && !OpenButton.activeSelf)
             {
@@ -299,7 +299,7 @@ public class ChestSlot : MonoBehaviour {
 
     //Open with diamonds without waiting
     public void OpenNow() {
-        int dCost = Timeleft / 120000;
+        int dCost = Timeleft / 240000;
 
         if (ValuesChange.getDiamonds() < dCost) {
             MenuManager.ShowMessage("You don't have enough resources");

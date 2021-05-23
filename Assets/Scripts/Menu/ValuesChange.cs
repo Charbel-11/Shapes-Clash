@@ -522,7 +522,7 @@ public class ValuesChange : MonoBehaviour
     public void SetUsedP1() { usedP1 = true; }
     public void watchedFirstAd()
     {
-        addDiamonds(10);
+        addDiamonds(5);
         playResourcesAnim(2);
 
         int[] remaining = PlayerPrefsX.GetIntArray("AdsRem");

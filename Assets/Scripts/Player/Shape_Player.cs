@@ -331,8 +331,10 @@ public abstract class Shape_Player : MonoBehaviour
     }
     public void SetAttackPower(int[] newPower)
     {
+        print("Setting atck for " + name + ": ");
         int attackDir = 0;
         for (int i = 0; i < 3; i++) {
+            print(newPower[i]);
             attack[i] = newPower[i];
             if (attack[i] > 0) { attackDir++;}
         }

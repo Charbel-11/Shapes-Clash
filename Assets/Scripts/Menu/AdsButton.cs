@@ -89,7 +89,6 @@ public class AdsButton : MonoBehaviour, IUnityAdsListener
 
     public void OnDestroy()
     {
-        print("Dead call 2");
         if (name != "Button2") { Advertisement.RemoveListener(this); }
     }
 }
