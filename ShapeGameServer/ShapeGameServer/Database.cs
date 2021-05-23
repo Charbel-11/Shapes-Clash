@@ -35,7 +35,7 @@ namespace ShapeGameServer
                 SecretCode = SecretCode + Letter;
             }
             string query = "INSERT INTO account(username,gold,exp,PP,Abilities,Super100,Super200,ShapeLvl,Code,Passives,SecretCode) VALUES(@Username" +
-                ",'" + 50 +
+                ",'" + 150 +
                 "','" + XP +
                 "','" + PP +
                 "','" + Abilities +

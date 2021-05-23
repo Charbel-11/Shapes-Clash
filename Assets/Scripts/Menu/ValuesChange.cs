@@ -542,7 +542,7 @@ public class ValuesChange : MonoBehaviour
 
     public void watchedSecondAd()
     {
-        addCoins(50); addRedBolts(5);
+        addCoins(35); addRedBolts(3);
         playResourcesAnim(0); playResourcesAnim(1);
 
         int[] remaining = PlayerPrefsX.GetIntArray("AdsRem");
