@@ -2,29 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerCollision : MonoBehaviour
-{
-    private Shape_Player player;
-    private Shape_Player otherPlayer;
+public class PlayerCollision : MonoBehaviour {
+    private Shape_Player player, otherPlayer;
+
     private Animator playerAnim;
     private int IDOfAbility;
     private int otherPlayerAbilityId;
     public static int AttackPower;
-    public static bool isfirsttime;
-    public static bool firstime;
+    public static bool isfirsttime, firstime;
     public Collider Collider;
 
-    public static bool firstTimeWaterP1;
-    public static bool firstTimeWaterP2;
+    public static bool firstTimeWaterP1, firstTimeWaterP2;
 
-    private bool Doit = true;
+    private bool Doit = true, isP1;
     public GameObject LastCol;
 
     private GameMaster GM;
     private string parentName;
 
-    void Start()
-    {
+    void Start() {
         GM = GameObject.Find("Game Manager").GetComponent<GameMaster>();
 
         firstTimeWaterP1 = true;
@@ -34,30 +30,31 @@ public class PlayerCollision : MonoBehaviour
         playerAnim = player.GetComponent<Animator>();
         parentName = transform.parent.name;
 
-        if (parentName == "Player1")
+        if (parentName == "Player1") {
             otherPlayer = GameObject.Find("Player2").GetComponent<Shape_Player>();
-        else
+            isP1 = true;
+        }
+        else {
             otherPlayer = GameObject.Find("Player1").GetComponent<Shape_Player>();
+            isP1 = false;
+        }
 
-        isfirsttime = firstime  = true;
+        isfirsttime = firstime = true;
         Collider.enabled = true;
     }
 
-    public void updateState()
-    {
-        if (parentName == "Player1")
+    public void updateState() {
+        if (isP1)
             otherPlayer = GM.player2;
         else
             otherPlayer = GM.player1;
+
         IDOfAbility = player.GetIdOfAnimUsed();
         otherPlayerAbilityId = otherPlayer.GetIdOfAnimUsed();
 
-        if (otherPlayerAbilityId == 201)
-        {
-            if (firstime)
-            {
-                if (IDOfAbility < 100)
-                {
+        if (otherPlayerAbilityId == 201) {
+            if (firstime) {
+                if (IDOfAbility < 100) {
                     firstime = false;
                     Invoke("BlackHoleAnim", 1f);
                 }
@@ -65,27 +62,23 @@ public class PlayerCollision : MonoBehaviour
             else
                 playerAnim.SetInteger("ID", -1);
         }
-        if (Doit)
-        {
+        if (Doit) {
             Collider.enabled = true;
             Doit = false;
             Invoke("ResetIt", 3.25f);
         }
-        if(otherPlayer.GetTriggerCollision())
-        {
+        if (otherPlayer.GetTriggerCollision()) {
             Collider.enabled = false;
             Invoke("ResetIt", 2.5f);
         }
     }
 
-    void BlackHoleAnim()
-    {
+    void BlackHoleAnim() {
         player.GetComponent<Animator>().SetInteger("ID", 20);
     }
 
-    private void OnTriggerEnter(Collider col)
-    {
-        if (parentName == "Player1")
+    private void OnTriggerEnter(Collider col) {
+        if (isP1)
             otherPlayer = GM.player2;
         else
             otherPlayer = GM.player1;
@@ -94,50 +87,41 @@ public class PlayerCollision : MonoBehaviour
         otherPlayerAbilityId = otherPlayer.GetIdOfAnimUsed();
 
         if (IDOfAbility > 100) { return; }
-        if (col.name == "Ground" || (col.tag == "BulletP1" && gameObject.transform.root.name == "Player1" && otherPlayerAbilityId != 11) || (col.tag == "BulletP2" && gameObject.transform.root.name == "Player2" && otherPlayerAbilityId != 11))
+        if (col.name == "Ground" || (col.tag == "BulletP1" && isP1 && otherPlayerAbilityId != 11) || (col.tag == "BulletP2" && !isP1 && otherPlayerAbilityId != 11))
             return;
 
-        if (parentName == "Player1")
-            GM.HitFace1 = true;
-        else
-            GM.HitFace2 = true;
-
+        if (isP1) { GM.HitFace1 = true; }
+        else { GM.HitFace2 = true; }
 
         if (!col.isTrigger) { return; }
 
         if (LastCol == null)
             LastCol = col.gameObject;
-        else
-        {
+        else {
             if (LastCol == col.gameObject || (LastCol.tag == "Bullet" && col.tag == "Bullet")) { return; }
             else { LastCol = col.gameObject; }
         }
 
 
-        if (isfirsttime && (col.tag == "BulletP1" || col.tag == "BulletP2" || col.tag == "Fire"))
-        {
+        if (isfirsttime && (col.tag == "BulletP1" || col.tag == "BulletP2" || col.tag == "Fire")) {
             AttackPower = player.GetAttackPower();
             isfirsttime = false;
         }
 
         //If the opponent used fountain attack
-        if (col.tag == "Fountain" && player.GetIdOfAnimUsed() == 4)
-        {
+        if (col.tag == "Fountain" && player.GetIdOfAnimUsed() == 4) {
             AttackPower = player.GetAttackPower();
             int Att2 = otherPlayer.GetAttackPower();
-            if (AttackPower > Att2)
-            {
+            if (AttackPower > Att2) {
                 AttackPower -= Att2;
                 col.gameObject.SetActive(false);
                 otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
             }
-            else if (AttackPower < Att2)
-            {
+            else if (AttackPower < Att2) {
                 AttackPower = 0;
                 playerAnim.SetInteger("ID", -1);
             }
-            else
-            {
+            else {
                 AttackPower = 0;
                 playerAnim.SetInteger("ID", -1);
                 otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
@@ -152,104 +136,77 @@ public class PlayerCollision : MonoBehaviour
         //else if (col.tag == "Player" && (otherPlayerAbilityId == 3 || otherPlayerAbilityId == 17 || otherPlayerAbilityId == 21))
         //playerAnim.SetBool("Hit", true);
         //If both player have used tackle or equivalent
-        if ((IDOfAbility == 3 || IDOfAbility == 17 || IDOfAbility == 21) && (otherPlayerAbilityId == 3 || otherPlayerAbilityId == 17 || otherPlayerAbilityId == 21) && col.tag == "Player")
-        {
+        if ((IDOfAbility == 3 || IDOfAbility == 17 || IDOfAbility == 21) && (otherPlayerAbilityId == 3 || otherPlayerAbilityId == 17 || otherPlayerAbilityId == 21) && col.tag == "Player") {
             AttackPower = player.GetAttackPower();
             int AttackPower2 = otherPlayer.GetAttackPower();
-            if (AttackPower > AttackPower2)
-            {
+            if (AttackPower > AttackPower2) {
                 //otherPlayer.GetComponent<Animator>().SetBool("Hit", true);
                 otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
             }
-            else if (AttackPower2 > AttackPower)
-            {
+            else if (AttackPower2 > AttackPower) {
                 //playerAnim.SetBool("Hit", true);
                 playerAnim.SetInteger("ID", -1);
             }
-            else
-            {
+            else {
                 otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
                 playerAnim.SetInteger("ID", -1);
-                //Debug.Log("???");
             }
         }
         //If the other player has used shadow attack and this player hasn't
-        else if ((IDOfAbility != 4 && IDOfAbility < 100) && otherPlayerAbilityId == 4 && col.tag == "Player")
-        {
+        else if ((IDOfAbility != 4 && IDOfAbility < 100) && otherPlayerAbilityId == 4 && col.tag == "Player") {
             //playerAnim.SetBool("Hit", true);
             if (IDOfAbility == 31)
                 player.transform.Find("FireLaser").gameObject.SetActive(false);
         }
-        else if ((col.tag == "BulletP1" || col.tag == "BulletP2") && IDOfAbility == 4)
-        {
-            Debug.LogError(1);
+        else if ((col.tag == "BulletP1" || col.tag == "BulletP2") && IDOfAbility == 4) {
             if (!new List<int> { 14, 17, 18, 19 }.Contains(col.gameObject.layer))
                 return;
-            Debug.LogError(2);
-            int BulletPower = col.GetComponent<BulletPlayer1>().bulletpowerP1;
-            if (BulletPower == AttackPower)
-            {
+
+            int BulletPower = col.GetComponent<BulletPlayer>().bulletPower;
+            if (BulletPower == AttackPower) {
                 AttackPower = 0;
 
                 otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
                 col.gameObject.SetActive(false);
 
                 IDOfAbility = -1;
-
                 playerAnim.SetInteger("ID", -1);
             }
-            else if (AttackPower > BulletPower)
-            {
+            else if (AttackPower > BulletPower) {
                 AttackPower -= BulletPower;
 
                 otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
                 col.gameObject.SetActive(false);
             }
-            else if (BulletPower > AttackPower)
-            {
-
+            else if (BulletPower > AttackPower) {
                 IDOfAbility = -1;
-
                 playerAnim.SetInteger("ID", -1);
             }
-
         }
-        //If a player is hit by a bullet
-        else if ((col.tag == "BulletP1" || col.tag == "BulletP2") && IDOfAbility != 3 && IDOfAbility != 17 && IDOfAbility != 21)
-        {
-            if (col.tag == "BulletP1")
-            {
-                //if (col.GetComponent<BulletPlayer1>() != null && !col.GetComponent<BulletPlayer1>().isMate)
-                    //player.GetComponent<Animator>().SetBool("Hit", true);
-                if (col.GetComponent<BulletPlayer1>() == null && col.GetComponent<BulletPlayer2>().isMate)
-                    Destroy(col.gameObject);
-            }
-            else
-            {
-                if (col.GetComponent<BulletPlayer2>() != null && !col.GetComponent<BulletPlayer2>().isMate)
-                {
-                    //player.GetComponent<Animator>().SetBool("Hit", true);
+        /*        //If a player is hit by a bullet;  seems useless as we can't satisfy both bulletp1 tag and null bulletp1
+                else if ((col.tag == "BulletP1" || col.tag == "BulletP2") && IDOfAbility != 3 && IDOfAbility != 17 && IDOfAbility != 21) {
+                    if (col.tag == "BulletP1") {
+                        if (col.GetComponent<BulletPlayer1>() == null && col.GetComponent<BulletPlayer2>().isMate)
+                            Destroy(col.gameObject);
+                    }
+                    else {
+                        if (col.GetComponent<BulletPlayer2>() == null && col.GetComponent<BulletPlayer1>().isMate)
+                            Destroy(col.gameObject);
+                    }
                 }
-                else if (col.GetComponent<BulletPlayer2>() == null && col.GetComponent<BulletPlayer1>().isMate)
-                    Destroy(col.gameObject);
-            }
-        }
-        else if (col.tag == "BulletP1" && gameObject.transform.parent.name == "Player2" && (IDOfAbility == 3 || IDOfAbility == 17 || IDOfAbility == 21) && otherPlayerAbilityId < 100)
-        {
-            int BulletPower = col.GetComponent<BulletPlayer1>().bulletpowerP1;
-            if (BulletPower == AttackPower)
-            {
+        */
+        else if (((col.tag == "BulletP1" && !isP1) || (col.tag == "BulletP2" && isP1)) && (IDOfAbility == 3 || IDOfAbility == 17 || IDOfAbility == 21) && otherPlayerAbilityId < 100) {
+            int BulletPower = col.GetComponent<BulletPlayer>().bulletPower;
+            if (BulletPower == AttackPower) {
                 AttackPower = 0;
 
                 if (col.gameObject.name == "IceDisk")
                     otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
 
                 col.gameObject.SetActive(false);
-
                 playerAnim.SetInteger("ID", -1);
             }
-            else if (AttackPower > BulletPower)
-            {
+            else if (AttackPower > BulletPower) {
                 AttackPower -= BulletPower;
 
                 if (col.gameObject.name == "IceDisk")
@@ -257,81 +214,41 @@ public class PlayerCollision : MonoBehaviour
 
                 col.gameObject.SetActive(false);
             }
-            else if (BulletPower > AttackPower)
-            {
+            else if (BulletPower > AttackPower) {
                 //if (!col.GetComponent<BulletPlayer1>().isMate)
-                    //playerAnim.SetBool("Hit", true);
+                //playerAnim.SetBool("Hit", true);
             }
         }
-        else if (col.tag == "BulletP2" && gameObject.transform.parent.name == "Player1" && (IDOfAbility == 3 || IDOfAbility == 17 || IDOfAbility == 21) && otherPlayerAbilityId < 100)
-        {
-            int BulletPower = col.GetComponent<BulletPlayer2>().bulletpowerP2;
-            if (BulletPower == AttackPower)
-            {
-                AttackPower = 0;
-
-                if (col.gameObject.name == "IceDisk")
-                    otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
-
-                col.gameObject.SetActive(false);
-
-                playerAnim.SetInteger("ID", -1);
-            }
-            else if (AttackPower > BulletPower)
-            {
-                AttackPower -= BulletPower;
-
-                if (col.gameObject.name == "IceDisk")
-                    otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
-
-                col.gameObject.SetActive(false);
-            }
-            else if (BulletPower > AttackPower)
-            {
-                //if (!col.GetComponent<BulletPlayer2>().isMate)
-                    //playerAnim.SetBool("Hit", true);
-            }
-        }
-        else if ((col.tag == "Fire") && (IDOfAbility != 3 && IDOfAbility != 17 && IDOfAbility != 21 && IDOfAbility != 4 && IDOfAbility != 7))
-        {
+        else if ((col.tag == "Fire") && (IDOfAbility != 3 && IDOfAbility != 17 && IDOfAbility != 21 && IDOfAbility != 4 && IDOfAbility != 7)) {
             playerAnim.SetBool("OnFire", true);
         }
         //If the other player has used a fire ability and this player hasn't
-        else if (col.tag == "Fire" && (IDOfAbility == 3 || IDOfAbility == 17 || IDOfAbility == 21))
-        {
+        else if (col.tag == "Fire" && (IDOfAbility == 3 || IDOfAbility == 17 || IDOfAbility == 21)) {
             int BulletPower = otherPlayer.GetBulletPower();
-            if (BulletPower == AttackPower)
-            {
+            if (BulletPower == AttackPower) {
                 col.gameObject.SetActive(false);
                 otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
             }
-            else if (AttackPower > BulletPower)
-            {
+            else if (AttackPower > BulletPower) {
                 AttackPower -= BulletPower;
                 col.gameObject.SetActive(false);
                 otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
             }
-            else if (BulletPower > AttackPower)
-            {
+            else if (BulletPower > AttackPower) {
                 playerAnim.SetBool("OnFire", true);
             }
         }
-        else if (col.tag == "Fire" && (IDOfAbility == 4 || IDOfAbility == 7))
-        {
+        else if (col.tag == "Fire" && (IDOfAbility == 4 || IDOfAbility == 7)) {
             col.gameObject.SetActive(false);
             otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
         }
-        else if (col.tag == "Ice")
-        {
+        else if (col.tag == "Ice") {
             //playerAnim.SetBool("Hit", true);
         }
     }
-    private void OnParticleCollision(GameObject other)
-    {
-        if (parentName == "Player1")
-            GM.HitFace1 = true;
-        else
-            GM.HitFace2 = true;
+    private void OnParticleCollision(GameObject other) {
+        if (isP1) { GM.HitFace1 = true; }
+        else { GM.HitFace2 = true; }
 
         if (other.tag == "BulletP1" && player.gameObject.name == "Player1") { return; }
         if (other.tag == "BulletP2" && player.gameObject.name == "Player2") { return; }
@@ -343,53 +260,37 @@ public class PlayerCollision : MonoBehaviour
 
         if (other.name == "Child")
             other = other.transform.parent.gameObject;
-        if (isfirsttime && (other.tag == "BulletP1" || other.tag == "BulletP2" || other.tag == "Fire"))
-        {
+        if (isfirsttime && (other.tag == "BulletP1" || other.tag == "BulletP2" || other.tag == "Fire")) {
             AttackPower = player.GetAttackPower();
             isfirsttime = false;
         }
 
         IDOfAbility = player.GetIdOfAnimUsed();
-        if((IDOfAbility == 3 || IDOfAbility == 17 || IDOfAbility == 21) && otherPlayer.GetIdOfAnimUsed() != 24)
-        {
-            int AttPow;
-            if (otherPlayer.gameObject.name == "Player2")
-                AttPow = other.GetComponent<BulletPlayer2>().bulletpowerP2;
-            else
-                AttPow = other.GetComponent<BulletPlayer1>().bulletpowerP1;
-            
-            if (AttPow > AttackPower)
-            {
+        if ((IDOfAbility == 3 || IDOfAbility == 17 || IDOfAbility == 21) && otherPlayer.GetIdOfAnimUsed() != 24) {
+            int AttPow = other.GetComponent<BulletPlayer>().bulletPower; 
+
+            if (AttPow > AttackPower) {
                 playerAnim.SetInteger("ID", -1);
                 //playerAnim.SetBool("Hit", true);
 
-                if(otherPlayer.gameObject.name == "Player2")
-                    other.GetComponent<BulletPlayer2>().bulletpowerP2 -= AttackPower;
-                else
-                    other.GetComponent<BulletPlayer1>().bulletpowerP1 -= AttackPower;
-
+                other.GetComponent<BulletPlayer>().bulletPower -= AttackPower;
                 Collider.enabled = false;
             }
-            else if(AttPow < AttackPower)
-            {
+            else if (AttPow < AttackPower) {
                 other.SetActive(false);
                 AttackPower -= AttPow;
             }
-            else
-            {
+            else {
                 other.SetActive(false);
                 playerAnim.SetInteger("ID", -1);
             }
         }
-        else if(otherPlayer.GetIdOfAnimUsed() != 24)
-        {
+        else if (otherPlayer.GetIdOfAnimUsed() != 24) {
             //playerAnim.SetBool("Hit", true);
             Collider.enabled = false;
         }
     }
-
-    public void ResetIt()
-    {
+    public void ResetIt() {
         Collider.enabled = true;
         Doit = true;
     }

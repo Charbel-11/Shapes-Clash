@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 23468496500862292}
   - component: {fileID: 65489082455309624}
   - component: {fileID: 54306711412041218}
-  - component: {fileID: 114590383468047988}
+  - component: {fileID: 6794428043237186580}
   - component: {fileID: 114654143085365464}
   - component: {fileID: 65224718135552660}
   m_Layer: 13
@@ -60,7 +60,6 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -85,7 +84,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &65489082455309624
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -115,7 +113,7 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 116
   m_CollisionDetection: 0
---- !u!114 &114590383468047988
+--- !u!114 &6794428043237186580
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -124,24 +122,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 1733040840300100}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d77a8e3c35b5784d97505780fe5024b, type: 3}
+  m_Script: {fileID: 11500000, guid: e2a00f17320ca9b4aa57013c16b4c005, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lobbed: 0
-  speed: 400
-  bulletpowerP1: 0
   isMate: 1
-  Mate: {fileID: 0}
-  PSystem: 0
-  LastCol: {fileID: 0}
-  IsAnim: 0
-  InstantiateCollider: {fileID: 0}
-  Colliders: []
+  isAnim: 0
+  isPartSystem: 0
+  isP1: 1
+  speed: 400
+  bulletPower: 0
+  collidersGO: []
   AirCannonMir: {fileID: 0}
   IceShardsMir: {fileID: 0}
   FireLaserMir: {fileID: 0}
   ToxicShotMir: {fileID: 0}
-  BeforeLastCol: {fileID: 0}
+  lastCol: {fileID: 0}
+  beforelastCol: {fileID: 0}
+  InstantiateCollider: {fileID: 0}
+  Mate: {fileID: 0}
 --- !u!114 &114654143085365464
 MonoBehaviour:
   m_ObjectHideFlags: 0

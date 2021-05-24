@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Cube_Player : Shape_Player {
-    public GameObject LobbedBullet;
     public GameObject Earthquake;
     GameObject[] Children;
     FallInPieces[] ObjectsToFall;
@@ -69,12 +68,6 @@ public class Cube_Player : Shape_Player {
         var pos = gameObject.transform.Find("position").GetComponent<Transform>();
         Instantiate(Bullet, pos.position, pos.rotation);
     }
-    /*
-    public void AerialAttack()
-    {
-        var pos = gameObject.transform.Find("position").GetComponent<Transform>();
-        Instantiate(LobbedBullet, pos.position, pos.rotation);
-    }*/
 
     public override void Choice(int ID)
     {

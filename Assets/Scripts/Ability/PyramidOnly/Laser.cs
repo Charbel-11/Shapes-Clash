@@ -58,7 +58,7 @@ public class Laser : MonoBehaviour {
 
         laserPower = player.GetBulletPower();
         int shieldPower = otherPlayer.GetDefensePower();
-        //Debug.Log("LaserCol : " + col.name);
+
         if (col.tag == "BulletP1" || col.tag == "BulletP2")
         {
             int bulletPower = otherPlayer.GetBulletPower();

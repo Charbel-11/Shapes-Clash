@@ -56,19 +56,6 @@ public class BulletPlayer2 : MonoBehaviour
 
             GetComponent<Rigidbody>().velocity = (new Vector3(-0.6f, 0, -1f) * speed * Time.fixedDeltaTime);
         }
-        else if(!PSystem)
-        {
-            gameObject.layer = 15;
-            if (player1.GetIdOfAnimUsed() == 4 || player1.GetIdOfAnimUsed() == 3)
-                speed = 6;  //Make him miss when we should
-            else
-                speed = 5;
-            GetComponent<Rigidbody>().mass = 1.5f;
-            GetComponent<Rigidbody>().useGravity = true;
-            GetComponent<BoxCollider>().isTrigger = false;
-            GetComponent<Rigidbody>().AddForce(new Vector3(-35f, 122.5f, -50f) * speed);
-            Destroy(gameObject, 2f);
-        }
         if (isMate)
         {
             bulletpowerP2 = Mate.GetBulletPow();
@@ -118,6 +105,8 @@ public class BulletPlayer2 : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        if (GetComponent<Rigidbody>())
+            GetComponent<Rigidbody>().velocity = (new Vector3(-0.6f, 0, -1f) * speed * Time.fixedDeltaTime);
         if ((gameObject.name == "WaterBubbleBarrage" || gameObject.name == "PoisonousBubble") && !Stop)
         {
             Psys.GetParticles(Pars);
@@ -170,11 +159,6 @@ public class BulletPlayer2 : MonoBehaviour
             Pars[0].remainingLifetime = Life;
             Psys.SetParticles(Pars, 1);
         }
-        /*
-        if(SetSpeed && !lobbed)
-            GetComponent<Rigidbody>().velocity = (new Vector3(-0.6f, 0, -1f) * speed * Time.fixedDeltaTime);*/
-        if(GetComponent<Rigidbody>())
-            GetComponent<Rigidbody>().velocity = (new Vector3(-0.6f, 0, -1f) * speed * Time.fixedDeltaTime); 
     }
     //Doesn't work for lobbed bullets since they use gravity
     private void OnTriggerEnter(Collider col)
@@ -189,10 +173,8 @@ public class BulletPlayer2 : MonoBehaviour
             {
                 OnParticleCollision(col.gameObject);
                 FirstCollision = false;
-                return;
             }
-            else
-                return;
+            return;
         }
         if (!col.isTrigger && col.tag != "Shield")
         {

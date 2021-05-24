@@ -116,7 +116,7 @@ public abstract class Shape_Player : MonoBehaviour
         if (!Reconnect && !GameMaster.Spectate)
         {
             life = MaxLP;
-            EP = 0;     
+            EP = 100;     
 
             //choiceDone gets reset to false by the GM
             choiceDone = false;
@@ -222,7 +222,7 @@ public abstract class Shape_Player : MonoBehaviour
     {
         List<int> IDs = new List<int> { 1, 2, 3, 5, 6, 11, 15, 16, 17, 21, 22, 23, 25, 27, 29, 42, 14 };
         if (IDs.Contains(newID))
-            TriggerCollision = true;
+            TriggerCollision = true;    
         else
             TriggerCollision = false;
 
