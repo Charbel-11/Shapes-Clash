@@ -18305,7 +18305,7 @@ GameObject:
   - component: {fileID: 4086006033300064}
   m_Layer: 18
   m_Name: SealingCube
-  m_TagString: Untagged
+  m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

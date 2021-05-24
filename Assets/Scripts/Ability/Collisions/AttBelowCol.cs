@@ -8,7 +8,6 @@ public class AttBelowCol : MonoBehaviour {
         if (col.transform.root.name != "Player1" && col.transform.root.name != "Player2") { return; }
 
         string escape = col.transform.root.GetComponent<Shape_Player>().GetEscapeType();
-        //Debug.Log(escape);
         if (escape == "Straight" || escape == "Above") { return; }
 
         if (escape == "Below") {

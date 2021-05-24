@@ -67,7 +67,8 @@ public class ShieldCol : MonoBehaviour {
 
     }
     private void OnEnable() {
-        firstTime = true;
+        firstTime = true; LastCol = null;
+
         foreach (GameObject[] Ar in shields) {
             if (Ar == null || Ar.Length == 0)
                 continue;

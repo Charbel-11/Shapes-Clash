@@ -4,6 +4,11 @@ using UnityEngine;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 
+//The idea is that each bullet will have its own "local" bullet power stored in it
+//Which might change after multiple collisions; the actual net damage is computed in GM
+//Here, we only care about when this bullet will be destroyed
+//Each game object is responsible of its own destruction
+
 public class BulletPlayer : MonoBehaviour {
     Shape_Player player, otherPlayer;
 
@@ -185,8 +190,8 @@ public class BulletPlayer : MonoBehaviour {
             }
             return;
         }
-        if (!col.isTrigger && col.tag != "Shield") { return; }
-        
+        if (!col.isTrigger && col.tag != "Shield" && col.tag != "Bullet") { return; }
+
         if (lastCol == null) {
             lastCol = col.gameObject;
             beforelastCol = col.gameObject;
@@ -210,9 +215,14 @@ public class BulletPlayer : MonoBehaviour {
             if (col.tag == otherPlayerBulletTag && col.GetComponent<BulletPlayer>().isMate) {
                 return;
             }
+
             if (col.tag == "Shield") {
                 otherPlayerShield = col.GetComponent<ShieldCol>().ShieldPower[dir];
             }
+            else if (col.tag == "Bullet" && dir == 2) {
+                otherPlayerShield = otherPlayer.GetDefensePower();
+            }
+
             if (col.tag == otherPlayerBulletTag) {
                 if (col.GetComponent<BulletPlayer>().beforelastCol == gameObject || col.GetComponent<BulletPlayer>().beforelastCol == null) {
                     otherPlayerBulletPower = otherPlayer.GetBulletPower();
@@ -229,48 +239,22 @@ public class BulletPlayer : MonoBehaviour {
 
         if (col.tag == otherPlayerBulletTag || col.tag == "Fire" || col.tag == "Ice") {
             if (bulletPower > otherPlayerBulletPower) {
-                if (!isPartSystem) { //redundant no?
+                if (!isPartSystem)
                     GetComponent<Rigidbody>().velocity = (new Vector3(0.7f * mult, 0, 1f * mult) * speed * Time.fixedDeltaTime);
-                }
                 bulletPower -= otherPlayerBulletPower;
             }
-            else if (otherPlayerBulletPower > bulletPower) {
-                if (!isPartSystem) {
-                    objectToFall.Fall();
-                    SendToDestruction(gameObject);
-                }
-                else {
-                    gameObject.SetActive(false);
-                }
-            }
-            else if (otherPlayerBulletPower == bulletPower) {
-                if (!col.GetComponent<BulletPlayer>().isPartSystem) {   //redundant no?
-                    SendToDestruction(col.gameObject);
-                }
-                if (!isPartSystem) {
-                    objectToFall.Fall();
-                    SendToDestruction(gameObject);
-                }
-                else {
-                    gameObject.SetActive(false);
-                }
+            else if (otherPlayerBulletPower >= bulletPower) {
+                destroyBullet();
             }
         }
         else if (col.tag == "Shield") {
             if (bulletPower > otherPlayerShield) {
-                if (!isPartSystem) { //again, redundant?
+                if (!isPartSystem)
                     GetComponent<Rigidbody>().velocity = (new Vector3(0.7f * mult, 0, 1f * mult) * speed * Time.fixedDeltaTime);
-                }
                 bulletPower -= otherPlayerShield;
             }
             else if (bulletPower <= otherPlayerShield) {
-                if (!isPartSystem) {
-                    objectToFall.Fall();
-                    SendToDestruction(gameObject);
-                }
-                else {
-                    gameObject.SetActive(false);
-                }
+                destroyBullet();
             }
         }
         else if (col.tag == "Player") {
@@ -279,25 +263,17 @@ public class BulletPlayer : MonoBehaviour {
                 SendToDestruction(gameObject);
             }
         }
-        else if (col.tag == "Bullet") {     //what is just Bullet? why not p1 or p2...
+        else if (col.tag == "Bullet") {     //When we encounter an atck/def combination (e.g., water cage, sealing cube, ...)
             if (bulletPower > otherPlayerShield) {
-                if (!isPartSystem) { //again, redundant?
+                if (!isPartSystem)
                     GetComponent<Rigidbody>().velocity = (new Vector3(0.7f * mult, 0, 1f * mult) * speed * Time.fixedDeltaTime);
-                }
                 bulletPower -= otherPlayerShield;
             }
             else if (bulletPower <= otherPlayerShield) {
-                otherPlayer.SetShieldPower(new int[3] { 0, 0, otherPlayerShield - bulletPower });
-                if (!isPartSystem) {
-                    objectToFall.Fall();
-                    SendToDestruction(gameObject);
-                }
-                else {
-                    gameObject.SetActive(false);
-                }
+                destroyBullet();
             }
         }
-        if (GetComponent<Rigidbody>())  //redundant? maybe at collision it loses velocity so this is necessary
+        if (GetComponent<Rigidbody>()) 
             GetComponent<Rigidbody>().velocity = (new Vector3(0.7f * mult, 0, 1f * mult) * speed * Time.fixedDeltaTime); 
     }
 
@@ -336,6 +312,9 @@ public class BulletPlayer : MonoBehaviour {
 
             if (col.tag == "Shield")
                 otherPlayerShield = col.GetComponent<ShieldCol>().ShieldPower[dir];
+            else if (col.tag == "Bullet" && dir == 2)
+                otherPlayerShield = otherPlayer.GetDefensePower();
+
             if (col.tag == otherPlayerBulletTag) {
                 if (col.GetComponent<BulletPlayer>().beforelastCol == gameObject || col.GetComponent<BulletPlayer>().beforelastCol == null) {
                     otherPlayerBulletPower = otherPlayer.GetBulletPower();
@@ -360,13 +339,7 @@ public class BulletPlayer : MonoBehaviour {
                 bulletPower -= otherPlayerBulletPower;
             }
             else if (otherPlayerBulletPower >= bulletPower) {
-                if (!isPartSystem) {
-                    objectToFall.Fall();
-                    SendToDestruction(gameObject);
-                }
-                else {
-                    gameObject.SetActive(false);
-                }
+                destroyBullet();
             }
         }
         else if (col.tag == "Shield") {
@@ -379,13 +352,7 @@ public class BulletPlayer : MonoBehaviour {
                 bulletPower -= otherPlayerShield;
             }
             else if (bulletPower <= otherPlayerShield) {
-                if (!isPartSystem) {
-                    objectToFall.Fall();
-                    SendToDestruction(gameObject);
-                }
-                else {
-                    gameObject.SetActive(false);
-                }
+                destroyBullet();
             }
         }
         else if (col.tag == "Player") {
@@ -404,33 +371,19 @@ public class BulletPlayer : MonoBehaviour {
                 }
                 bulletPower -= otherPlayerShield;
             }
-            else if (bulletPower < otherPlayerShield) {
-                otherPlayer.SetShieldPower(new int[3] { 0, 0, otherPlayerShield - bulletPower });
-                if (!isPartSystem) {
-                    objectToFall.Fall();
-                    SendToDestruction(gameObject);
-                }
-                else if (col.name != "ToxicRing") //??
-                {
-                    if (col.GetComponent<Sealingscript>().IsAnim) {
-                        otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
-                    }
-                    gameObject.SetActive(false);
-                }
-                else {
-                    gameObject.SetActive(false);
-                }
+            else if (bulletPower <= otherPlayerShield) {
+                destroyBullet();
             }
-            else if (bulletPower == otherPlayerShield) {
-                otherPlayer.SetShieldPower(new int[3] { 0, 0, otherPlayerShield - bulletPower });
-                if (!isPartSystem) {
-                    objectToFall.Fall();
-                    SendToDestruction(gameObject);
-                }
-                else {
-                    gameObject.SetActive(false);
-                }
-            }
+        }
+    }
+
+    private void destroyBullet() {
+        if (!isPartSystem) {
+            objectToFall.Fall();
+            SendToDestruction(gameObject);
+        }
+        else {
+            gameObject.SetActive(false);
         }
     }
 
