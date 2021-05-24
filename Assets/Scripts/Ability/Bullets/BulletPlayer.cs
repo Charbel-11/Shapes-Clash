@@ -72,7 +72,7 @@ public class BulletPlayer : MonoBehaviour {
         else {
             partSystem = gameObject.GetComponent<ParticleSystem>();
             particles = new ParticleSystem.Particle[partSystem.main.maxParticles];
-            collidersGO = new GameObject[particles.Length];
+            collidersGO = new GameObject[50];
         }
 
         colliders = gameObject.GetComponents<Collider>();
@@ -114,8 +114,7 @@ public class BulletPlayer : MonoBehaviour {
                 RemLife = particles[0].remainingLifetime;
             }
         }
-        //        else if ((gameObject.name == "WaterBubbleBarrage" || gameObject.name == "PoisonousBubble") && Stop) {
-        else if (Stop) {
+        else if ((gameObject.name == "WaterBubbleBarrage" || gameObject.name == "PoisonousBubble") && Stop) {
             long Secs = watch.ElapsedMilliseconds;
             float Life = ((RemLife * 1000 - Secs) / 1000) - T;
             if (Life < 0) { Life = 0; }
@@ -145,16 +144,16 @@ public class BulletPlayer : MonoBehaviour {
             partSystem.GetParticles(particles);
             int i = 0;
             if (First) {
+                First = false;
                 foreach (ParticleSystem.Particle P in particles) {
                     collidersGO[i] = Instantiate(InstantiateCollider, P.position, partSystem.transform.rotation, partSystem.transform);
                     collidersGO[i].layer = collidersGO[i].transform.parent.gameObject.layer;
                     i++; if (i > 40) { break; }
-                }
-                First = false;
+                }            
             }
             else {
                 foreach (GameObject G in collidersGO) {
-                    SendToDestruction(G);
+                    SendToDestruction(G, true);
                 }
                 foreach (ParticleSystem.Particle P in particles) {
                     Quaternion Q = new Quaternion(P.rotation3D.x, P.rotation3D.y, P.rotation3D.z, 1);
@@ -237,7 +236,7 @@ public class BulletPlayer : MonoBehaviour {
             firstTime = false;
         }
 
-        if (col.tag == otherPlayerBulletTag || col.tag == "Fire" || col.tag == "Ice") {
+        if (col.tag == otherPlayerBulletTag || col.tag == "Fire" || col.tag == "Ice" || col.tag == "Laser") {
             if (bulletPower > otherPlayerBulletPower) {
                 if (!isPartSystem)
                     GetComponent<Rigidbody>().velocity = (new Vector3(0.7f * mult, 0, 1f * mult) * speed * Time.fixedDeltaTime);
@@ -329,7 +328,7 @@ public class BulletPlayer : MonoBehaviour {
             firstTime = false;
         }
 
-        if (col.tag == otherPlayerBulletTag || col.tag == "Fire" || col.tag == "Ice") {
+        if (col.tag == otherPlayerBulletTag || col.tag == "Fire" || col.tag == "Ice" || col.tag == "Laser") {
             if (bulletPower > otherPlayerBulletPower) {
                 if (gameObject.name == "WaterBubbleBarrage" || gameObject.name == "PoisonousBubble") {
                     T = 0.35f;
@@ -383,7 +382,7 @@ public class BulletPlayer : MonoBehaviour {
             SendToDestruction(gameObject);
         }
         else {
-            gameObject.SetActive(false);
+            gameObject.SetActive(false);            
         }
     }
 
@@ -399,11 +398,12 @@ public class BulletPlayer : MonoBehaviour {
             }
         }
     }
-    private void SendToDestruction(GameObject Object) {
+    private void SendToDestruction(GameObject Object, bool isCol = false) {
         if (Object != null) {
             GameMaster.ObjectsToDestroy.Add(Object);
             Object.SetActive(false);
         }
+        if (!isCol && isAnim) { player.GetComponent<Animator>().SetInteger("ID", -1); }
     }
 
     private int FindDir(GameObject col) {

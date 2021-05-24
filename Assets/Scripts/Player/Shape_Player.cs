@@ -220,7 +220,7 @@ public abstract class Shape_Player : MonoBehaviour
     }
     public void SetIdOfAnimUSed(int newID)
     {
-        List<int> IDs = new List<int> { 1, 2, 3, 5, 6, 11, 15, 16, 17, 21, 22, 23, 25, 27, 29, 42, 14 };
+        List<int> IDs = new List<int> { 1, 2, 3, 5, 6, 11, 14, 15, 17, 21, 22, 23, 25, 27, 29, 42 };
         if (IDs.Contains(newID))
             TriggerCollision = true;    
         else

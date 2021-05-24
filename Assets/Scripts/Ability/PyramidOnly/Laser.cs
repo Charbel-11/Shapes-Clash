@@ -3,189 +3,108 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Laser : MonoBehaviour {
-    private Shape_Player player;
-    private Shape_Player otherPlayer;
+    private Shape_Player player, otherPlayer;
 
     private int laserPower;
 
-    public Collider ColliderPar;
+    private Collider colliderComp;
 
-    private void Awake()
-    {
+    private void Awake() {
         player = GetComponentInParent<Shape_Player>();
+        colliderComp = GetComponent<BoxCollider>();
 
         if (transform.parent.name == "Player1")
             otherPlayer = GameObject.Find("Player2").GetComponent<Shape_Player>();
         else
             otherPlayer = GameObject.Find("Player1").GetComponent<Shape_Player>();
     }
-    
-    private void OnEnable()
-    {
-        ColliderPar.enabled = true;
+
+    private void OnEnable() {
+        colliderComp.enabled = true;
         if (otherPlayer.GetTriggerCollision())
-            ColliderPar.enabled = false;
+            colliderComp.enabled = false;
     }
 
-    private void Update()
-    {
-        if (player.GetIdOfAnimUsed() == 13 && otherPlayer.GetIdOfAnimUsed() == 13)
-        {
-            laserPower = player.GetBulletPower();
-            int otherLaserPower = otherPlayer.GetBulletPower();
-
-            if (laserPower > otherLaserPower)
-            {
-                otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
-            }
-            else if (laserPower == otherLaserPower)
-            {
-                player.GetComponent<Animator>().SetInteger("ID", -1);
-                this.gameObject.SetActive(false);
-                otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
-            }
-            else
-            {
-                player.GetComponent<Animator>().SetInteger("ID", -1);
-                this.gameObject.SetActive(false);
-            }
-        }
-    }
-
-    private void OnTriggerEnter(Collider col)
-    {
+    private void OnTriggerEnter(Collider col) {
         if (otherPlayer.escapeFrom[0]) { return; }
 
         laserPower = player.GetBulletPower();
         int shieldPower = otherPlayer.GetDefensePower();
 
-        if (col.tag == "BulletP1" || col.tag == "BulletP2")
-        {
+        if (col.tag == "BulletP1" || col.tag == "BulletP2") {
             int bulletPower = otherPlayer.GetBulletPower();
 
-            if (laserPower > bulletPower)
-            {
-                col.GetComponent<FallInPieces>().Fall();
-                col.gameObject.SetActive(false);
-                player.SetBulletPower(laserPower - bulletPower);
+            if (laserPower > bulletPower) {
+                laserPower -= bulletPower;
             }
-            else if(laserPower == bulletPower)
-            {
+            else if (laserPower <= bulletPower) {
                 this.gameObject.SetActive(false);
                 player.GetComponent<Animator>().SetInteger("ID", -1);
-                col.GetComponent<FallInPieces>().Fall();
-                col.gameObject.SetActive(false);
-            }
-            else
-            {
-                player.GetComponent<Animator>().SetInteger("ID", -1);
-                this.gameObject.SetActive(false);
             }
         }
-        else if (col.tag == "Laser")
-        {
+        else if (col.tag == "Laser") {
             int otherLaserPower = otherPlayer.GetBulletPower();
 
-            if (laserPower > otherLaserPower)
-            {
-                otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
-                col.gameObject.SetActive(false);
-                player.SetBulletPower(laserPower - otherLaserPower);
+            if (laserPower > otherLaserPower) {
+                laserPower -= otherLaserPower;
             }
-            else if (laserPower == otherLaserPower)
-            {
-                player.GetComponent<Animator>().SetInteger("ID", -1);
-                this.gameObject.SetActive(false);
-                otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
-                col.gameObject.SetActive(false);
-            }
-            else
-            {
+            else if (laserPower <= otherLaserPower) {
                 player.GetComponent<Animator>().SetInteger("ID", -1);
                 this.gameObject.SetActive(false);
             }
         }
-        else if(col.tag == "Shield")
-        {
-            if (laserPower > shieldPower)
-            {
+        else if (col.tag == "Shield") {
+            if (laserPower > shieldPower) {
                 laserPower -= shieldPower;
             }
-            else if (laserPower <= shieldPower)
-            {
+            else if (laserPower <= shieldPower) {
                 player.GetComponent<Animator>().SetInteger("ID", -1);
-                 gameObject.SetActive(false);
+                Invoke("SetFalse", 0.5f);
             }
         }
     }
-    private void OnParticleCollision(GameObject col)
-    {
+    private void OnParticleCollision(GameObject col) {
         if (otherPlayer.escapeFrom[0]) { return; }
 
         laserPower = player.GetBulletPower();
         int shieldPower = otherPlayer.GetDefensePower();
-        if (col.tag == "BulletP1" || col.tag == "BulletP2")
-        {
+
+        if (col.tag == "BulletP1" || col.tag == "BulletP2") {
             if (otherPlayer.attack[0] == 0) { return; }
             int bulletPower = otherPlayer.GetBulletPower();
 
-            if (laserPower > bulletPower)
-            {
+            if (laserPower > bulletPower) {
                 col.gameObject.SetActive(false);
-                player.SetBulletPower(laserPower - bulletPower);
+                laserPower -= bulletPower;
             }
-            else if (laserPower == bulletPower)
-            {
-                player.GetComponent<Animator>().SetInteger("ID", -1);
-                //col.GetComponent<FallInPieces>().Fall();
-                col.gameObject.SetActive(false);
-                Invoke("SetFalse", 0.35f);
-            }
-            else
-            {
-                ColliderPar.enabled = false;
+            else if (laserPower <= bulletPower) {
                 player.GetComponent<Animator>().SetInteger("ID", -1);
                 Invoke("SetFalse", 0.35f);
             }
         }
-        else if (col.tag == "Laser")
-        {
+        else if (col.tag == "Laser") {
             int otherLaserPower = otherPlayer.GetBulletPower();
 
-            if (laserPower > otherLaserPower)
-            {
+            if (laserPower > otherLaserPower) {
                 otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
-                col.gameObject.SetActive(false);
-                player.SetBulletPower(laserPower - otherLaserPower);
+                laserPower -= otherLaserPower;
             }
-            else if (laserPower == otherLaserPower)
-            {
-                player.GetComponent<Animator>().SetInteger("ID", -1);
-                this.gameObject.SetActive(false);
-                otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
-                col.gameObject.SetActive(false);
-            }
-            else
-            {
+            else if (laserPower <= otherLaserPower) {
                 player.GetComponent<Animator>().SetInteger("ID", -1);
                 this.gameObject.SetActive(false);
             }
         }
-        else if (col.tag == "Shield")
-        {
-            if (laserPower > shieldPower)
-            {
+        else if (col.tag == "Shield") {
+            if (laserPower > shieldPower) {
                 laserPower -= shieldPower;
             }
-            else if (laserPower <= shieldPower)
-            {
+            else if (laserPower <= shieldPower) {
                 player.GetComponent<Animator>().SetInteger("ID", -1);
-                gameObject.SetActive(false);
+                Invoke("SetFalse", 0.5f);
             }
         }
     }
-    private void SetFalse()
-    {
+    private void SetFalse() {
         gameObject.SetActive(false);
     }
 }

@@ -8,17 +8,16 @@ public class ShieldCol : MonoBehaviour {
     public int[] ShieldPower = new int[3];
     public GameObject LastCol;
 
-    private bool firstTime;
     private GameObject[][] shields = new GameObject[3][]; // Above, Below, Straight
 
     private void Awake() {
         player = GetComponentInParent<Shape_Player>();
         if (transform.root.name == "Player1")
             otherPlayer = GameObject.Find("Player2").GetComponent<Shape_Player>();
-        else 
+        else
             otherPlayer = GameObject.Find("Player1").GetComponent<Shape_Player>();
-        
-        if (gameObject.name == "ShieldSphere" || gameObject.name == "WaterBubbleShield" || gameObject.name == "ShieldEffect")
+
+        if (gameObject.name == "ShieldSphere" || gameObject.name == "WaterBubbleShield" || gameObject.name == "ShieldEffect" || gameObject.name == "FlameShield")
             isPartSystem = true;
 
         #region Initializing shields
@@ -67,7 +66,8 @@ public class ShieldCol : MonoBehaviour {
 
     }
     private void OnEnable() {
-        firstTime = true; LastCol = null;
+        LastCol = null;
+        player.defense.CopyTo(ShieldPower, 0);
 
         foreach (GameObject[] Ar in shields) {
             if (Ar == null || Ar.Length == 0)
@@ -92,10 +92,6 @@ public class ShieldCol : MonoBehaviour {
 
         int BulletPower = otherPlayer.GetBulletPower();
         int Dir = FindDir(col.gameObject);
-        if (firstTime) {
-            player.defense.CopyTo(ShieldPower, 0);
-            firstTime = false;
-        }
         if (col.tag == "Player") {
             if (player.gameObject == col.transform.parent || (Dir == 1 && !(gameObject.layer == 18 || gameObject.layer == 19))) {
                 return;
@@ -154,10 +150,6 @@ public class ShieldCol : MonoBehaviour {
 
         int BulletPower = otherPlayer.GetBulletPower();
         int Dir = FindDir(col.gameObject);
-        if (firstTime) {
-            player.defense.CopyTo(ShieldPower, 0);
-            firstTime = false;
-        }
         if (col.tag == "Player") {
             if (player.gameObject == col.transform.parent || (Dir == 1 && !(gameObject.layer == 18 || gameObject.layer == 19))) {
                 return;
@@ -213,5 +205,9 @@ public class ShieldCol : MonoBehaviour {
     public void Disable(int Dir) {
         foreach (GameObject G in shields[Dir])
             G.SetActive(false);
+    }
+
+    public void setEnabled() {
+        gameObject.SetActive(true);
     }
 }

@@ -127674,6 +127674,11 @@ PrefabInstance:
       propertyPath: PSystem
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1317402459548624451, guid: 6fda57b55a5bc2b4a8c9e834924853e4,
+        type: 3}
+      propertyPath: isAnim
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6fda57b55a5bc2b4a8c9e834924853e4, type: 3}
 --- !u!4 &4460710051973874 stripped
