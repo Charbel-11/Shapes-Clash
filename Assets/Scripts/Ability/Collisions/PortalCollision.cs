@@ -102,7 +102,7 @@ public class PortalCollision : MonoBehaviour {
             {
                 if (!Obj.Contains(col.gameObject))
                 {
-                    if (!col.GetComponent<BulletPlayer1>().PSystem)
+                    if (!col.GetComponent<BulletPlayer>().isPartSystem)
                     {
                         col.gameObject.layer = 16;
                         col.tag = "BulletP2";
@@ -114,7 +114,7 @@ public class PortalCollision : MonoBehaviour {
             {
                 if (!Obj.Contains(col.gameObject))
                 {
-                    if (!col.GetComponent<BulletPlayer2>().PSystem)
+                    if (!col.GetComponent<BulletPlayer>().isPartSystem)
                     {
                         col.gameObject.layer = 13;
                         col.tag = "BulletP1";
@@ -177,50 +177,22 @@ public class PortalCollision : MonoBehaviour {
             }
             else if(col.name == "AirCannon")
             {
-                if(OtherPlayer.name == "Player1")
-                {
-                    col.GetComponent<BulletPlayer1>().AirCannonMir.SetActive(true);
-                }
-                else
-                {
-                    col.GetComponent<BulletPlayer2>().AirCannonMir.SetActive(true);
-                }
+                col.GetComponent<BulletPlayer>().AirCannonMir.SetActive(true);
                 col.GetComponent<ParticleSystem>().Stop();
             }
             else if(col.name == "IceShardsAttackStraight")
             {
-                if (OtherPlayer.name == "Player1")
-                {
-                    col.GetComponent<BulletPlayer1>().IceShardsMir.SetActive(true);
-                }
-                else
-                {
-                    col.GetComponent<BulletPlayer2>().IceShardsMir.SetActive(true);
-                }
+                col.GetComponent<BulletPlayer>().IceShardsMir.SetActive(true);
                 col.SetActive(false);
             }
             else if (col.name == "FireLaser")
             {
-                if (OtherPlayer.name == "Player1")
-                {
-                    col.GetComponent<BulletPlayer1>().FireLaserMir.SetActive(true);
-                }
-                else
-                {
-                    col.GetComponent<BulletPlayer2>().FireLaserMir.SetActive(true);
-                }
+                col.GetComponent<BulletPlayer>().FireLaserMir.SetActive(true);
                 col.SetActive(false);
             }
             else if (col.name == "ToxicShot")
             {
-                if (OtherPlayer.name == "Player1")
-                {
-                    col.GetComponent<BulletPlayer1>().ToxicShotMir.SetActive(true);
-                }
-                else
-                {
-                    col.GetComponent<BulletPlayer2>().ToxicShotMir.SetActive(true);
-                }
+                col.GetComponent<BulletPlayer>().ToxicShotMir.SetActive(true);
                 col.SetActive(false);
             }
             for (int i = 0; i< Pars.Length; i++)
@@ -244,24 +216,6 @@ public class PortalCollision : MonoBehaviour {
                     Obj.Add(col);
                 }
             }
-            /*if (col.tag == "BulletP1")
-            {
-                if (!Obj.Contains(col))
-                {
-                    col.layer = 11;
-                    //col.tag = "BulletP2";
-                    Obj.Add(col);
-                }
-            }
-            else if (col.tag == "BulletP2")
-            {
-                if (!Obj.Contains(col))
-                {
-                    col.layer = 10;
-                    //col.tag = "BulletP1";
-                    Obj.Add(col);
-                }
-            }*/
         }
         Invoke("ResetList", 1.8f);
     }
@@ -291,47 +245,19 @@ public class PortalCollision : MonoBehaviour {
             }
             else if(Ob!= null && Ob.name == "AirCannon")
             {
-                if (OtherPlayer.name == "Player1")
-                {
-                    Ob.GetComponent<BulletPlayer1>().AirCannonMir.SetActive(false);
-                }
-                else
-                {
-                    Ob.GetComponent<BulletPlayer2>().AirCannonMir.SetActive(false);
-                }
+                Ob.GetComponent<BulletPlayer>().AirCannonMir.SetActive(false);
             }
             else if (Ob != null && Ob.name == "IceShardsAttackStraight")
             {
-                if (OtherPlayer.name == "Player1")
-                {
-                    Ob.GetComponent<BulletPlayer1>().IceShardsMir.SetActive(false);
-                }
-                else
-                {
-                    Ob.GetComponent<BulletPlayer2>().IceShardsMir.SetActive(false);
-                }
+                Ob.GetComponent<BulletPlayer>().IceShardsMir.SetActive(false);
             }
             else if (Ob != null && Ob.name == "FireLaser")
             {
-                if (OtherPlayer.name == "Player1")
-                {
-                    Ob.GetComponent<BulletPlayer1>().FireLaserMir.SetActive(false);
-                }
-                else
-                {
-                    Ob.GetComponent<BulletPlayer2>().FireLaserMir.SetActive(false);
-                }
+                Ob.GetComponent<BulletPlayer>().FireLaserMir.SetActive(false);
             }
             else if (Ob != null && Ob.name == "ToxicShot")
             {
-                if (OtherPlayer.name == "Player1")
-                {
-                    Ob.GetComponent<BulletPlayer1>().ToxicShotMir.SetActive(false);
-                }
-                else
-                {
-                    Ob.GetComponent<BulletPlayer2>().ToxicShotMir.SetActive(false);
-                }
+                Ob.GetComponent<BulletPlayer>().ToxicShotMir.SetActive(false);
             }
         }
         Obj.Clear();

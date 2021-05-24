@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11313677ab2096f448124b8e65100f57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  miniCube: {fileID: 1521389482507634, guid: 4d830c73b93c015448e2a096251a2643, type: 3}
+  miniCube: {fileID: 1310004028401130, guid: dc5103b5f86140b4296f54deb641aa75, type: 3}
   miniCubeThisPlayer: {fileID: 0}
   miniCubeOtherPlayer: {fileID: 0}
 --- !u!65 &65017453371836112

@@ -210,8 +210,9 @@ public class BulletPlayer : MonoBehaviour {
             if (col.tag == otherPlayerBulletTag && col.GetComponent<BulletPlayer>().isMate) {
                 return;
             }
-            if (col.tag == "Shield")
+            if (col.tag == "Shield") {
                 otherPlayerShield = col.GetComponent<ShieldCol>().ShieldPower[dir];
+            }
             if (col.tag == otherPlayerBulletTag) {
                 if (col.GetComponent<BulletPlayer>().beforelastCol == gameObject || col.GetComponent<BulletPlayer>().beforelastCol == null) {
                     otherPlayerBulletPower = otherPlayer.GetBulletPower();
@@ -439,7 +440,7 @@ public class BulletPlayer : MonoBehaviour {
     }
     private void OnDisable() {
         if (isAnim) { player.GetComponent<Animator>().SetInteger("ID", -1); }
-        if (isPartSystem) {
+        if (isP1 && isPartSystem) {
             foreach (GameObject G in collidersGO) {
                 SendToDestruction(G);
             }
