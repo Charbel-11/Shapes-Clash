@@ -47,7 +47,7 @@ public class ProtectiveEarth : MonoBehaviour {
         if (col.tag == "Portal") { return; }
 
         //Don't want to break the effect unecessarily
-        if ((player.GetIdOfAnimUsed() == 4 && otherPlayer.attack[1] == 0) || (player.GetIdOfAnimUsed() == 3 && otherPlayer.attack[2] == 0) || player.GetIdOfAnimUsed() == 202)
+        if ((player.GetIdOfAnimUsed() == 4 && otherPlayer.getAttack(1) == 0) || (player.GetIdOfAnimUsed() == 3 && otherPlayer.getAttack(2) == 0) || player.GetIdOfAnimUsed() == 202)
             return;
 
         if (col.gameObject.transform.root.name == "Player1" || col.gameObject.transform.root.name == "Player2")
@@ -93,7 +93,7 @@ public class ProtectiveEarth : MonoBehaviour {
     private void OnParticleCollision(GameObject col)
     {
         //Don't want to break the effect unecessarily
-        if ((player.GetIdOfAnimUsed() == 4 && otherPlayer.attack[1] == 0) || (player.GetIdOfAnimUsed() == 3 && otherPlayer.attack[2] == 0) || player.GetIdOfAnimUsed() == 202)
+        if ((player.GetIdOfAnimUsed() == 4 && otherPlayer.getAttack(1) == 0) || (player.GetIdOfAnimUsed() == 3 && otherPlayer.getAttack(2) == 0) || player.GetIdOfAnimUsed() == 202)
             return;
 
         if (col.gameObject.transform.root.name == "Player1" || col.gameObject.transform.root.name == "Player2")

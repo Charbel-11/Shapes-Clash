@@ -67,7 +67,7 @@ public class ShieldCol : MonoBehaviour {
     }
     private void OnEnable() {
         LastCol = null;
-        player.defense.CopyTo(ShieldPower, 0);
+        ShieldPower = player.getDefenseArr();
 
         foreach (GameObject[] Ar in shields) {
             if (Ar == null || Ar.Length == 0)
@@ -117,15 +117,13 @@ public class ShieldCol : MonoBehaviour {
         if (col.tag == "BulletP1" || col.tag == "BulletP2" || col.tag == "Laser" || col.tag == "Bullet") {
             if (ShieldPower[Dir] <= BulletPower) {
                 ShieldPower[Dir] = 0;
-                if (gameObject.GetComponent<FallInPieces>())
-                    gameObject.GetComponent<FallInPieces>().Fall();
                 Disable(Dir);
+
+                if (ShieldPower[Dir] == BulletPower && col.tag == "Bullet")
+                    otherPlayer.GetComponent<Animator>().SetInteger("ID", -1); 
             }
             else {
                 ShieldPower[Dir] -= BulletPower;
-            }
-
-            if (ShieldPower[Dir] >= BulletPower && col.tag == "Bullet") {
                 otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
             }
         }
@@ -173,15 +171,13 @@ public class ShieldCol : MonoBehaviour {
         if (col.tag == "BulletP1" || col.tag == "BulletP2" || col.tag == "Fire" || col.tag == "Bullet") {
             if (ShieldPower[Dir] <= BulletPower) {
                 ShieldPower[Dir] = 0;
-                if (col.tag == "Bullet")
+                if (col.tag == "Bullet" && BulletPower == ShieldPower[Dir])
                     otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
-                if (!isPartSystem)
-                    Invoke("setEnabled", 2f);
-                if (gameObject.name == "Waterfall" || transform.parent.name == "Shield") {
-                    player.GetComponent<Animator>().SetInteger("ID", -1);
-                }
+                Disable(Dir);
                 if (transform.parent.name != "Shield")
                     gameObject.SetActive(false);
+                if (!isPartSystem)
+                    Invoke("setEnabled", 2f);
             }
             else {
                 ShieldPower[Dir] -= BulletPower;
@@ -203,6 +199,9 @@ public class ShieldCol : MonoBehaviour {
     }
 
     public void Disable(int Dir) {
+        if (gameObject.GetComponent<FallInPieces>())
+            gameObject.GetComponent<FallInPieces>().Fall();
+        player.GetComponent<Animator>().SetInteger("ID", -1);
         foreach (GameObject G in shields[Dir])
             G.SetActive(false);
     }

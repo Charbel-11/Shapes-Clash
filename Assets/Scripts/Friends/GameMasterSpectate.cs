@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class GameMasterSpectate : GameMaster
-{
+public class GameMasterSpectate : GameMaster {
     private bool SendPackage = false;
     private bool Go = true;
 
@@ -38,8 +37,7 @@ public class GameMasterSpectate : GameMaster
 
     public GameObject Disc;
 
-    protected override void Awake()
-    {
+    protected override void Awake() {
         doneInit = true;
         Spectate = true;
         Online = true;
@@ -53,17 +51,14 @@ public class GameMasterSpectate : GameMaster
         shapeID2 = TempOpponent.Opponent.ShapeID;
 
         background = PlayerPrefs.GetInt("BckgdID");
-        for (int i = 0; i < Backgrounds.Length; i++)
-        {
+        for (int i = 0; i < Backgrounds.Length; i++) {
             Backgrounds[i].SetActive(i == background);
         }
 
-        if (background == 0)
-        {
+        if (background == 0) {
             cameraFight.backgroundColor = new Color(0, 0, 0);
         }
-        else if (background == 1)
-        {
+        else if (background == 1) {
             cameraFight.backgroundColor = new Color(0.5568628f, 0.09019608f, 0.09803922f);
 
             Transform temp = Backgrounds[1].transform.Find("UP");
@@ -120,8 +115,7 @@ public class GameMasterSpectate : GameMaster
         animatorPlayer1.SetInteger("ID", -1);
         animatorPlayer2.SetInteger("ID", -1);
 
-        if (shapeID1 == 1 || shapeID1 == 2 || shapeID1 == 3)
-        {
+        if (shapeID1 == 1 || shapeID1 == 2 || shapeID1 == 3) {
             animatorPlayer1.SetBool("Player1", true);
         }
 
@@ -138,20 +132,15 @@ public class GameMasterSpectate : GameMaster
         canvasPlayer1.gameObject.SetActive(true);
         Abilities = new GameObject[6];
         string[] namesS = { "ImageCube", "ImagePyramid", "ImageStar", "ImageSphere" };
-        for (int i = 1; i < 7; i++)
-        {
+        for (int i = 1; i < 7; i++) {
             Abilities[i - 1] = GameObject.Find("Ability" + i);
-            foreach (Transform Child in Abilities[i - 1].transform)
-            {
-                if (Child.name == "QMark")
-                {
+            foreach (Transform Child in Abilities[i - 1].transform) {
+                if (Child.name == "QMark") {
                     Child.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
                 }
-                else
-                {
+                else {
                     Child.GetComponent<RectTransform>().localScale = new Vector3(0, 1, 1);
-                    if (Child.GetComponent<Shape_Abilities>().common == true)
-                    {
+                    if (Child.GetComponent<Shape_Abilities>().common == true) {
                         for (int k = 0; k < namesS.Length; k++)
                             Child.transform.Find(namesS[k]).gameObject.SetActive(k == shapeID1);
                     }
@@ -159,15 +148,13 @@ public class GameMasterSpectate : GameMaster
             }
         }
         Ab = canvasPlayer1.transform.Find("Abs").Find("Attack");
-        for (int i = 0; i < 4; i++)
-        {
+        for (int i = 0; i < 4; i++) {
             Ab.GetChild(i).gameObject.SetActive(i == shapeID1);
             if (Ab.GetChild(i).gameObject.activeSelf)
                 Ab.GetChild(i).GetComponent<Button>().interactable = false;
         }
         Transform ep = canvasPlayer1.transform.Find("EnergyPoints");
-        for (int i = 0; i < 4; i++)
-        {
+        for (int i = 0; i < 4; i++) {
             ep.GetChild(i).gameObject.SetActive(i == shapeID1);
         }
 
@@ -182,24 +169,19 @@ public class GameMasterSpectate : GameMaster
         ClientTCP.PACKAGE_DEBUG("GiveLP", "", TempOpponent.Opponent.ConnectionID2);
     }
 
-    protected override void Start()
-    {
+    protected override void Start() {
         GameObject[] Rubble = new GameObject[MiddleRubble.transform.childCount];
         Rubbles = new FallInPieces[MiddleRubble.transform.childCount];
-        for (int i = 0; i < MiddleRubble.transform.childCount; i++)
-        {
+        for (int i = 0; i < MiddleRubble.transform.childCount; i++) {
             Rubble[i] = MiddleRubble.transform.GetChild(i).gameObject;
             Rubbles[i] = Rubble[i].GetComponent<FallInPieces>();
         }
         SpecialAb = Special;
-        foreach (Transform Child in SpecialAb.transform)
-        {
-            if (Child.name == "QMark")
-            {
+        foreach (Transform Child in SpecialAb.transform) {
+            if (Child.name == "QMark") {
                 Child.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
             }
-            else
-            {
+            else {
                 Child.GetComponent<RectTransform>().localScale = new Vector3(0, 1, 1);
             }
         }
@@ -218,85 +200,67 @@ public class GameMasterSpectate : GameMaster
     }
 
     //Update??? Call???
-    public void CheckChoices()
-    {
+    public void CheckChoices() {
         player1ChoiceDone = player1.GetChoiceDone();
         player2ChoiceDone = player2.GetChoiceDone();
 
-        if (player1ChoiceDone && player2ChoiceDone && call == false)
-        {
+        if (player1ChoiceDone && player2ChoiceDone && call == false) {
             call = true;
             StartCoroutine(EvaluateOutput());
             //To avoid calling this multiple times while waiting for 2 sec  
         }
     }
 
-    protected override IEnumerator EvaluateOutput()
-    {
+    protected override IEnumerator EvaluateOutput() {
         //To avoid multiple evaluation
-        if (otherCall == false)
-        {
+        if (otherCall == false) {
             Abs.SetActive(false);
             yield return StartCoroutine(base.EvaluateOutput());
             otherCall = true;
 
             // PASSIVES
             //For the star burn passive
-            if (player1 is Star_Player)
-            {
-                if (netDamageTakenP2 > 0 && (player1.GetComponent<Star_Player>().CanBurn == true || player1.ProbPlusAtt > 0))
-                {
+            if (player1 is Star_Player) {
+                if (netDamageTakenP2 > 0 && (player1.GetComponent<Star_Player>().CanBurn == true || player1.ProbPlusAtt > 0)) {
                     Stop1 = true;
                     StartCoroutine(WaitForProb(1, 1));
                 }
             }
-            if (player2 is Star_Player)
-            {
-                if (netDamageTakenP1 > 0 && (player2.GetComponent<Star_Player>().CanBurn == true || player2.ProbPlusAtt > 0))
-                {
+            if (player2 is Star_Player) {
+                if (netDamageTakenP1 > 0 && (player2.GetComponent<Star_Player>().CanBurn == true || player2.ProbPlusAtt > 0)) {
                     Stop2 = true;
                     StartCoroutine(WaitForProb(2, 1));
                 }
             }
-            //For turning off the FieryEyes
-            if (player1.GetComponent<Shape_Player>().AdditionalDamage > 0)
-            {
-                player1.GetComponent<Shape_Player>().AdditionalDamage = 0;
+            //For turning off the FieryEyes or others
+            if (player1.GetComponent<Shape_Player>().getAdditionalDamage() > 0) {
+                player1.GetComponent<Shape_Player>().setAdditionalDamage(0); boostP1 = 0;
                 player1.transform.Find("Design").transform.Find("FieryEyes").gameObject.SetActive(false);
-                AddText(FightText,"The Attack Boost faded.");
+                AddText(FightText, "The Attack Boost faded.");
             }
-            if (player2.GetComponent<Shape_Player>().AdditionalDamage > 0)
-            {
-                player2.GetComponent<Shape_Player>().AdditionalDamage = 0;
+            if (player2.GetComponent<Shape_Player>().getAdditionalDamage() > 0) {
+                player2.GetComponent<Shape_Player>().setAdditionalDamage(0); boostP2 = 0;
                 player2.transform.Find("Design").transform.Find("FieryEyes").gameObject.SetActive(false);
-                AddText(FightText,"The Attack Boost faded.");
+                AddText(FightText, "The Attack Boost faded.");
             }
             //For the Star Additional Attack passive
-            if (player1 is Star_Player)
-            {
-                if (netDamageTakenP1 > 0 && (player1.GetComponent<Star_Player>().CanFieryEyes == true || player1.ProbPlusDef > 0))
-                {
-                    if (Stop1)
-                    {
+            if (player1 is Star_Player) {
+                if (netDamageTakenP1 > 0 && (player1.GetComponent<Star_Player>().CanFieryEyes == true || player1.ProbPlusDef > 0)) {
+                    if (Stop1) {
                         StartCoroutine(Fuckwhileloops(1));
                     }
-                    else
-                    {
+                    else {
                         Stop3 = true;
                         StartCoroutine(WaitForProb(1, 2));
                     }
                 }
             }
-            if (player2 is Star_Player)
-            {
-                if (netDamageTakenP2 > 0 && (player2.GetComponent<Star_Player>().CanFieryEyes == true || player2.ProbPlusDef > 0))
-                {
-                    if (Stop2)
-                    {
+            if (player2 is Star_Player) {
+                if (netDamageTakenP2 > 0 && (player2.GetComponent<Star_Player>().CanFieryEyes == true || player2.ProbPlusDef > 0)) {
+                    if (Stop2) {
                         StartCoroutine(Fuckwhileloops(2));
                     }
-                    else
-                    {
+                    else {
                         Stop4 = true;
                         StartCoroutine(WaitForProb(2, 2));
                     }
@@ -304,49 +268,37 @@ public class GameMasterSpectate : GameMaster
             }
 
             //For the cube stuck in place passive
-            if (player1 is Cube_Player)
-            {
-                if (netDamageTakenP2 > 0 && (player1.GetComponent<Cube_Player>().CanStuckInPlace == true || player1.ProbPlusAtt > 0))
-                {
+            if (player1 is Cube_Player) {
+                if (netDamageTakenP2 > 0 && (player1.GetComponent<Cube_Player>().CanStuckInPlace == true || player1.ProbPlusAtt > 0)) {
                     Stop5 = true;
                     StartCoroutine(WaitForProb(1, 3));
                 }
             }
-            if (player2 is Cube_Player)
-            {
-                if (netDamageTakenP1 > 0 && (player2.GetComponent<Cube_Player>().CanStuckInPlace == true || player2.ProbPlusAtt > 0))
-                {
+            if (player2 is Cube_Player) {
+                if (netDamageTakenP1 > 0 && (player2.GetComponent<Cube_Player>().CanStuckInPlace == true || player2.ProbPlusAtt > 0)) {
                     Stop6 = true;
                     StartCoroutine(WaitForProb(2, 3));
                 }
             }
 
             //For the cube protective earth passive; it stays enabled until the player is attacked
-            if (player1 is Cube_Player)
-            {
-                if (netDamageTakenP1 > 0 && (player1.GetComponent<Cube_Player>().CanHaveProtectiveEarth == true || player1.ProbPlusDef > 0) && !protectiveEarthEffectP1)
-                {
-                    if (Stop5)
-                    {
+            if (player1 is Cube_Player) {
+                if (netDamageTakenP1 > 0 && (player1.GetComponent<Cube_Player>().CanHaveProtectiveEarth == true || player1.ProbPlusDef > 0) && !protectiveEarthEffectP1) {
+                    if (Stop5) {
                         StartCoroutine(Fuckwhileloops(3));
                     }
-                    else
-                    {
+                    else {
                         Stop7 = true;
                         StartCoroutine(WaitForProb(1, 4));
                     }
                 }
             }
-            if (player2 is Cube_Player)
-            {
-                if (netDamageTakenP2 > 0 && (player2.GetComponent<Cube_Player>().CanHaveProtectiveEarth == true || player2.ProbPlusDef > 0) && !protectiveEarthEffectP2)
-                {
-                    if (Stop6)
-                    {
+            if (player2 is Cube_Player) {
+                if (netDamageTakenP2 > 0 && (player2.GetComponent<Cube_Player>().CanHaveProtectiveEarth == true || player2.ProbPlusDef > 0) && !protectiveEarthEffectP2) {
+                    if (Stop6) {
                         StartCoroutine(Fuckwhileloops(4));
                     }
-                    else
-                    {
+                    else {
                         Stop8 = true;
                         StartCoroutine(WaitForProb(2, 4));
                     }
@@ -355,49 +307,37 @@ public class GameMasterSpectate : GameMaster
 
             //For the pyramid freeze passive
 
-            if (player1 is Pyramid_Player)
-            {
-                if (netDamageTakenP2 > 0 && (player1.GetComponent<Pyramid_Player>().CanFreeze == true || player1.ProbPlusAtt > 0))
-                {
+            if (player1 is Pyramid_Player) {
+                if (netDamageTakenP2 > 0 && (player1.GetComponent<Pyramid_Player>().CanFreeze == true || player1.ProbPlusAtt > 0)) {
                     Stop9 = true;
                     StartCoroutine(WaitForProb(1, 5));
                 }
             }
-            if (player2 is Pyramid_Player)
-            {
-                if (netDamageTakenP1 > 0 && (player2.GetComponent<Pyramid_Player>().CanFreeze == true || player2.ProbPlusAtt > 0))
-                {
+            if (player2 is Pyramid_Player) {
+                if (netDamageTakenP1 > 0 && (player2.GetComponent<Pyramid_Player>().CanFreeze == true || player2.ProbPlusAtt > 0)) {
                     Stop10 = true;
                     StartCoroutine(WaitForProb(2, 5));
                 }
             }
 
             //for the Pyramid Snow Passive
-            if (player1 is Pyramid_Player)
-            {
-                if (netDamageTakenP1 > 0 && (player1.GetComponent<Pyramid_Player>().CanSnow == true || player1.ProbPlusDef > 0))
-                {
-                    if (Stop9)
-                    {
+            if (player1 is Pyramid_Player) {
+                if (netDamageTakenP1 > 0 && (player1.GetComponent<Pyramid_Player>().CanSnow == true || player1.ProbPlusDef > 0)) {
+                    if (Stop9) {
                         StartCoroutine(Fuckwhileloops(5));
                     }
-                    else
-                    {
+                    else {
                         Stop11 = true;
                         StartCoroutine(WaitForProb(1, 6));
                     }
                 }
             }
-            if (player2 is Pyramid_Player)
-            {
-                if (netDamageTakenP2 > 0 && (player2.GetComponent<Pyramid_Player>().CanSnow == true || player2.ProbPlusDef > 0))
-                {
-                    if (Stop10)
-                    {
+            if (player2 is Pyramid_Player) {
+                if (netDamageTakenP2 > 0 && (player2.GetComponent<Pyramid_Player>().CanSnow == true || player2.ProbPlusDef > 0)) {
+                    if (Stop10) {
                         StartCoroutine(Fuckwhileloops(6));
                     }
-                    else
-                    {
+                    else {
                         Stop12 = true;
                         StartCoroutine(WaitForProb(2, 6));
                     }
@@ -405,49 +345,37 @@ public class GameMasterSpectate : GameMaster
             }
 
             //for the Sphere HelperSpheres Passive
-            if (player1 is Sphere_Player)
-            {
-                if (netDamageTakenP2 > 0 && (player1.GetComponent<Sphere_Player>().CanHelperSpheres || player1.ProbPlusAtt > 0))
-                {
+            if (player1 is Sphere_Player) {
+                if (netDamageTakenP2 > 0 && (player1.GetComponent<Sphere_Player>().CanHelperSpheres || player1.ProbPlusAtt > 0)) {
                     Stop13 = true;
                     StartCoroutine(WaitForProb(1, 7));
                 }
             }
-            if (player2 is Sphere_Player)
-            {
-                if (netDamageTakenP1 > 0 && (player2.GetComponent<Sphere_Player>().CanHelperSpheres || player2.ProbPlusAtt > 0))
-                {
+            if (player2 is Sphere_Player) {
+                if (netDamageTakenP1 > 0 && (player2.GetComponent<Sphere_Player>().CanHelperSpheres || player2.ProbPlusAtt > 0)) {
                     Stop14 = true;
                     StartCoroutine(WaitForProb(2, 7));
                 }
             }
 
             //For The Smoke Passive
-            if (player1 is Sphere_Player)
-            {
-                if (netDamageTakenP1 > 0 && (player1.GetComponent<Sphere_Player>().CanSmoke || player1.ProbPlusDef > 0))
-                {
-                    if (Stop13)
-                    {
+            if (player1 is Sphere_Player) {
+                if (netDamageTakenP1 > 0 && (player1.GetComponent<Sphere_Player>().CanSmoke || player1.ProbPlusDef > 0)) {
+                    if (Stop13) {
                         StartCoroutine(Fuckwhileloops(7));
                     }
-                    else
-                    {
+                    else {
                         Stop15 = true;
                         StartCoroutine(WaitForProb(1, 8));
                     }
                 }
             }
-            if (player2 is Sphere_Player)
-            {
-                if (netDamageTakenP2 > 0 && (player2.GetComponent<Sphere_Player>().CanSmoke || player2.ProbPlusDef > 0))
-                {
-                    if (Stop14)
-                    {
+            if (player2 is Sphere_Player) {
+                if (netDamageTakenP2 > 0 && (player2.GetComponent<Sphere_Player>().CanSmoke || player2.ProbPlusDef > 0)) {
+                    if (Stop14) {
                         StartCoroutine(Fuckwhileloops(8));
                     }
-                    else
-                    {
+                    else {
                         Stop16 = true;
                         StartCoroutine(WaitForProb(2, 8));
                     }
@@ -457,25 +385,21 @@ public class GameMasterSpectate : GameMaster
             player1Life = player1.GetLife();
             player2Life = player2.GetLife();
 
-            if (player1Life <= 0 || player2Life <= 0)
-            {
+            if (player1Life <= 0 || player2Life <= 0) {
                 AddText(FightText, "Game Over!");
                 GameOver();
             }
-            else if (Stop1 || Stop2 || Stop3 || Stop4 || Stop5 || Stop6 || Stop7 || Stop8 || Stop9 || Stop10 || Stop11 || Stop12 || Stop13 || Stop14 || Stop15 || Stop16)
-            {
+            else if (Stop1 || Stop2 || Stop3 || Stop4 || Stop5 || Stop6 || Stop7 || Stop8 || Stop9 || Stop10 || Stop11 || Stop12 || Stop13 || Stop14 || Stop15 || Stop16) {
                 StartCoroutine(Reset());
             }
-            else
-            {
+            else {
                 ResetRound();
             }
         }
     }
 
-    protected override void ResetRound(bool Start = false)
-    {
-        if(!Start)
+    protected override void ResetRound(bool Start = false) {
+        if (!Start)
             Abs.SetActive(true);
         base.ResetRound(Start);
 
@@ -490,18 +414,15 @@ public class GameMasterSpectate : GameMaster
         round++;
     }
 
-    public override void GameOver()
-    {
+    public override void GameOver() {
         animatorPlayer1.SetInteger("ID", -1);
         animatorPlayer2.SetInteger("ID", -1);
-        if (player1Life <= 0)
-        {
+        if (player1Life <= 0) {
             playerWon = 2;
             //cameraPlayer2.gameObject.SetActive(true);
             //cameraPlayer2.GetComponent<Animator>().SetBool("End", true);
         }
-        else
-        {
+        else {
             /*if (Mode == 0)
             {
                 ClientTCP.PACKAGE_ENDGAME(PlayerPrefs.GetString("Username"), TempOpponent.Opponent.Username, TempOpponent.Opponent.ConnectionID, shapeID1, shapeID2);
@@ -524,232 +445,191 @@ public class GameMasterSpectate : GameMaster
         //SceneManager.LoadScene("Choosing Scene");
         //StartCoroutine(endC());
     }
-    IEnumerator endC()
-    {
+    IEnumerator endC() {
         yield return new WaitForSeconds(1.5f);
         endGame.gameObject.SetActive(true);
         endGame.GetComponent<Endgame>().UpdateEnd(0, 0, 0);
     }
-    void SetValueBack()
-    {
+    void SetValueBack() {
         Go = true;
         call = false;
     }
-    IEnumerator WaitForProb(int Player, int ID)
-    {
-        if (Player == 1)
-        {
+    IEnumerator WaitForProb(int Player, int ID) {
+        if (Player == 1) {
             yield return new WaitUntil(() => TempOpponent.Opponent.GotProb1 == true || TempOpponent.Opponent.GotProb11);
-            if (TempOpponent.Opponent.GotProb1)
-            {
+            if (TempOpponent.Opponent.GotProb1) {
                 TempOpponent.Opponent.GotProb1 = false;
             }
-            else if (TempOpponent.Opponent.GotProb11)
-            {
+            else if (TempOpponent.Opponent.GotProb11) {
                 TempOpponent.Opponent.GotProb11 = false;
             }
-            if (ID == 1)
-            {
-                if (TempOpponent.Opponent.Probability <= (((Star_Player)player1).CanBurn ? PassiveStats[4][PassivesArray[4] + 2] + player1.ProbPlusAtt : player1.ProbPlusAtt))
-                {
+            if (ID == 1) {
+                if (TempOpponent.Opponent.Probability <= (((Star_Player)player1).CanBurn ? PassiveStats[4][PassivesArray[4] + 2] + player1.ProbPlusAtt : player1.ProbPlusAtt)) {
                     StartRoundCountBurn2 = round;
                     player2.transform.Find("BurnedFlame").gameObject.SetActive(true);
-                    AddText(FightText,"Player 2 was Burned by his Opponent's Fire Attack");
+                    AddText(FightText, "Player 2 was Burned by his Opponent's Fire Attack");
                 }
                 TempOpponent.Opponent.Probability = 0;
                 Stop1 = false;
             }
-            else if (ID == 2)
-            {
+            else if (ID == 2) {
                 int Range = ((Star_Player)player1).CanFieryEyes ? PassiveStats[5][PassivesArray[5] + 2] + player1.ProbPlusDef : player1.ProbPlusDef;
-                if (TempOpponent.Opponent.Probability <= Range || TempOpponent.Opponent.Probability1 <= Range)
-                {
+                if (TempOpponent.Opponent.Probability <= Range || TempOpponent.Opponent.Probability1 <= Range) {
                     player1.transform.Find("Design").transform.Find("FieryEyes").gameObject.SetActive(true);
-                    player1.GetComponent<Shape_Player>().AdditionalDamage = PassiveStats[5][PassivesArray[5] - 1];
-                    AddText(FightText,"Player 1 got angry because he took damage and gained a power boost.");
+                    player1.GetComponent<Shape_Player>().setAdditionalDamage(PassiveStats[5][PassivesArray[5] - 1]);
+                    AddText(FightText, "Player 1 got angry because he took damage and gained a power boost.");
                 }
                 TempOpponent.Opponent.Probability = 0;
                 TempOpponent.Opponent.Probability1 = 0;
                 Stop3 = false;
             }
-            else if (ID == 3)
-            {
-                if (TempOpponent.Opponent.Probability <= (((Cube_Player)player1).CanStuckInPlace ? PassiveStats[0][PassivesArray[0] + 2] + player1.ProbPlusAtt : player1.ProbPlusAtt))
-                {
+            else if (ID == 3) {
+                if (TempOpponent.Opponent.Probability <= (((Cube_Player)player1).CanStuckInPlace ? PassiveStats[0][PassivesArray[0] + 2] + player1.ProbPlusAtt : player1.ProbPlusAtt)) {
                     StartRoundCountStuckInPlace2 = round;
                     player2.transform.Find("GroundStuck").gameObject.SetActive(true);
-                    AddText(FightText,"Player 2 was Burned by his Opponent's Fire Attack");
+                    AddText(FightText, "Player 2 was Burned by his Opponent's Fire Attack");
                 }
                 TempOpponent.Opponent.Probability = 0;
                 Stop5 = false;
             }
-            else if (ID == 4)
-            {
+            else if (ID == 4) {
                 int Range = ((Cube_Player)player1).CanHaveProtectiveEarth ? PassiveStats[1][PassivesArray[1] + 2] + player1.ProbPlusDef : player1.ProbPlusDef;
-                if (TempOpponent.Opponent.Probability <= Range || TempOpponent.Opponent.Probability1 <= Range)
-                {
+                if (TempOpponent.Opponent.Probability <= Range || TempOpponent.Opponent.Probability1 <= Range) {
                     player1.GetComponent<Cube_Player>().ShieldAppearance.SetActive(true);
                     protectiveEarthEffectP1 = true;
                     HardeningPow1 = PassiveStats[1][PassivesArray[1] - 1];
-                    AddText(FightText,"Player 1 hardened himself");
+                    AddText(FightText, "Player 1 hardened himself");
                 }
                 TempOpponent.Opponent.Probability = 0;
                 TempOpponent.Opponent.Probability1 = 0;
                 Stop7 = false;
             }
-            else if (ID == 5)
-            {
-                if (TempOpponent.Opponent.Probability <= (((Pyramid_Player)player1).CanFreeze ? PassiveStats[2][PassivesArray[2] + 2] + player1.ProbPlusAtt : player1.ProbPlusAtt))
-                {
+            else if (ID == 5) {
+                if (TempOpponent.Opponent.Probability <= (((Pyramid_Player)player1).CanFreeze ? PassiveStats[2][PassivesArray[2] + 2] + player1.ProbPlusAtt : player1.ProbPlusAtt)) {
                     StartRoundCountFreeze2 = round;
                     animatorPlayer2.SetBool("Frozen", true);
-                    AddText(FightText,"Player 2 is frozen for " + PassiveStats[2][PassivesArray[2] - 1] + " round(s)");
+                    AddText(FightText, "Player 2 is frozen for " + PassiveStats[2][PassivesArray[2] - 1] + " round(s)");
                 }
                 TempOpponent.Opponent.Probability = 0;
                 Stop9 = false;
             }
-            else if (ID == 6)
-            {
+            else if (ID == 6) {
                 int Range = ((Pyramid_Player)player1).CanSnow ? PassiveStats[3][PassivesArray[3] + 2] + player1.ProbPlusDef : player1.ProbPlusDef;
-                if (TempOpponent.Opponent.Probability <= Range || TempOpponent.Opponent.Probability1 <= Range)
-                {
+                if (TempOpponent.Opponent.Probability <= Range || TempOpponent.Opponent.Probability1 <= Range) {
                     player1.GetComponent<Pyramid_Player>().Snow.SetActive(true);
                     Snowing1 = true;
-                    AddText(FightText,"Player 1's call for help from the Weather Gods has been answered!");
+                    AddText(FightText, "Player 1's call for help from the Weather Gods has been answered!");
                 }
                 TempOpponent.Opponent.Probability = 0;
                 TempOpponent.Opponent.Probability1 = 0;
                 Stop11 = false;
             }
-            else if (ID == 7)
-            {
-                if (TempOpponent.Opponent.Probability <= (((Sphere_Player)player1).CanHelperSpheres ? PassiveStats[6][PassivesArray[6] + 2] + player1.ProbPlusAtt : player1.ProbPlusAtt))
-                {
+            else if (ID == 7) {
+                if (TempOpponent.Opponent.Probability <= (((Sphere_Player)player1).CanHelperSpheres ? PassiveStats[6][PassivesArray[6] + 2] + player1.ProbPlusAtt : player1.ProbPlusAtt)) {
                     player1.GetComponent<Sphere_Player>().HelperSpheres.SetActive(true);
                     HelperSpheres1 = 1;
-                    AddText(FightText,"Poison Spheres rushed to Player1's help!");
+                    AddText(FightText, "Poison Spheres rushed to Player1's help!");
                 }
                 TempOpponent.Opponent.Probability = 0;
                 Stop13 = false;
             }
-            else if (ID == 8)
-            {
+            else if (ID == 8) {
                 int Range = ((Sphere_Player)player1).CanSmoke ? PassiveStats[7][PassivesArray[7] + 2] + player1.ProbPlusDef : player1.ProbPlusDef;
-                if (TempOpponent.Opponent.Probability <= Range || TempOpponent.Opponent.Probability1 <= Range)
-                {
+                if (TempOpponent.Opponent.Probability <= Range || TempOpponent.Opponent.Probability1 <= Range) {
                     player1.GetComponent<Sphere_Player>().Smoke.SetActive(true);
                     DoitSmoke1 = true;
-                    AddText(FightText,"Player 1 was surrounded by Fog!");
+                    AddText(FightText, "Player 1 was surrounded by Fog!");
                 }
                 TempOpponent.Opponent.Probability = 0;
                 TempOpponent.Opponent.Probability1 = 0;
                 Stop15 = false;
             }
         }
-        else
-        {
+        else {
             yield return new WaitUntil(() => TempOpponent.Opponent.GotProb2 == true || TempOpponent.Opponent.GotProb21 == true);
 
-            if (TempOpponent.Opponent.GotProb2)
-            {
+            if (TempOpponent.Opponent.GotProb2) {
                 TempOpponent.Opponent.GotProb2 = false;
             }
-            else
-            {
+            else {
                 TempOpponent.Opponent.GotProb21 = false;
             }
-            if (ID == 1)
-            {
-                if (TempOpponent.Opponent.Probability2 <= (((Star_Player)player2).CanBurn ? PassiveStats[4][TempOpponent.Opponent.Passives[4] + 2] + player2.ProbPlusAtt : player2.ProbPlusAtt))
-                {
+            if (ID == 1) {
+                if (TempOpponent.Opponent.Probability2 <= (((Star_Player)player2).CanBurn ? PassiveStats[4][TempOpponent.Opponent.Passives[4] + 2] + player2.ProbPlusAtt : player2.ProbPlusAtt)) {
                     StartRoundCountBurn1 = round;
                     player1.transform.Find("BurnedFlame").gameObject.SetActive(true);
-                    AddText(FightText,"Player 2 was Burned by his Opponent's Fire Attack");
+                    AddText(FightText, "Player 2 was Burned by his Opponent's Fire Attack");
                 }
                 TempOpponent.Opponent.Probability2 = 0;
                 Stop2 = false;
             }
-            else if (ID == 2)
-            {
+            else if (ID == 2) {
                 int Range = ((Star_Player)player2).CanBurn ? PassiveStats[5][TempOpponent.Opponent.Passives[5] + 2] + player2.ProbPlusDef : player2.ProbPlusDef;
-                if (TempOpponent.Opponent.Probability2 <= Range || TempOpponent.Opponent.Probability21 <= Range)
-                {
+                if (TempOpponent.Opponent.Probability2 <= Range || TempOpponent.Opponent.Probability21 <= Range) {
                     player2.transform.Find("Design").transform.Find("FieryEyes").gameObject.SetActive(true);
-                    player2.GetComponent<Shape_Player>().AdditionalDamage = PassiveStats[5][TempOpponent.Opponent.Passives[5] - 1];
-                    AddText(FightText,"Player 2 got angry because he took damage and gained a power boost.");
+                    player2.GetComponent<Shape_Player>().setAdditionalDamage(PassiveStats[5][TempOpponent.Opponent.Passives[5] - 1]);
+                    AddText(FightText, "Player 2 got angry because he took damage and gained a power boost.");
                 }
                 TempOpponent.Opponent.Probability2 = 0;
                 TempOpponent.Opponent.Probability21 = 0;
                 Stop4 = false;
             }
-            else if (ID == 3)
-            {
-                if (TempOpponent.Opponent.Probability2 <= (((Cube_Player)player2).CanStuckInPlace ? PassiveStats[0][TempOpponent.Opponent.Passives[0] + 2] + player2.ProbPlusAtt : player2.ProbPlusAtt))
-                {
+            else if (ID == 3) {
+                if (TempOpponent.Opponent.Probability2 <= (((Cube_Player)player2).CanStuckInPlace ? PassiveStats[0][TempOpponent.Opponent.Passives[0] + 2] + player2.ProbPlusAtt : player2.ProbPlusAtt)) {
                     StartRoundCountStuckInPlace1 = round;
                     player1.transform.Find("GroundStuck").gameObject.SetActive(true);
-                    AddText(FightText,"Player 2 was Burned by his Opponent's Fire Attack");
+                    AddText(FightText, "Player 2 was Burned by his Opponent's Fire Attack");
                 }
                 TempOpponent.Opponent.Probability2 = 0;
                 Stop6 = false;
             }
-            else if (ID == 4)
-            {
+            else if (ID == 4) {
                 int Range = ((Cube_Player)player2).CanHaveProtectiveEarth ? PassiveStats[1][TempOpponent.Opponent.Passives[1] + 2] + player2.ProbPlusDef : player2.ProbPlusDef;
-                if (TempOpponent.Opponent.Probability2 <= Range || TempOpponent.Opponent.Probability21 <= Range)
-                {
+                if (TempOpponent.Opponent.Probability2 <= Range || TempOpponent.Opponent.Probability21 <= Range) {
                     player2.GetComponent<Cube_Player>().ShieldAppearance.SetActive(true);
                     protectiveEarthEffectP2 = true;
                     HardeningPow2 = PassiveStats[1][TempOpponent.Opponent.Passives[1] - 1];
-                    AddText(FightText,"Player 2 hardened himself");
+                    AddText(FightText, "Player 2 hardened himself");
                 }
                 TempOpponent.Opponent.Probability2 = 0;
                 TempOpponent.Opponent.Probability21 = 0;
                 Stop8 = false;
             }
-            else if (ID == 5)
-            {
-                if (TempOpponent.Opponent.Probability2 <= (((Pyramid_Player)player2).CanFreeze ? PassiveStats[2][TempOpponent.Opponent.Passives[2] + 2] + player2.ProbPlusAtt : player2.ProbPlusAtt))
-                {
+            else if (ID == 5) {
+                if (TempOpponent.Opponent.Probability2 <= (((Pyramid_Player)player2).CanFreeze ? PassiveStats[2][TempOpponent.Opponent.Passives[2] + 2] + player2.ProbPlusAtt : player2.ProbPlusAtt)) {
                     StartRoundCountFreeze1 = round;
                     animatorPlayer1.SetBool("Frozen", true);
-                    AddText(FightText,"Player 1 is frozen for " + PassiveStats[2][TempOpponent.Opponent.Passives[2] - 1] + " round(s)");
+                    AddText(FightText, "Player 1 is frozen for " + PassiveStats[2][TempOpponent.Opponent.Passives[2] - 1] + " round(s)");
                 }
                 TempOpponent.Opponent.Probability2 = 0;
                 Stop10 = false;
             }
-            else if (ID == 6)
-            {
+            else if (ID == 6) {
                 int Range = ((Pyramid_Player)player2).CanSnow ? PassiveStats[3][TempOpponent.Opponent.Passives[3] + 2] + player2.ProbPlusDef : player2.ProbPlusDef;
-                if (TempOpponent.Opponent.Probability2 <= Range || TempOpponent.Opponent.Probability21 <= Range)
-                {
+                if (TempOpponent.Opponent.Probability2 <= Range || TempOpponent.Opponent.Probability21 <= Range) {
                     player2.GetComponent<Pyramid_Player>().Snow.SetActive(true);
                     Snowing2 = true;
-                    AddText(FightText,"Player 2's call for help from the Weather Gods has been answered!");
+                    AddText(FightText, "Player 2's call for help from the Weather Gods has been answered!");
                 }
                 TempOpponent.Opponent.Probability2 = 0;
                 TempOpponent.Opponent.Probability21 = 0;
                 Stop12 = false;
             }
-            else if (ID == 7)
-            {
-                if (TempOpponent.Opponent.Probability2 <= (((Sphere_Player)player2).CanHelperSpheres ? PassiveStats[6][TempOpponent.Opponent.Passives[6] + 2] + player2.ProbPlusAtt : player2.ProbPlusAtt))
-                {
+            else if (ID == 7) {
+                if (TempOpponent.Opponent.Probability2 <= (((Sphere_Player)player2).CanHelperSpheres ? PassiveStats[6][TempOpponent.Opponent.Passives[6] + 2] + player2.ProbPlusAtt : player2.ProbPlusAtt)) {
                     player2.GetComponent<Sphere_Player>().HelperSpheres.SetActive(true);
                     HelperSpheres2 = 1;
-                    AddText(FightText,"Poison Spheres rushed to Player2's help!");
+                    AddText(FightText, "Poison Spheres rushed to Player2's help!");
                 }
                 TempOpponent.Opponent.Probability2 = 0;
                 Stop14 = false;
             }
-            else if (ID == 8)
-            {
+            else if (ID == 8) {
                 int Range = ((Sphere_Player)player2).CanSmoke ? PassiveStats[7][TempOpponent.Opponent.Passives[7] + 2] + player2.ProbPlusDef : player2.ProbPlusDef;
-                if (TempOpponent.Opponent.Probability2 <= Range || TempOpponent.Opponent.Probability21 <= Range)
-                {
+                if (TempOpponent.Opponent.Probability2 <= Range || TempOpponent.Opponent.Probability21 <= Range) {
                     player2.GetComponent<Sphere_Player>().Smoke.SetActive(true);
                     DoitSmoke2 = true;
-                    AddText(FightText,"Player 2 was surrounded by Fog!");
+                    AddText(FightText, "Player 2 was surrounded by Fog!");
                 }
                 TempOpponent.Opponent.Probability2 = 0;
                 TempOpponent.Opponent.Probability21 = 0;
@@ -757,61 +637,51 @@ public class GameMasterSpectate : GameMaster
             }
         }
     }
-    IEnumerator Reset()
-    {
+    IEnumerator Reset() {
         yield return new WaitUntil(() => (!Stop1 && !Stop2 && !Stop3 && !Stop4 && !Stop5 && !Stop6 && !Stop7 && !Stop8 && !Stop9 && !Stop10 && !Stop11 && !Stop12 && !Stop13 && !Stop14 && !Stop15 && !Stop16));
         if (player1Life <= 0 || player2Life <= 0)
             GameOver();
         else
             ResetRound();
     }
-    IEnumerator Fuckwhileloops(int ID)
-    {
-        if (ID == 1)
-        {
+    IEnumerator Fuckwhileloops(int ID) {
+        if (ID == 1) {
             yield return new WaitUntil(() => (!Stop1));
             Stop3 = true;
             StartCoroutine(WaitForProb(1, 2));
 
         }
-        else if (ID == 2)
-        {
+        else if (ID == 2) {
             yield return new WaitUntil(() => (!Stop2));
             Stop4 = true;
             StartCoroutine(WaitForProb(2, 2));
         }
-        else if (ID == 3)
-        {
+        else if (ID == 3) {
             yield return new WaitUntil(() => (!Stop5));
             Stop7 = true;
             StartCoroutine(WaitForProb(1, 4));
         }
-        else if (ID == 4)
-        {
+        else if (ID == 4) {
             yield return new WaitUntil(() => (!Stop6));
             Stop8 = true;
             StartCoroutine(WaitForProb(2, 4));
         }
-        else if (ID == 5)
-        {
+        else if (ID == 5) {
             yield return new WaitUntil(() => (!Stop9));
             Stop11 = true;
             StartCoroutine(WaitForProb(1, 6));
         }
-        else if (ID == 6)
-        {
+        else if (ID == 6) {
             yield return new WaitUntil(() => (!Stop10));
             Stop12 = true;
             StartCoroutine(WaitForProb(2, 6));
         }
-        else if (ID == 7)
-        {
+        else if (ID == 7) {
             yield return new WaitUntil(() => (!Stop13));
             Stop15 = true;
             StartCoroutine(WaitForProb(1, 8));
         }
-        else if (ID == 6)
-        {
+        else if (ID == 6) {
             yield return new WaitUntil(() => (!Stop14));
             Stop16 = true;
             StartCoroutine(WaitForProb(2, 8));

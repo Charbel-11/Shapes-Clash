@@ -8,7 +8,7 @@ public class Sealingscript : MonoBehaviour {
     FallInPieces objectToFall;
     Shape_Player player, otherPlayer;
     private bool firstTime = true, Go = false;
-    private int BulletPower, AttackPower, ShieldPow;
+    private int otherBulletPower, otherAttackPower, otherShieldPow, ShieldPow, attackPow;
     ParticleSystem Psys;
     ParticleSystem.Particle[] Pars = new ParticleSystem.Particle[1];
 
@@ -75,9 +75,11 @@ public class Sealingscript : MonoBehaviour {
 
     private void OnTriggerEnter(Collider col) {
         if (firstTime) {
-            AttackPower = otherPlayer.GetAttackPower();
-            BulletPower = otherPlayer.GetBulletPower();
+            otherAttackPower = otherPlayer.getOverallAttack();
+            otherBulletPower = otherPlayer.GetBulletPower();
+            otherShieldPow = otherPlayer.getDefense(1);
             ShieldPow = player.GetDefensePower();
+            attackPow = player.getOverallAttack();
             firstTime = false;
         }
 
@@ -99,15 +101,23 @@ public class Sealingscript : MonoBehaviour {
         }
 
         if (col.tag == "BulletP2" || col.tag == "BulletP1") {
-            if (BulletPower > ShieldPow) {
+            if (otherBulletPower > ShieldPow) {
                 disableShield(); ShieldPow = 0;
             }
-            else if (BulletPower <= ShieldPow) {
-                ShieldPow -= BulletPower;
+            else if (otherBulletPower <= ShieldPow) {
+                ShieldPow -= otherBulletPower;
             }
         }
         else if (col.tag == "Shield") {
-            //objectToFall.Fall(); TODO : Implement the col for below shields
+            if (attackPow <= otherShieldPow) {
+                if (gameObject.name != "WaterCage" && gameObject.name != "ToxicRing") {
+                    objectToFall.Fall();
+                }
+                player.GetComponent<Animator>().SetInteger("ID", -1);
+                gameObject.SetActive(false);
+                Invoke("setEnabled1", 2f);
+            }
+            else { attackPow -= otherShieldPow; }
         }
         else if (col.tag == "Player") {
             int tempColID = otherPlayer.GetIdOfAnimUsed();
@@ -120,41 +130,37 @@ public class Sealingscript : MonoBehaviour {
                 col.GetComponentInParent<Animator>().SetBool("Hit", true);
             }
             else if ((tempColID == 3 || tempColID == 17 || tempColID == 21) && tempID < 100) {
-                if (AttackPower > ShieldPow) {
+                if (otherAttackPower > ShieldPow) {
                     disableShield();
                     playerEscape = true;
                 }
-                else if (AttackPower < ShieldPow) {
-                    ShieldPow -= BulletPower;
+                else if (otherAttackPower < ShieldPow) {
+                    ShieldPow -= otherBulletPower;
                     otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
-                    otherPlayer.SetIdOfAnimUSed(-1);
                 }
                 else {
                     disableShield();
-
                     otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
-                    otherPlayer.SetIdOfAnimUSed(-1);
                 }
             }
             else if (tempColID == 4 && tempID < 100) {
-                int AttPow = player.GetAttackPower();
+                int AttPow = player.getOverallAttack();
                 if (gameObject.name == "WaterCage") {
                     col.GetComponent<PlayerCollision>().Collider.enabled = false;
                 }
                 Go = true;
-                if (AttackPower < AttPow) {
-                    AttPow -= AttackPower;
+                if (otherAttackPower < AttPow) {
+                    AttPow -= otherAttackPower;
                     otherPlayer.GetComponent<Animator>().SetTrigger("Stuck");
                 }
-                else if (AttackPower == ShieldPow) {
+                else if (otherAttackPower == ShieldPow) {
                     otherPlayer.GetComponent<Animator>().SetTrigger("Stuck");
                     objectToFall.Fall();
                     player.GetComponent<Animator>().SetInteger("ID", -1);
-                    AttPow = 0;
-                    AttackPower = 0;
+                    AttPow = otherAttackPower = 0;
                 }
                 else {
-                    AttackPower -= AttPow;
+                    otherAttackPower -= AttPow;
                     AttPow = 0;
                     objectToFall.Fall();
                     player.GetComponent<Animator>().SetInteger("ID", -1);
@@ -162,19 +168,22 @@ public class Sealingscript : MonoBehaviour {
             }
         }
         else if (col.tag == "Bullet") {
-            if (player.attack[1] <= otherPlayer.attack[1])
+            int attackB = player.getAttack(1), otherAttackB = otherPlayer.getAttack(1);
+            if (attackB <= otherAttackB)
                 if (player is Cube_Player || player is Sphere_Player)
                     player.GetComponent<Animator>().SetInteger("ID", -1);
                 else
                     gameObject.SetActive(false);
         }
         else if (col.tag == "Fountain") {
-            if (player.attack[1] <= otherPlayer.attack[1]) {
+            int attackB = player.getAttack(1), otherAttackB = otherPlayer.getAttack(1);
+
+            if (attackB <= otherAttackB) {
                 if (player is Cube_Player || player is Sphere_Player)
                     player.GetComponent<Animator>().SetInteger("ID", -1);
                 else
                     gameObject.SetActive(false);
-                if (player.attack[1] == otherPlayer.attack[1])
+                if (attackB == otherAttackB)
                     col.gameObject.SetActive(false);
             }
             else
@@ -204,15 +213,28 @@ public class Sealingscript : MonoBehaviour {
         }
 
         if (firstTime) {
-            AttackPower = otherPlayer.GetAttackPower();
-            BulletPower = otherPlayer.GetBulletPower();
+            otherAttackPower = otherPlayer.getOverallAttack();
+            otherBulletPower = otherPlayer.GetBulletPower();
+            otherShieldPow = otherPlayer.getDefense(1);
             ShieldPow = player.GetDefensePower();
+            attackPow = player.getOverallAttack();
             firstTime = false;
         }
         if (col.tag == "BulletP2" || col.tag == "BulletP1") {
             Go = true;
-            ShieldPow -= BulletPower;
+            ShieldPow -= otherBulletPower;
             if (ShieldPow < 0) { disableShield(); }
+        }
+        else if (col.tag == "Shield") {
+            if (attackPow <= otherShieldPow) {
+                if (gameObject.name != "WaterCage" && gameObject.name != "ToxicRing") {
+                    objectToFall.Fall();
+                }
+                player.GetComponent<Animator>().SetInteger("ID", -1);
+                gameObject.SetActive(false);
+                Invoke("setEnabled1", 2f);
+            }
+            else { attackPow -= otherShieldPow; }
         }
         else if (col.tag == "Player") {
             int tempColID = otherPlayer.GetIdOfAnimUsed();
@@ -227,67 +249,65 @@ public class Sealingscript : MonoBehaviour {
                     col.GetComponent<PlayerCollision>().Collider.enabled = false;
                 }
                 Go = true;
-                if (AttackPower < ShieldPow) {
-                    ShieldPow -= AttackPower;
+                if (otherAttackPower < ShieldPow) {
+                    ShieldPow -= otherAttackPower;
                     otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
                 }
-                else if (AttackPower == ShieldPow) {
+                else if (otherAttackPower == ShieldPow) {
                     otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
                 }
             }
             else if (tempColID == 4 && tempID < 100) {
-                int AttPow = player.GetAttackPower();
+                int AttPow = player.getOverallAttack();
                 if (gameObject.name == "WaterCage") {
                     col.GetComponent<PlayerCollision>().Collider.enabled = false;
                 }
                 Go = true;
-                if (AttackPower < AttPow) {
-                    AttPow -= AttackPower;
+                if (otherAttackPower < AttPow) {
+                    AttPow -= otherAttackPower;
                     otherPlayer.GetComponent<Animator>().SetTrigger("Stuck");
                 }
-                else if (AttackPower == ShieldPow) {
+                else if (otherAttackPower == ShieldPow) {
                     otherPlayer.GetComponent<Animator>().SetTrigger("Stuck");
                     player.GetComponent<Animator>().SetInteger("ID", -1);
-                    AttPow = AttackPower = 0;
+                    AttPow = otherAttackPower = 0;
                 }
                 else {
-                    AttackPower -= AttPow;
+                    otherAttackPower -= AttPow;
                     AttPow = 0;
                     player.GetComponent<Animator>().SetInteger("ID", -1);
                 }
             }
         }
         else if (col.tag == "Bullet") {
-            if (player.attack[1] <= otherPlayer.attack[1])
+            int attackB = player.getAttack(1), otherAttackB = otherPlayer.getAttack(1);
+            if (attackB <= otherAttackB)
                 if (player is Cube_Player || player is Sphere_Player)
                     player.GetComponent<Animator>().SetInteger("ID", -1);
                 else
                     gameObject.SetActive(false);
         }
         else if (col.tag == "Fountain") {
-            if (player.attack[1] <= otherPlayer.attack[1]) {
+            int attackB = player.getAttack(1), otherAttackB = otherPlayer.getAttack(1);
+            if (attackB <= otherAttackB) {
                 if (player is Cube_Player || player is Sphere_Player)
                     player.GetComponent<Animator>().SetInteger("ID", -1);
                 else
                     gameObject.SetActive(false);
-                if (player.attack[1] == otherPlayer.attack[1])
-                    col.SetActive(false);
+                if (attackB == otherAttackB)
+                    col.gameObject.SetActive(false);
             }
             else
-                col.SetActive(false);
+                col.gameObject.SetActive(false);
         }
     }
 
     void disableShield() {
         if (gameObject.name != "WaterCage" && gameObject.name != "ToxicRing") {
             objectToFall.Fall();
-            gameObject.SetActive(false);
-            Invoke("setEnabled1", 2f);
         }
-        else {
-            GetComponentInChildren<BoxCollider>().enabled = false;
-            Invoke("setEnabled2", 2f);
-        }
+        GetComponentInChildren<BoxCollider>().enabled = false;
+        Invoke("setEnabled2", 2f);
     }
 
     void setEnabled1() {

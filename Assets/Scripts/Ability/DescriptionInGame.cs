@@ -36,7 +36,7 @@ public class DescriptionInGame : MonoBehaviour
             Attack = transform.Find("Atck").GetComponent<Text>();
             Def = transform.Find("Def").GetComponent<Text>();
             int att = GameMaster.StatsArr[ID][abLvl - 1], def = GameMaster.StatsArr[ID][abLvl + 2];
-            int addAtt = GM.player1.AddAtt, addDef = GM.player1.AddDef;
+            int addAtt = GM.player1.getAddLvlAttack(), addDef = GM.player1.getAddLvlDef();
             Attack.text = att.ToString() + (att > 0 ? " +" + addAtt.ToString() : "");
             Def.text = def.ToString() + (def > 0 ? " +" + addDef.ToString() : "");
 
@@ -119,7 +119,7 @@ public class DescriptionInGame : MonoBehaviour
                 temp = GameMaster.Super200StatsArr[ID - 201];
 
             Attack = transform.Find("Atck").GetComponent<Text>();
-            int addAtt = GM.player1.AddAtt;
+            int addAtt = GM.player1.getAddLvlAttack();
 
             curRarity = 3;
             rarity = transform.Find("Rarity").gameObject;

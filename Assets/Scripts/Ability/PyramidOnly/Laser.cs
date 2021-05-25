@@ -26,7 +26,7 @@ public class Laser : MonoBehaviour {
     }
 
     private void OnTriggerEnter(Collider col) {
-        if (otherPlayer.escapeFrom[0]) { return; }
+        if (otherPlayer.escapesFrom(0)) { return; }
 
         laserPower = player.GetBulletPower();
         int shieldPower = otherPlayer.GetDefensePower();
@@ -64,13 +64,13 @@ public class Laser : MonoBehaviour {
         }
     }
     private void OnParticleCollision(GameObject col) {
-        if (otherPlayer.escapeFrom[0]) { return; }
+        if (otherPlayer.escapesFrom(0)) { return; }
 
         laserPower = player.GetBulletPower();
         int shieldPower = otherPlayer.GetDefensePower();
 
         if (col.tag == "BulletP1" || col.tag == "BulletP2") {
-            if (otherPlayer.attack[0] == 0) { return; }
+            if (otherPlayer.getAttack(0) == 0) { return; }
             int bulletPower = otherPlayer.GetBulletPower();
 
             if (laserPower > bulletPower) {

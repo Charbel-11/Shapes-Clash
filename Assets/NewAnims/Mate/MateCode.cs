@@ -13,65 +13,52 @@ public class MateCode : MonoBehaviour {
     private int AddLP = 0;
     public bool Reconnect = false;
 
-    void Start()
-    {
+    void Start() {
         Anim = gameObject.GetComponent<Animator>();
-        if(!Reconnect)
+        if (!Reconnect)
             gameObject.SetActive(false);
         Fall = gameObject.GetComponent<FallInPieces>();
     }
-    public void SetAdditionals(int AddAttack, int AddLifePoints)
-    {
+    public void SetAdditionals(int AddAttack, int AddLifePoints) {
         AddAtt = AddAttack;
         AddLP = AddLifePoints;
     }
-    public void Initialize(int LP, int AttP)
-    {
+    public void Initialize(int LP, int AttP) {
         LifePoints = LP + AddLP;
         AttPow = AttP + AddAtt;
         BulletPow += AttPow;
     }
-    public void ResetBulletPow()
-    {
+    public void ResetBulletPow() {
         BulletPow = AttPow;
     }
-    public void IncreaseBulletPow(int add)
-    {
+    public void IncreaseBulletPow(int add) {
         BulletPow += add;
     }
-    public int GetBulletPow()
-    {
+    public int GetBulletPow() {
         return BulletPow;
     }
-    public int GetAttPow()
-    {
+    public int GetAttPow() {
         return AttPow;
     }
-    public int GetLP()
-    {
+    public int GetLP() {
         return LifePoints;
     }
-    public void SetLife(int NewLife)
-    {
+    public void SetLife(int NewLife) {
         LifePoints = NewLife;
-        if (LifePoints == 0)
-        {
+        if (LifePoints == 0) {
             Fall.Fall();
             Anim.SetInteger("ID", -1);
             Invoke("SetFalse", 1f);
         }
     }
-    public void BulletInstantiation()
-    {
+    public void BulletInstantiation() {
         var pos = gameObject.transform.Find("position").GetComponent<Transform>();
         GameMaster.ObjectsToDestroy.Add(Instantiate(Bullet, pos.position, pos.rotation));
     }
-    private void SetFalse()
-    {
+    private void SetFalse() {
         gameObject.SetActive(false);
     }
-    private void OnDisable()
-    {
+    private void OnDisable() {
         Reconnect = false;
     }
 }

@@ -6,8 +6,7 @@ using UnityEngine.SceneManagement;
 using System;
 //using System.Diagnostics;
 
-public class GameMasterOnline : GameMaster
-{
+public class GameMasterOnline : GameMaster {
     public bool v2, p1Selected, p1Selected2;
     private int leftAlive, leftAlive2;
 
@@ -37,8 +36,7 @@ public class GameMasterOnline : GameMaster
     public GameObject Disc;
 
     // Has to be awake to deactivate the unused player before a script calls them
-    protected override void Awake()
-    {
+    protected override void Awake() {
         Online = true;
         Replay = Spectate = false;
         p1Selected = p1Selected2 = true; //needs to be really early because of Reconnect
@@ -53,13 +51,11 @@ public class GameMasterOnline : GameMaster
 
         player2.transform.Find("Design").Find("Cube").gameObject.SetActive(0 == TempOpponent.Opponent.SkinID);
         player2.transform.Find("Design").Find("Cube").GetComponent<MeshRenderer>().enabled = (0 == TempOpponent.Opponent.SkinID);
-        for (int i = 1; i < 2; i++)
-        {
+        for (int i = 1; i < 2; i++) {
             player2.transform.Find("Design").Find("Cube" + i.ToString()).gameObject.SetActive(i == TempOpponent.Opponent.SkinID);
         }
 
-        if (v2)
-        {
+        if (v2) {
             finalIDs2 = PlayerPrefsX.GetIntArray("2ActiveAbilityID" + shapeID12.ToString());
             specialAbilityID2 = PlayerPrefs.GetInt("2SpecialAbilityID" + shapeID12.ToString());
 
@@ -75,8 +71,7 @@ public class GameMasterOnline : GameMaster
             //Set up the correct skin
             player12.transform.Find("Design").Find("Cube").gameObject.SetActive(0 == skin);
             player12.transform.Find("Design").Find("Cube").GetComponent<MeshRenderer>().enabled = (0 == skin);
-            for (int i = 1; i < 2; i++)
-            {
+            for (int i = 1; i < 2; i++) {
                 player12.transform.Find("Design").Find("Cube" + i.ToString()).gameObject.SetActive(i == skin);
             }
 
@@ -91,8 +86,7 @@ public class GameMasterOnline : GameMaster
 
             player22.transform.Find("Design").Find("Cube").gameObject.SetActive(0 == TempOpponent.Opponent.SkinID2);
             player22.transform.Find("Design").Find("Cube").GetComponent<MeshRenderer>().enabled = (0 == TempOpponent.Opponent.SkinID2);
-            for (int i = 1; i < 2; i++)
-            {
+            for (int i = 1; i < 2; i++) {
                 player22.transform.Find("Design").Find("Cube" + i.ToString()).gameObject.SetActive(i == TempOpponent.Opponent.SkinID2);
             }
 
@@ -103,30 +97,24 @@ public class GameMasterOnline : GameMaster
         else { leftAlive = leftAlive2 = 1; }
     }
 
-    protected override void Start()
-    {
+    protected override void Start() {
         base.Start();
         p1Name = PlayerPrefs.GetString("Username");
         p2Name = TempOpponent.Opponent.Username;
 
         canvasPlayer1.transform.Find("Switch").gameObject.SetActive(v2);
         canvasPlayer2.transform.Find("Switch").gameObject.SetActive(v2);
-        if (v2)
-        {
+        if (v2) {
             canvasPlayer2.gameObject.SetActive(true);
 
             string[] namesS = { "ImageCube", "ImagePyramid", "ImageStar", "ImageSphere" };
             Ab = canvasPlayer2.transform.Find("AllUsualAbilities");
-            for (int j = 0; j < Ab.childCount; j++)
-            {
+            for (int j = 0; j < Ab.childCount; j++) {
                 Transform child = Ab.GetChild(j);
                 bool used = false;
-                for (int k = 0; k < 6; k++)
-                {
-                    if (child.GetComponent<Shape_Abilities>().ID == finalIDs2[k])
-                    {
-                        if (child.GetComponent<Shape_Abilities>().common == true)
-                        {
+                for (int k = 0; k < 6; k++) {
+                    if (child.GetComponent<Shape_Abilities>().ID == finalIDs2[k]) {
+                        if (child.GetComponent<Shape_Abilities>().common == true) {
                             for (int i = 0; i < namesS.Length; i++)
                                 child.transform.Find(namesS[i]).gameObject.SetActive(i == shapeID12);
                         }
@@ -141,31 +129,27 @@ public class GameMasterOnline : GameMaster
                         break;
                     }
                 }
-                if (used)
-                {
+                if (used) {
                     j--; continue;
                 }
                 child.gameObject.SetActive(false);
             }
             //For the shape's specific attack
             Ab = canvasPlayer2.transform.Find("Attack");
-            for (int i = 0; i < 4; i++)
-            {
+            for (int i = 0; i < 4; i++) {
                 Ab.GetChild(i).gameObject.SetActive(i == shapeID12);
             }
 
             //For the special ability
             Ab = canvasPlayer2.transform.Find("AllSpecialAbilities");
-            foreach (Transform child in Ab)
-            {
+            foreach (Transform child in Ab) {
                 if (child.name == "AbDescription") { continue; }
                 child.gameObject.SetActive(specialAbilityID2 == child.GetComponent<Shape_Abilities>().ID);
             }
 
             //For the energy point
             Transform ep = canvasPlayer2.transform.Find("EnergyPoints");
-            for (int i = 0; i < 4; i++)
-            {
+            for (int i = 0; i < 4; i++) {
                 ep.GetChild(i).gameObject.SetActive(i == shapeID12);
             }
 
@@ -180,16 +164,14 @@ public class GameMasterOnline : GameMaster
             canvasPlayer2.transform.Find("Get_EP").GetComponent<Shape_Abilities>().Awake();
             canvasPlayer2.gameObject.SetActive(false);
         }
-        for (int i = 1; i < EmotesID.Length + 1; i++)
-        {
+        for (int i = 1; i < EmotesID.Length + 1; i++) {
             GameObject.Find("Emotes" + i).GetComponent<EmotesMotherClass>().ID = EmotesID[i - 1];
         }
         StartCoroutine(waitRound(round, Reconnect));
         Reconnect = false;
     }
 
-    public void switchShape(bool send = true)
-    {
+    public void switchShape(bool send = true) {
         turnOffPassives(true);
 
         int tmp = shapeID1;
@@ -210,8 +192,7 @@ public class GameMasterOnline : GameMaster
 
         Transform MiniEnemy1 = player12.transform.Find("MiniEnemy");
         Transform MiniEnemy2 = player2.transform.Find("MiniEnemy");
-        for (int i = 0; i < 4; i++)
-        {
+        for (int i = 0; i < 4; i++) {
             MiniEnemy1.GetChild(i).gameObject.SetActive(i == shapeID2);
             MiniEnemy2.GetChild(i).gameObject.SetActive(i == shapeID1);
         }
@@ -237,8 +218,7 @@ public class GameMasterOnline : GameMaster
         StartCoroutine("SwitchTimer");
     }
 
-    public void switchShape2()
-    {
+    public void switchShape2() {
         turnOffPassives(false);
 
         int tmp = shapeID2;
@@ -257,8 +237,7 @@ public class GameMasterOnline : GameMaster
 
         Transform MiniEnemy1 = player1.transform.Find("MiniEnemy");
         Transform MiniEnemy2 = player22.transform.Find("MiniEnemy");
-        for (int i = 0; i < 4; i++)
-        {
+        for (int i = 0; i < 4; i++) {
             MiniEnemy1.GetChild(i).gameObject.SetActive(i == shapeID2);
             MiniEnemy2.GetChild(i).gameObject.SetActive(i == shapeID1);
         }
@@ -275,16 +254,13 @@ public class GameMasterOnline : GameMaster
         StartCoroutine("SwitchTimer2");
     }
 
-    IEnumerator SwitchTimer()
-    {
+    IEnumerator SwitchTimer() {
         yield return new WaitForSeconds(1f);
         player12.gameObject.SetActive(false);
         canvasPlayer1.gameObject.SetActive(true);
 
-        if (!Spectate)
-        {
-            for(int k = 0; k < 6; k++)
-            {
+        if (!Spectate) {
+            for (int k = 0; k < 6; k++) {
                 Shape_Abilities cur = canvasPlayer1.transform.Find("Ability" + (k + 1).ToString()).GetComponentInChildren<Shape_Abilities>();
                 if (cur == null) { continue; }
                 cur.Disabled(); cur.updateState();
@@ -295,19 +271,16 @@ public class GameMasterOnline : GameMaster
         }
     }
 
-    IEnumerator SwitchTimer2()
-    {
+    IEnumerator SwitchTimer2() {
         yield return new WaitForSeconds(1f);
         player22.gameObject.SetActive(false);
     }
 
-    public override void TryEvaluating()
-    {
+    public override void TryEvaluating() {
         player1ChoiceDone = player1.GetChoiceDone();
         player2ChoiceDone = player2.GetChoiceDone();
 
-        if (player1ChoiceDone && player2ChoiceDone)
-        {
+        if (player1ChoiceDone && player2ChoiceDone) {
             if (StopEvaluating) { return; }
             StopEvaluating = true;
             StartCoroutine(EvaluateOutput());
@@ -317,20 +290,17 @@ public class GameMasterOnline : GameMaster
         if (player1ChoiceDone) { ChangeCameraAndCanvas(); }
     }
 
-    void ChangeCameraAndCanvas()
-    {
+    void ChangeCameraAndCanvas() {
         canvasPlayer1.gameObject.SetActive(false);
 
-        if (botActive)
-        {
+        if (botActive) {
             bot.makeChoice();
             cameraPlayer1.gameObject.SetActive(false);
             cameraFight.gameObject.SetActive(true);
         }
     }
 
-    protected override IEnumerator EvaluateOutput()
-    {
+    protected override IEnumerator EvaluateOutput() {
         Wait = 0;
         DisconnectedFirstTime = false;
 
@@ -345,68 +315,54 @@ public class GameMasterOnline : GameMaster
         //PASSIVES
 
         //For the star burn passive
-        if (player1 is Star_Player)
-        {
-            if (netDamageTakenP2 > 0 && (player1.GetComponent<Star_Player>().CanBurn == true || player1.ProbPlusAtt > 0))
-            {
+        if (player1 is Star_Player) {
+            if (netDamageTakenP2 > 0 && (player1.GetComponent<Star_Player>().CanBurn == true || player1.ProbPlusAtt > 0)) {
                 Stop1 = true;
                 ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"));
                 StartCoroutine(WaitForProb(1, 1));
             }
         }
-        if (player2 is Star_Player)
-        {
-            if (netDamageTakenP1 > 0 && (player2.GetComponent<Star_Player>().CanBurn == true || player2.ProbPlusAtt > 0))
-            {
+        if (player2 is Star_Player) {
+            if (netDamageTakenP1 > 0 && (player2.GetComponent<Star_Player>().CanBurn == true || player2.ProbPlusAtt > 0)) {
                 Stop2 = true;
-                if(Disconnected)
-                    ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"),true);
+                if (Disconnected)
+                    ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"), true);
 
                 StartCoroutine(WaitForProb(2, 1));
             }
         }
-        //For turning off the FieryEyes
-        if (player1.GetComponent<Shape_Player>().AdditionalDamage > 0)
-        {
-            player1.GetComponent<Shape_Player>().AdditionalDamage = 0;
+        //For turning off the FieryEyes or others
+        if (player1.GetComponent<Shape_Player>().getAdditionalDamage() > 0) {
+            player1.GetComponent<Shape_Player>().setAdditionalDamage(0); boostP1 = 0;
             player1.transform.Find("Design").transform.Find("FieryEyes").gameObject.SetActive(false);
-            AddText(FightText,"The Attack Boost faded.");
+            AddText(FightText, p1Name + "'s Attack Boost faded.");
         }
-        if (player2.GetComponent<Shape_Player>().AdditionalDamage > 0)
-        {
-            player2.GetComponent<Shape_Player>().AdditionalDamage = 0;
+        if (player2.GetComponent<Shape_Player>().getAdditionalDamage() > 0) {
+            player2.GetComponent<Shape_Player>().setAdditionalDamage(0); boostP2 = 0;
             player2.transform.Find("Design").transform.Find("FieryEyes").gameObject.SetActive(false);
-            AddText(FightText, "The Attack Boost faded.");
+            AddText(FightText, p2Name + "'s Attack Boost faded.");
         }
         //For the Star Additional Attack passive
-        if (player1 is Star_Player)
-        {
-            if (netDamageTakenP1 > 0 && (player1.GetComponent<Star_Player>().CanFieryEyes == true || player1.ProbPlusDef > 0))
-            {
-                if (Stop1)
-                {
+        if (player1 is Star_Player) {
+            if (netDamageTakenP1 > 0 && (player1.GetComponent<Star_Player>().CanFieryEyes == true || player1.ProbPlusDef > 0)) {
+                if (Stop1) {
                     StartCoroutine(Fuckwhileloops(1));
                 }
-                else
-                {
+                else {
                     Stop3 = true;
                     ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"));
                     StartCoroutine(WaitForProb(1, 2));
                 }
             }
         }
-        if (player2 is Star_Player)
-        {
-            if (netDamageTakenP2 > 0 && (player2.GetComponent<Star_Player>().CanFieryEyes == true || player2.ProbPlusDef > 0))
-            {
-                if (Stop2)
-                {
+        if (player2 is Star_Player) {
+            if (netDamageTakenP2 > 0 && (player2.GetComponent<Star_Player>().CanFieryEyes == true || player2.ProbPlusDef > 0)) {
+                if (Stop2) {
                     StartCoroutine(Fuckwhileloops(2));
                 }
-                else
-                {
+                else {
                     Stop4 = true;
-                    if(Disconnected)
+                    if (Disconnected)
                         ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"), true);
 
                     StartCoroutine(WaitForProb(2, 2));
@@ -415,21 +371,17 @@ public class GameMasterOnline : GameMaster
         }
 
         //For the cube stuck in place passive
-        if (player1 is Cube_Player)
-        {
-            if (netDamageTakenP2 > 0 && (player1.GetComponent<Cube_Player>().CanStuckInPlace == true || player1.ProbPlusAtt > 0))
-            {
+        if (player1 is Cube_Player) {
+            if (netDamageTakenP2 > 0 && (player1.GetComponent<Cube_Player>().CanStuckInPlace == true || player1.ProbPlusAtt > 0)) {
                 Stop5 = true;
                 ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"));
                 StartCoroutine(WaitForProb(1, 3));
             }
         }
-        if (player2 is Cube_Player)
-        {
-            if (netDamageTakenP1 > 0 && (player2.GetComponent<Cube_Player>().CanStuckInPlace == true || player2.ProbPlusAtt > 0))
-            {
+        if (player2 is Cube_Player) {
+            if (netDamageTakenP1 > 0 && (player2.GetComponent<Cube_Player>().CanStuckInPlace == true || player2.ProbPlusAtt > 0)) {
                 Stop6 = true;
-                if(Disconnected)
+                if (Disconnected)
                     ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"), true);
 
                 StartCoroutine(WaitForProb(2, 3));
@@ -437,34 +389,26 @@ public class GameMasterOnline : GameMaster
         }
 
         //For the cube protective earth passive; it stays enabled until the player is attacked
-        if (player1 is Cube_Player)
-        {
-            if (netDamageTakenP1 > 0 && (player1.GetComponent<Cube_Player>().CanHaveProtectiveEarth == true || player1.ProbPlusDef > 0) && !protectiveEarthEffectP1)
-            {
-                if (Stop5)
-                {
+        if (player1 is Cube_Player) {
+            if (netDamageTakenP1 > 0 && (player1.GetComponent<Cube_Player>().CanHaveProtectiveEarth == true || player1.ProbPlusDef > 0) && !protectiveEarthEffectP1) {
+                if (Stop5) {
                     StartCoroutine(Fuckwhileloops(3));
                 }
-                else
-                {
+                else {
                     Stop7 = true;
                     ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"));
                     StartCoroutine(WaitForProb(1, 4));
                 }
             }
         }
-        if (player2 is Cube_Player)
-        {
-            if (netDamageTakenP2 > 0 && (player2.GetComponent<Cube_Player>().CanHaveProtectiveEarth == true || player2.ProbPlusDef > 0) && !protectiveEarthEffectP2)
-            {
-                if (Stop6)
-                {
+        if (player2 is Cube_Player) {
+            if (netDamageTakenP2 > 0 && (player2.GetComponent<Cube_Player>().CanHaveProtectiveEarth == true || player2.ProbPlusDef > 0) && !protectiveEarthEffectP2) {
+                if (Stop6) {
                     StartCoroutine(Fuckwhileloops(4));
                 }
-                else
-                {
+                else {
                     Stop8 = true;
-                    if(Disconnected)
+                    if (Disconnected)
                         ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"), true);
 
                     StartCoroutine(WaitForProb(2, 4));
@@ -474,19 +418,15 @@ public class GameMasterOnline : GameMaster
 
         //For the pyramid freeze passive
 
-        if (player1 is Pyramid_Player)
-        {
-            if (netDamageTakenP2 > 0 && (player1.GetComponent<Pyramid_Player>().CanFreeze == true || player1.ProbPlusAtt > 0))
-            {
+        if (player1 is Pyramid_Player) {
+            if (netDamageTakenP2 > 0 && (player1.GetComponent<Pyramid_Player>().CanFreeze == true || player1.ProbPlusAtt > 0)) {
                 Stop9 = true;
                 ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"));
                 StartCoroutine(WaitForProb(1, 5));
             }
         }
-        if (player2 is Pyramid_Player)
-        {
-            if (netDamageTakenP1 > 0 && (player2.GetComponent<Pyramid_Player>().CanFreeze == true || player2.ProbPlusAtt > 0))
-            {
+        if (player2 is Pyramid_Player) {
+            if (netDamageTakenP1 > 0 && (player2.GetComponent<Pyramid_Player>().CanFreeze == true || player2.ProbPlusAtt > 0)) {
                 Stop10 = true;
                 if (Disconnected)
                     ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"), true);
@@ -495,32 +435,24 @@ public class GameMasterOnline : GameMaster
         }
 
         //for the Pyramid Snow Passive
-        if (player1 is Pyramid_Player)
-        {
-            if (netDamageTakenP1 > 0 && (player1.GetComponent<Pyramid_Player>().CanSnow == true || player1.ProbPlusDef > 0))
-            {
-                if (Stop9)
-                {
+        if (player1 is Pyramid_Player) {
+            if (netDamageTakenP1 > 0 && (player1.GetComponent<Pyramid_Player>().CanSnow == true || player1.ProbPlusDef > 0)) {
+                if (Stop9) {
                     StartCoroutine(Fuckwhileloops(5));
                 }
-                else
-                {
+                else {
                     Stop11 = true;
                     ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"));
                     StartCoroutine(WaitForProb(1, 6));
                 }
             }
         }
-        if (player2 is Pyramid_Player)
-        {
-            if (netDamageTakenP2 > 0 && (player2.GetComponent<Pyramid_Player>().CanSnow == true || player2.ProbPlusDef > 0))
-            {
-                if (Stop10)
-                {
+        if (player2 is Pyramid_Player) {
+            if (netDamageTakenP2 > 0 && (player2.GetComponent<Pyramid_Player>().CanSnow == true || player2.ProbPlusDef > 0)) {
+                if (Stop10) {
                     StartCoroutine(Fuckwhileloops(6));
                 }
-                else
-                {
+                else {
                     Stop12 = true;
                     if (Disconnected)
                         ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"), true);
@@ -530,19 +462,15 @@ public class GameMasterOnline : GameMaster
         }
 
         //for the Sphere HelperSpheres Passive
-        if (player1 is Sphere_Player)
-        {
-            if (netDamageTakenP2 > 0 && (player1.GetComponent<Sphere_Player>().CanHelperSpheres || player1.ProbPlusAtt > 0))
-            {
+        if (player1 is Sphere_Player) {
+            if (netDamageTakenP2 > 0 && (player1.GetComponent<Sphere_Player>().CanHelperSpheres || player1.ProbPlusAtt > 0)) {
                 Stop13 = true;
                 ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"));
                 StartCoroutine(WaitForProb(1, 7));
             }
         }
-        if (player2 is Sphere_Player)
-        {
-            if (netDamageTakenP1 > 0 && (player2.GetComponent<Sphere_Player>().CanHelperSpheres || player2.ProbPlusAtt > 0))
-            {
+        if (player2 is Sphere_Player) {
+            if (netDamageTakenP1 > 0 && (player2.GetComponent<Sphere_Player>().CanHelperSpheres || player2.ProbPlusAtt > 0)) {
                 Stop14 = true;
                 if (Disconnected)
                     ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"), true);
@@ -551,35 +479,27 @@ public class GameMasterOnline : GameMaster
         }
 
         //For The Smoke Passive
-        if (player1 is Sphere_Player)
-        {
-            if (netDamageTakenP1 > 0 && (player1.GetComponent<Sphere_Player>().CanSmoke || player1.ProbPlusDef > 0))
-            {
-                if (Stop13)
-                {
+        if (player1 is Sphere_Player) {
+            if (netDamageTakenP1 > 0 && (player1.GetComponent<Sphere_Player>().CanSmoke || player1.ProbPlusDef > 0)) {
+                if (Stop13) {
                     StartCoroutine(Fuckwhileloops(7));
                 }
-                else
-                {
+                else {
                     Stop15 = true;
                     ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"));
                     StartCoroutine(WaitForProb(1, 8));
                 }
             }
         }
-        if (player2 is Sphere_Player)
-        {
-            if (netDamageTakenP2 > 0 && (player2.GetComponent<Sphere_Player>().CanSmoke || player2.ProbPlusDef > 0))
-            {
-                if (Stop14)
-                {
+        if (player2 is Sphere_Player) {
+            if (netDamageTakenP2 > 0 && (player2.GetComponent<Sphere_Player>().CanSmoke || player2.ProbPlusDef > 0)) {
+                if (Stop14) {
                     StartCoroutine(Fuckwhileloops(8));
                 }
-                else
-                {
+                else {
                     Stop16 = true;
                     if (Disconnected)
-                        ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"),true);
+                        ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"), true);
                     StartCoroutine(WaitForProb(2, 8));
                 }
             }
@@ -588,18 +508,15 @@ public class GameMasterOnline : GameMaster
         player1Life = player1.GetLife();
         player2Life = player2.GetLife();
 
-        if (v2)
-        {
-            if (!v2CheckEndRound())
-            {
+        if (v2) {
+            if (!v2CheckEndRound()) {
                 if (Stop1 || Stop2 || Stop3 || Stop4 || Stop5 || Stop6 || Stop7 || Stop8 || Stop9 || Stop10 || Stop11 || Stop12 || Stop13 || Stop14 || Stop15 || Stop16)
                     StartCoroutine(ResetV2());
                 else
                     ResetRound();
             }
         }
-        else
-        {
+        else {
             if (player1Life <= 0 || player2Life <= 0)
                 GameOver();
             else if (Stop1 || Stop2 || Stop3 || Stop4 || Stop5 || Stop6 || Stop7 || Stop8 || Stop9 || Stop10 || Stop11 || Stop12 || Stop13 || Stop14 || Stop15 || Stop16)
@@ -609,36 +526,29 @@ public class GameMasterOnline : GameMaster
         }
     }
 
-    bool v2CheckEndRound()
-    {
+    bool v2CheckEndRound() {
         Debug.Log("Check: " + player1.GetLife() + " " + player2.GetLife());
-        if (player1.GetLife() <= 0 && player12.GetLife() <= 0)
-        {
+        if (player1.GetLife() <= 0 && player12.GetLife() <= 0) {
             leftAlive = 0;
             GameOver();
             return true;
         }
-        if (player2.GetLife() <= 0 && player22.GetLife() <= 0)
-        {
+        if (player2.GetLife() <= 0 && player22.GetLife() <= 0) {
             leftAlive2 = 0;
             GameOver();
             return true;
         }
 
-        if (player1.GetLife() <= 0 || player12.GetLife() <= 0)
-        {
-            if (leftAlive == 2)
-            {
+        if (player1.GetLife() <= 0 || player12.GetLife() <= 0) {
+            if (leftAlive == 2) {
                 switchShape(false);
                 canvasPlayer1.transform.Find("Switch").gameObject.SetActive(false);
                 canvasPlayer2.transform.Find("Switch").gameObject.SetActive(false);
                 leftAlive = 1;
             }
         }
-        if (player2.GetLife() <= 0 || player22.GetLife() <= 0)
-        {
-            if (leftAlive2 == 2)
-            {
+        if (player2.GetLife() <= 0 || player22.GetLife() <= 0) {
+            if (leftAlive2 == 2) {
                 leftAlive2 = 1;
                 switchShape2();
             }
@@ -646,39 +556,31 @@ public class GameMasterOnline : GameMaster
         return false;
     }
 
-    private void forceEndRound()
-    {
-        if (player1.GetChoiceDone() == false)
-        {
+    private void forceEndRound() {
+        if (player1.GetChoiceDone() == false) {
             canvasPlayer1.transform.Find("Get_EP").GetComponent<Get_EP>().UseAbility();
         }
 
-        if(player2.GetChoiceDone() == false && Disconnected)
-        {
+        if (player2.GetChoiceDone() == false && Disconnected) {
             if (TempOpponent.Opponent.Abilities.TryGetValue(0, out TempOpponent.Method method))
                 method.Invoke();
         }
     }
 
-    IEnumerator waitRound(int r, bool reconnect = false)
-    {
+    IEnumerator waitRound(int r, bool reconnect = false) {
         if (reconnect) { yield return new WaitForSeconds(1); }
         else { yield return new WaitForSeconds(4); }
         if (round != r) { yield break; }
-        foreach (Text T in SecondsLeft)
-        {
-            if (T.transform.root.gameObject.activeSelf)
-            {
+        foreach (Text T in SecondsLeft) {
+            if (T.transform.root.gameObject.activeSelf) {
                 T.transform.parent.gameObject.SetActive(true);
                 T.text = "3 Seconds Left";
             }
         }
         yield return new WaitForSeconds(1);
         if (round != r) { yield break; }
-        foreach (Text T in SecondsLeft)
-        {
-            if (T.transform.root.gameObject.activeSelf)
-            {
+        foreach (Text T in SecondsLeft) {
+            if (T.transform.root.gameObject.activeSelf) {
                 T.transform.parent.gameObject.SetActive(true);
                 T.text = "2 Seconds Left";
             }
@@ -689,10 +591,8 @@ public class GameMasterOnline : GameMaster
         EmotesMotherClass.OK = false;
         yield return new WaitForSeconds(1);
         if (round != r) { yield break; }
-        foreach (Text T in SecondsLeft)
-        {
-            if (T.transform.root.gameObject.activeSelf)
-            {
+        foreach (Text T in SecondsLeft) {
+            if (T.transform.root.gameObject.activeSelf) {
                 T.transform.parent.gameObject.SetActive(true);
                 T.text = "1 Seconds Left";
             }
@@ -701,15 +601,13 @@ public class GameMasterOnline : GameMaster
         if (round == r) forceEndRound();
     }
 
-    protected override void ResetRound(bool Start = false)
-    {
+    protected override void ResetRound(bool Start = false) {
         foreach (Text T in SecondsLeft)
             T.transform.parent.gameObject.SetActive(false);
 
         base.ResetRound(Start);
 
-        if (v2)
-        {
+        if (v2) {
             canvasPlayer1.transform.Find("Switch").GetComponent<Button>().interactable = player1.GetEP() >= 2;
             canvasPlayer2.transform.Find("Switch").GetComponent<Button>().interactable = player1.GetEP() >= 2;
         }
@@ -726,8 +624,7 @@ public class GameMasterOnline : GameMaster
         StartCoroutine(waitRound(round));
     }
 
-    public override void GameOver()
-    {
+    public override void GameOver() {
         /*
         StackTrace stackTrace = new StackTrace();
         print(stackTrace.GetFrame(0).GetMethod().Name + " called GameOver");
@@ -739,8 +636,7 @@ public class GameMasterOnline : GameMaster
             */
 
         FightCanvas.SetActive(false);
-        if (background == 1)
-        {
+        if (background == 1) {
             Backgrounds[1].transform.Find("UP").Find("BackEnd1").gameObject.SetActive(true);
             Backgrounds[1].transform.Find("UP").Find("BackEnd2").gameObject.SetActive(true);
         }
@@ -756,32 +652,28 @@ public class GameMasterOnline : GameMaster
         string lastDeck = PlayerPrefs.GetString("Username") + "," + shapeID.ToString() + "," + String.Join(",", PlayerPrefsX.GetIntArray("ActiveAbilityID" + shapeID.ToString())) + "," + PlayerPrefs.GetInt("SpecialAbilityID" + shapeID.ToString()).ToString();
         ClientTCP.PACKAGE_DEBUG("LastDeck", lastDeck);
 
-        if (player1Life <= 0 && player2Life <= 0)
-        {
+        if (player1Life <= 0 && player2Life <= 0) {
             playerWon = 0;
             cameraFight.gameObject.SetActive(true);
             animatorPlayer1.SetBool("Win", true);
             animatorPlayer2.SetBool("Win", true);
             int GameMode = v2 ? 2 : 1;
-            if (TempOpponent.Opponent.ConnectionID2 > TempOpponent.Opponent.ConnectionID)
-            {
-                ClientTCP.PACKAGE_ENDGAME(GameMode, PlayerPrefs.GetString("Username"), TempOpponent.Opponent.Username, TempOpponent.Opponent.ConnectionID, shapeID1, shapeID2, Mode==1, true);
+            if (TempOpponent.Opponent.ConnectionID2 > TempOpponent.Opponent.ConnectionID) {
+                ClientTCP.PACKAGE_ENDGAME(GameMode, PlayerPrefs.GetString("Username"), TempOpponent.Opponent.Username, TempOpponent.Opponent.ConnectionID, shapeID1, shapeID2, Mode == 1, true);
             }
-            AddReplay(TempOpponent.Opponent.Username, shapeID1, shapeID2, string.Join(",", ChoicesP1), string.Join(",", ChoicesP2), string.Join(",", ProbsP1), string.Join(",", ProbsP2), string.Join(",", AbLevelArray), string.Join(",", TempOpponent.Opponent.AbLevelArray), string.Join(",", Super100), string.Join(",", TempOpponent.Opponent.Super100), string.Join(",", Super200), string.Join(",", TempOpponent.Opponent.Super200), string.Join(",", PassivesArray), string.Join(",", TempOpponent.Opponent.Passives),false, Mode == 1, true);
+            AddReplay(TempOpponent.Opponent.Username, shapeID1, shapeID2, string.Join(",", ChoicesP1), string.Join(",", ChoicesP2), string.Join(",", ProbsP1), string.Join(",", ProbsP2), string.Join(",", AbLevelArray), string.Join(",", TempOpponent.Opponent.AbLevelArray), string.Join(",", Super100), string.Join(",", TempOpponent.Opponent.Super100), string.Join(",", Super200), string.Join(",", TempOpponent.Opponent.Super200), string.Join(",", PassivesArray), string.Join(",", TempOpponent.Opponent.Passives), false, Mode == 1, true);
         }
-        else if (player1Life <= 0)
-        {
+        else if (player1Life <= 0) {
             playerWon = 2;
-            AddReplay(TempOpponent.Opponent.Username, shapeID1, shapeID2, string.Join(",", ChoicesP1), string.Join(",", ChoicesP2), string.Join(",", ProbsP1), string.Join(",", ProbsP2), string.Join(",", AbLevelArray), string.Join(",", TempOpponent.Opponent.AbLevelArray), string.Join(",", Super100), string.Join(",", TempOpponent.Opponent.Super100), string.Join(",", Super200), string.Join(",", TempOpponent.Opponent.Super200), string.Join(",", PassivesArray), string.Join(",", TempOpponent.Opponent.Passives), false,Mode == 1, false);
+            AddReplay(TempOpponent.Opponent.Username, shapeID1, shapeID2, string.Join(",", ChoicesP1), string.Join(",", ChoicesP2), string.Join(",", ProbsP1), string.Join(",", ProbsP2), string.Join(",", AbLevelArray), string.Join(",", TempOpponent.Opponent.AbLevelArray), string.Join(",", Super100), string.Join(",", TempOpponent.Opponent.Super100), string.Join(",", Super200), string.Join(",", TempOpponent.Opponent.Super200), string.Join(",", PassivesArray), string.Join(",", TempOpponent.Opponent.Passives), false, Mode == 1, false);
             animatorPlayer1.SetBool("Hit", true);
             animatorPlayer2.SetBool("Win", true);
         }
-        else
-        {
+        else {
             int GameMode = v2 ? 2 : 1;
 
             ClientTCP.PACKAGE_ENDGAME(GameMode, PlayerPrefs.GetString("Username"), TempOpponent.Opponent.Username, TempOpponent.Opponent.ConnectionID, shapeID1, shapeID2, Mode == 1, false);
-            AddReplay(TempOpponent.Opponent.Username, shapeID1, shapeID2, string.Join(",", ChoicesP1), string.Join(",", ChoicesP2), string.Join(",", ProbsP1), string.Join(",", ProbsP2), string.Join(",", AbLevelArray), string.Join(",", TempOpponent.Opponent.AbLevelArray), string.Join(",", Super100), string.Join(",", TempOpponent.Opponent.Super100), string.Join(",", Super200), string.Join(",", TempOpponent.Opponent.Super200), string.Join(",", PassivesArray), string.Join(",", TempOpponent.Opponent.Passives),true, Mode == 1, false);
+            AddReplay(TempOpponent.Opponent.Username, shapeID1, shapeID2, string.Join(",", ChoicesP1), string.Join(",", ChoicesP2), string.Join(",", ProbsP1), string.Join(",", ProbsP2), string.Join(",", AbLevelArray), string.Join(",", TempOpponent.Opponent.AbLevelArray), string.Join(",", Super100), string.Join(",", TempOpponent.Opponent.Super100), string.Join(",", Super200), string.Join(",", TempOpponent.Opponent.Super200), string.Join(",", PassivesArray), string.Join(",", TempOpponent.Opponent.Passives), true, Mode == 1, false);
             playerWon = 1;
             animatorPlayer2.SetBool("Hit", true);
             animatorPlayer1.SetBool("Win", true);
@@ -790,8 +682,7 @@ public class GameMasterOnline : GameMaster
         cameraPlayer1.gameObject.SetActive(true);
         cameraPlayer1.GetComponent<Animator>().SetBool("End", true);
 
-        if (Mode == 1)
-        {
+        if (Mode == 1) {
             TempOpponent.Opponent.FriendlyBattle = false;
             TempOpponent.Opponent.Accepting = false;
         }
@@ -800,13 +691,11 @@ public class GameMasterOnline : GameMaster
         StartCoroutine(endC());
     }
 
-    IEnumerator endC()
-    {
+    IEnumerator endC() {
         yield return new WaitForSeconds(1.5f);
         endGame.gameObject.SetActive(true);
 
-        if (Mode != 1)  
-        {
+        if (Mode != 1) {
             if (v2) endGame2.gameObject.SetActive(true);
             int goldGained = 0, rbGained = 0, xpGained = 0;
             if (playerWon == 1) { goldGained = 50; rbGained = 5; xpGained = 50; }
@@ -833,19 +722,17 @@ public class GameMasterOnline : GameMaster
             PlayerPrefsX.SetIntArray("XP", curXP);
             PlayerPrefs.Save();
 
-            try
-            {
+            try {
                 bool b = endGame.GetComponent<Endgame>().shapeLevelUp();
                 if (!b) ClientTCP.PACKAGE_ChestOpening();
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 endGame.GetComponent<Endgame>().ErrorOccured.gameObject.SetActive(true);
                 print(e);
             }
 
             endGame.GetComponent<Endgame>().UpdateEnd(goldGained, rbGained, xpGained);
-            if (v2) endGame2.GetComponent<Endgame>().UpdateEnd(goldGained, rbGained, xpGained);   
+            if (v2) endGame2.GetComponent<Endgame>().UpdateEnd(goldGained, rbGained, xpGained);
             if (v2) endGame2.gameObject.SetActive(false);
         }
         else  //For friendly games
@@ -854,17 +741,13 @@ public class GameMasterOnline : GameMaster
         }
     }
 
-    IEnumerator WaitForProb(int Player, int ID)
-    {
-        if (Player == 1)
-        {
+    IEnumerator WaitForProb(int Player, int ID) {
+        if (Player == 1) {
             yield return new WaitUntil(() => TempOpponent.Opponent.GotProb1 == true);
             TempOpponent.Opponent.GotProb1 = false;
             ProbsP1.Add(TempOpponent.Opponent.Probability);
-            if (ID == 1)
-            {
-                if (TempOpponent.Opponent.Probability <= (((Star_Player)player1).CanBurn ? PassiveStats[4][PassivesArray[4] + 2]+player1.ProbPlusAtt : player1.ProbPlusAtt))
-                {
+            if (ID == 1) {
+                if (TempOpponent.Opponent.Probability <= (((Star_Player)player1).CanBurn ? PassiveStats[4][PassivesArray[4] + 2] + player1.ProbPlusAtt : player1.ProbPlusAtt)) {
                     StartRoundCountBurn2 = round;
                     player2.transform.Find("BurnedFlame").gameObject.SetActive(true);
                     AddText(FightText, "Player 2 was Burned by his Opponent's Fire Attack");
@@ -872,21 +755,18 @@ public class GameMasterOnline : GameMaster
                 TempOpponent.Opponent.Probability = 0;
                 Stop1 = false;
             }
-            else if (ID == 2)
-            {
-                if (TempOpponent.Opponent.Probability <= (((Star_Player)player1).CanFieryEyes ? PassiveStats[5][PassivesArray[5] + 2] + player1.ProbPlusDef : player1.ProbPlusDef))
-                {
+            else if (ID == 2) {
+                if (TempOpponent.Opponent.Probability <= (((Star_Player)player1).CanFieryEyes ? PassiveStats[5][PassivesArray[5] + 2] + player1.ProbPlusDef : player1.ProbPlusDef)) {
                     player1.transform.Find("Design").transform.Find("FieryEyes").gameObject.SetActive(true);
-                    player1.AdditionalDamage = PassiveStats[5][PassivesArray[5] - 1];
+                    player1.setAdditionalDamage(PassiveStats[5][PassivesArray[5] - 1]);
+                    boostP1 = PassiveStats[5][PassivesArray[5] - 1];
                     AddText(FightText, "Player 1 got angry because he took damage and gained a power boost.");
                 }
                 TempOpponent.Opponent.Probability = 0;
                 Stop3 = false;
             }
-            else if (ID == 3)
-            {
-                if (TempOpponent.Opponent.Probability <= (((Cube_Player)player1).CanStuckInPlace ? PassiveStats[0][PassivesArray[0] + 2] + player1.ProbPlusAtt : player1.ProbPlusAtt))
-                {
+            else if (ID == 3) {
+                if (TempOpponent.Opponent.Probability <= (((Cube_Player)player1).CanStuckInPlace ? PassiveStats[0][PassivesArray[0] + 2] + player1.ProbPlusAtt : player1.ProbPlusAtt)) {
                     StartRoundCountStuckInPlace2 = round;
                     player2.transform.Find("GroundStuck").gameObject.SetActive(true);
                     AddText(FightText, "Player 2 is stuck!");
@@ -894,10 +774,8 @@ public class GameMasterOnline : GameMaster
                 TempOpponent.Opponent.Probability = 0;
                 Stop5 = false;
             }
-            else if (ID == 4)
-            {
-                if (TempOpponent.Opponent.Probability <= (((Cube_Player)player1).CanHaveProtectiveEarth ? PassiveStats[1][PassivesArray[1] + 2] + player1.ProbPlusDef : player1.ProbPlusDef))
-                {
+            else if (ID == 4) {
+                if (TempOpponent.Opponent.Probability <= (((Cube_Player)player1).CanHaveProtectiveEarth ? PassiveStats[1][PassivesArray[1] + 2] + player1.ProbPlusDef : player1.ProbPlusDef)) {
                     player1.GetComponent<Cube_Player>().ShieldAppearance.SetActive(true);
                     protectiveEarthEffectP1 = true;
                     HardeningPow1 = PassiveStats[1][PassivesArray[1] - 1];
@@ -906,21 +784,17 @@ public class GameMasterOnline : GameMaster
                 TempOpponent.Opponent.Probability = 0;
                 Stop7 = false;
             }
-            else if (ID == 5)
-            {
-                if (TempOpponent.Opponent.Probability <= (((Pyramid_Player)player1).CanFreeze ? PassiveStats[2][PassivesArray[2] + 2] + player1.ProbPlusAtt : player1.ProbPlusAtt))
-                {
+            else if (ID == 5) {
+                if (TempOpponent.Opponent.Probability <= (((Pyramid_Player)player1).CanFreeze ? PassiveStats[2][PassivesArray[2] + 2] + player1.ProbPlusAtt : player1.ProbPlusAtt)) {
                     StartRoundCountFreeze2 = round;
                     animatorPlayer2.SetBool("Frozen", true);
-                    AddText(FightText, "Player 2 is frozen for " + PassiveStats[2][PassivesArray[2] - 1]+" round(s)");
+                    AddText(FightText, "Player 2 is frozen for " + PassiveStats[2][PassivesArray[2] - 1] + " round(s)");
                 }
                 TempOpponent.Opponent.Probability = 0;
                 Stop9 = false;
             }
-            else if (ID == 6)
-            {
-                if(TempOpponent.Opponent.Probability <= (((Pyramid_Player)player1).CanSnow ? PassiveStats[3][PassivesArray[3] + 2] + player1.ProbPlusDef : player1.ProbPlusDef))
-                {
+            else if (ID == 6) {
+                if (TempOpponent.Opponent.Probability <= (((Pyramid_Player)player1).CanSnow ? PassiveStats[3][PassivesArray[3] + 2] + player1.ProbPlusDef : player1.ProbPlusDef)) {
                     player1.GetComponent<Pyramid_Player>().Snow.SetActive(true);
                     Snowing1 = true;
                     AddText(FightText, "Player 1's call for help from the Weather Gods has been answered!");
@@ -928,10 +802,8 @@ public class GameMasterOnline : GameMaster
                 TempOpponent.Opponent.Probability = 0;
                 Stop11 = false;
             }
-            else if(ID == 7)
-            {
-                if (TempOpponent.Opponent.Probability <= (((Sphere_Player)player1).CanHelperSpheres ? PassiveStats[6][PassivesArray[6] + 2] + player1.ProbPlusAtt : player1.ProbPlusAtt))
-                {
+            else if (ID == 7) {
+                if (TempOpponent.Opponent.Probability <= (((Sphere_Player)player1).CanHelperSpheres ? PassiveStats[6][PassivesArray[6] + 2] + player1.ProbPlusAtt : player1.ProbPlusAtt)) {
                     player1.GetComponent<Sphere_Player>().HelperSpheres.SetActive(true);
                     HelperSpheres1 = 1;
                     AddText(FightText, "Poison Spheres rushed to Player1's help!");
@@ -939,10 +811,8 @@ public class GameMasterOnline : GameMaster
                 TempOpponent.Opponent.Probability = 0;
                 Stop13 = false;
             }
-            else if(ID == 8)
-            {
-                if (TempOpponent.Opponent.Probability <= (((Sphere_Player)player1).CanSmoke ? PassiveStats[7][PassivesArray[7] + 2] + player1.ProbPlusDef : player1.ProbPlusDef))
-                {
+            else if (ID == 8) {
+                if (TempOpponent.Opponent.Probability <= (((Sphere_Player)player1).CanSmoke ? PassiveStats[7][PassivesArray[7] + 2] + player1.ProbPlusDef : player1.ProbPlusDef)) {
                     player1.GetComponent<Sphere_Player>().Smoke.SetActive(true);
                     DoitSmoke1 = true;
                     AddText(FightText, "Player 1 was surrounded by Fog!");
@@ -951,11 +821,9 @@ public class GameMasterOnline : GameMaster
                 Stop15 = false;
             }
         }
-        else
-        {
+        else {
             yield return new WaitUntil(() => TempOpponent.Opponent.GotProb2 == true || TempOpponent.Opponent.GotProb21 == true || DisconnectedFirstTime);
-            if (DisconnectedFirstTime)
-            {
+            if (DisconnectedFirstTime) {
                 bool GoGo = true;
                 if (LastID[0] == 0)
                     LastID[0] = ID;
@@ -963,90 +831,74 @@ public class GameMasterOnline : GameMaster
                     LastID[1] = ID;
                 else
                     if (LastID[0] == ID || LastID[1] == ID)
-                        GoGo = false;
-                if (GoGo)
-                {
-                    if (ID == 1)
-                    {
+                    GoGo = false;
+                if (GoGo) {
+                    if (ID == 1) {
                         ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"), true);
                         StartCoroutine(WaitForProb(2, 1));
                     }
-                    else if (ID == 2)
-                    {
+                    else if (ID == 2) {
                         ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"), true);
                         StartCoroutine(WaitForProb(2, 2));
                     }
-                    else if (ID == 3)
-                    {
+                    else if (ID == 3) {
                         ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"), true);
                         StartCoroutine(WaitForProb(2, 3));
                     }
-                    else if (ID == 4)
-                    {
+                    else if (ID == 4) {
                         ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"), true);
                         StartCoroutine(WaitForProb(2, 4));
                     }
-                    else if (ID == 5)
-                    {
+                    else if (ID == 5) {
                         ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"), true);
                         StartCoroutine(WaitForProb(2, 5));
                     }
-                    else if (ID == 6)
-                    {
+                    else if (ID == 6) {
                         ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"), true);
                         StartCoroutine(WaitForProb(2, 6));
                     }
-                    else if (ID == 7)
-                    {
+                    else if (ID == 7) {
                         ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"), true);
                         StartCoroutine(WaitForProb(2, 7));
                     }
-                    else if (ID == 8)
-                    {
+                    else if (ID == 8) {
                         ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"), true);
                         StartCoroutine(WaitForProb(2, 8));
                     }
                     yield break;
-                }                
+                }
             }
-            else if (TempOpponent.Opponent.GotProb2)
-            {
+            else if (TempOpponent.Opponent.GotProb2) {
                 TempOpponent.Opponent.GotProb2 = false;
                 ProbsP2.Add(TempOpponent.Opponent.Probability2);
             }
-            else
-            {               
+            else {
                 TempOpponent.Opponent.GotProb21 = false;
                 ProbsP2.Add(TempOpponent.Opponent.Probability21);
             }
-            if (ID == 1)
-            {
-                if (TempOpponent.Opponent.Probability2 <= (((Star_Player)player2).CanBurn ? PassiveStats[4][TempOpponent.Opponent.Passives[4] + 2] + player2.ProbPlusAtt : player2.ProbPlusAtt))
-                {
+            if (ID == 1) {
+                if (TempOpponent.Opponent.Probability2 <= (((Star_Player)player2).CanBurn ? PassiveStats[4][TempOpponent.Opponent.Passives[4] + 2] + player2.ProbPlusAtt : player2.ProbPlusAtt)) {
                     StartRoundCountBurn1 = round;
                     player1.transform.Find("BurnedFlame").gameObject.SetActive(true);
-                    AddText(FightText, "Player 2 was Burned by his Opponent's Fire Attack");
+                    AddText(FightText, "Player 1 was Burned by his Opponent's Fire Attack");
                 }
                 TempOpponent.Opponent.Probability2 = 0;
                 Stop2 = false;
             }
-            else if (ID == 2)
-            {
+            else if (ID == 2) {
                 int Range = ((Star_Player)player2).CanBurn ? PassiveStats[5][TempOpponent.Opponent.Passives[5] + 2] + player2.ProbPlusDef : player2.ProbPlusDef;
-                if (TempOpponent.Opponent.Probability2 <= Range || TempOpponent.Opponent.Probability21 <= Range)
-                {
+                if (TempOpponent.Opponent.Probability2 <= Range || TempOpponent.Opponent.Probability21 <= Range) {
                     player2.transform.Find("Design").transform.Find("FieryEyes").gameObject.SetActive(true);
-                    player2.AdditionalDamage = PassiveStats[5][TempOpponent.Opponent.Passives[5] - 1];
+                    player2.setAdditionalDamage(PassiveStats[5][TempOpponent.Opponent.Passives[5] - 1]);
+                    boostP2 = PassiveStats[5][TempOpponent.Opponent.Passives[5] - 1];
                     AddText(FightText, "Player 2 got angry because he took damage and gained a power boost.");
                 }
                 TempOpponent.Opponent.Probability2 = 0;
                 TempOpponent.Opponent.Probability21 = 0;
                 Stop4 = false;
             }
-            else if (ID == 3)
-            {
-                if (TempOpponent.Opponent.Probability2 <= (((Cube_Player)player2).CanStuckInPlace ? PassiveStats[0][TempOpponent.Opponent.Passives[0] + 2] + player2.ProbPlusAtt : player2.ProbPlusAtt))
-                {
+            else if (ID == 3) {
+                if (TempOpponent.Opponent.Probability2 <= (((Cube_Player)player2).CanStuckInPlace ? PassiveStats[0][TempOpponent.Opponent.Passives[0] + 2] + player2.ProbPlusAtt : player2.ProbPlusAtt)) {
                     StartRoundCountStuckInPlace1 = round;
                     player1.transform.Find("GroundStuck").gameObject.SetActive(true);
                     AddText(FightText, "Player 2 was Burned by his Opponent's Fire Attack");
@@ -1054,11 +906,9 @@ public class GameMasterOnline : GameMaster
                 TempOpponent.Opponent.Probability2 = 0;
                 Stop6 = false;
             }
-            else if (ID == 4)
-            {
+            else if (ID == 4) {
                 int Range = ((Cube_Player)player2).CanHaveProtectiveEarth ? PassiveStats[1][TempOpponent.Opponent.Passives[1] + 2] + player2.ProbPlusDef : player2.ProbPlusDef;
-                if (TempOpponent.Opponent.Probability2 <= Range || TempOpponent.Opponent.Probability21 <= Range)
-                {
+                if (TempOpponent.Opponent.Probability2 <= Range || TempOpponent.Opponent.Probability21 <= Range) {
                     player2.GetComponent<Cube_Player>().ShieldAppearance.SetActive(true);
                     protectiveEarthEffectP2 = true;
                     HardeningPow2 = PassiveStats[1][TempOpponent.Opponent.Passives[1] - 1];
@@ -1068,22 +918,18 @@ public class GameMasterOnline : GameMaster
                 TempOpponent.Opponent.Probability21 = 0;
                 Stop8 = false;
             }
-            else if (ID == 5)
-            {
-                if (TempOpponent.Opponent.Probability2 <= (((Pyramid_Player)player2).CanFreeze ? PassiveStats[2][TempOpponent.Opponent.Passives[2] + 2] + player2.ProbPlusAtt : player2.ProbPlusAtt))
-                {
+            else if (ID == 5) {
+                if (TempOpponent.Opponent.Probability2 <= (((Pyramid_Player)player2).CanFreeze ? PassiveStats[2][TempOpponent.Opponent.Passives[2] + 2] + player2.ProbPlusAtt : player2.ProbPlusAtt)) {
                     StartRoundCountFreeze1 = round;
                     animatorPlayer1.SetBool("Frozen", true);
-                    AddText(FightText, "Player 1 is frozen for " + PassiveStats[2][TempOpponent.Opponent.Passives[2] - 1]+" round(s)");
+                    AddText(FightText, "Player 1 is frozen for " + PassiveStats[2][TempOpponent.Opponent.Passives[2] - 1] + " round(s)");
                 }
                 TempOpponent.Opponent.Probability2 = 0;
                 Stop10 = false;
             }
-            else if (ID == 6)
-            {
+            else if (ID == 6) {
                 int Range = ((Pyramid_Player)player2).CanSnow ? PassiveStats[3][TempOpponent.Opponent.Passives[3] + 2] + player2.ProbPlusDef : player2.ProbPlusDef;
-                if (TempOpponent.Opponent.Probability2 <= Range || TempOpponent.Opponent.Probability21 <= Range)
-                {
+                if (TempOpponent.Opponent.Probability2 <= Range || TempOpponent.Opponent.Probability21 <= Range) {
                     player2.GetComponent<Pyramid_Player>().Snow.SetActive(true);
                     Snowing2 = true;
                     AddText(FightText, "Player 2's call for help from the Weather Gods has been answered!");
@@ -1092,10 +938,8 @@ public class GameMasterOnline : GameMaster
                 TempOpponent.Opponent.Probability21 = 0;
                 Stop12 = false;
             }
-            else if (ID == 7)
-            {
-                if (TempOpponent.Opponent.Probability2 <= (((Sphere_Player)player2).CanHelperSpheres ? PassiveStats[6][TempOpponent.Opponent.Passives[6] + 2] + player2.ProbPlusAtt : player2.ProbPlusAtt))
-                {
+            else if (ID == 7) {
+                if (TempOpponent.Opponent.Probability2 <= (((Sphere_Player)player2).CanHelperSpheres ? PassiveStats[6][TempOpponent.Opponent.Passives[6] + 2] + player2.ProbPlusAtt : player2.ProbPlusAtt)) {
                     player2.GetComponent<Sphere_Player>().HelperSpheres.SetActive(true);
                     HelperSpheres2 = 1;
                     AddText(FightText, "Poison Spheres rushed to Player2's help!");
@@ -1103,11 +947,9 @@ public class GameMasterOnline : GameMaster
                 TempOpponent.Opponent.Probability2 = 0;
                 Stop14 = false;
             }
-            else if (ID == 8)
-            {
+            else if (ID == 8) {
                 int Range = ((Sphere_Player)player2).CanSmoke ? PassiveStats[7][TempOpponent.Opponent.Passives[7] + 2] + player2.ProbPlusDef : player2.ProbPlusDef;
-                if (TempOpponent.Opponent.Probability2 <= Range || TempOpponent.Opponent.Probability21 <= Range)
-                {
+                if (TempOpponent.Opponent.Probability2 <= Range || TempOpponent.Opponent.Probability21 <= Range) {
                     player2.GetComponent<Sphere_Player>().Smoke.SetActive(true);
                     DoitSmoke2 = true;
                     AddText(FightText, "Player 2 was surrounded by Fog!");
@@ -1118,77 +960,66 @@ public class GameMasterOnline : GameMaster
             }
         }
     }
-    IEnumerator Reset()
-    {
+    IEnumerator Reset() {
         yield return new WaitUntil(() => (!Stop1 && !Stop2 && !Stop3 && !Stop4 && !Stop5 && !Stop6 && !Stop7 && !Stop8 && !Stop9 && !Stop10 && !Stop11 && !Stop12 && !Stop13 && !Stop14 && !Stop15 && !Stop16 && Wait == 0));
         if ((v2 && ((player1.GetLife() <= 0 && player12.GetLife() <= 0) || (player2.GetLife() <= 0 && player22.GetLife() <= 0))) || (!v2 && (player1Life <= 0 || player2Life <= 0)))
             GameOver();
         else
             ResetRound();
     }
-    IEnumerator ResetV2()
-    {
+    IEnumerator ResetV2() {
         yield return new WaitUntil(() => (!Stop1 && !Stop2 && !Stop3 && !Stop4 && !Stop5 && !Stop6 && !Stop7 && !Stop8 && !Stop9 && !Stop10 && !Stop11 && !Stop12 && !Stop13 && !Stop14 && !Stop15 && !Stop16 && Wait == 0));
         if (!v2CheckEndRound()) { ResetRound(); }
     }
-    IEnumerator Fuckwhileloops(int ID)
-    {
+    IEnumerator Fuckwhileloops(int ID) {
         Wait += 1;
-        if (ID == 1)
-        {
+        if (ID == 1) {
             yield return new WaitUntil(() => (!Stop1));
             Stop3 = true;
             ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"));
             StartCoroutine(WaitForProb(1, 2));
             Wait -= 1;
         }
-        else if (ID == 2)
-        {
+        else if (ID == 2) {
             yield return new WaitUntil(() => (!Stop2));
             Stop4 = true;
             StartCoroutine(WaitForProb(2, 2));
             Wait -= 1;
         }
-        else if (ID == 3)
-        {
+        else if (ID == 3) {
             yield return new WaitUntil(() => (!Stop5));
             Stop7 = true;
             ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"));
             StartCoroutine(WaitForProb(1, 4));
             Wait -= 1;
         }
-        else if (ID == 4)
-        {
+        else if (ID == 4) {
             yield return new WaitUntil(() => (!Stop6));
             Stop8 = true;
             StartCoroutine(WaitForProb(2, 4));
             Wait -= 1;
         }
-        else if (ID == 5)
-        {
+        else if (ID == 5) {
             yield return new WaitUntil(() => (!Stop9));
             Stop11 = true;
             ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"));
             StartCoroutine(WaitForProb(1, 6));
             Wait -= 1;
         }
-        else if (ID == 6)
-        {
+        else if (ID == 6) {
             yield return new WaitUntil(() => (!Stop10));
             Stop12 = true;
             StartCoroutine(WaitForProb(2, 6));
             Wait -= 1;
         }
-        else if(ID == 7)
-        {
+        else if (ID == 7) {
             yield return new WaitUntil(() => (!Stop13));
             Stop15 = true;
             ClientTCP.PACKAGE_GetProbability(player2.GetConnectionID(), PlayerPrefs.GetString("Username"));
             StartCoroutine(WaitForProb(1, 8));
             Wait -= 1;
         }
-        else if (ID == 8)
-        {
+        else if (ID == 8) {
             yield return new WaitUntil(() => (!Stop14));
             Stop16 = true;
             StartCoroutine(WaitForProb(2, 8));
@@ -1196,14 +1027,12 @@ public class GameMasterOnline : GameMaster
         }
     }
 
-    private IEnumerator ReconnectIt(int OtherConnID)
-    {
+    private IEnumerator ReconnectIt(int OtherConnID) {
         yield return new WaitUntil(() => (!StopEvaluating));
         ClientTCP.PACKAGE_Reconnect(OtherConnID);
         Disconnected = false;
     }
-    public void ReconnectFunction(int OtherConnID)
-    {
+    public void ReconnectFunction(int OtherConnID) {
         StartCoroutine(ReconnectIt(OtherConnID));
     }
 }

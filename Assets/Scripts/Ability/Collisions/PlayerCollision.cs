@@ -104,14 +104,14 @@ public class PlayerCollision : MonoBehaviour {
 
 
         if (isfirsttime && (col.tag == "BulletP1" || col.tag == "BulletP2" || col.tag == "Fire")) {
-            AttackPower = player.GetAttackPower();
+            AttackPower = player.getOverallAttack();
             isfirsttime = false;
         }
 
         //If the opponent used fountain attack
         if (col.tag == "Fountain" && player.GetIdOfAnimUsed() == 4) {
-            AttackPower = player.GetAttackPower();
-            int Att2 = otherPlayer.GetAttackPower();
+            AttackPower = player.getOverallAttack();
+            int Att2 = otherPlayer.getOverallAttack();
             if (AttackPower > Att2) {
                 AttackPower -= Att2;
                 col.gameObject.SetActive(false);
@@ -137,8 +137,8 @@ public class PlayerCollision : MonoBehaviour {
         //playerAnim.SetBool("Hit", true);
         //If both player have used tackle or equivalent
         if ((IDOfAbility == 3 || IDOfAbility == 17 || IDOfAbility == 21) && (otherPlayerAbilityId == 3 || otherPlayerAbilityId == 17 || otherPlayerAbilityId == 21) && col.tag == "Player") {
-            AttackPower = player.GetAttackPower();
-            int AttackPower2 = otherPlayer.GetAttackPower();
+            AttackPower = player.getOverallAttack();
+            int AttackPower2 = otherPlayer.getOverallAttack();
             if (AttackPower > AttackPower2) {
                 //otherPlayer.GetComponent<Animator>().SetBool("Hit", true);
                 otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
@@ -261,7 +261,7 @@ public class PlayerCollision : MonoBehaviour {
         if (other.name == "Child")
             other = other.transform.parent.gameObject;
         if (isfirsttime && (other.tag == "BulletP1" || other.tag == "BulletP2" || other.tag == "Fire")) {
-            AttackPower = player.GetAttackPower();
+            AttackPower = player.getOverallAttack();
             isfirsttime = false;
         }
 

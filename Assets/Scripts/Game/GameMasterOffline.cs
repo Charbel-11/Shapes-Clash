@@ -206,7 +206,8 @@ public class GameMasterOffline : GameMaster
 
         if (Tutorial)
         {
-            player1.AddAtt = player1.AddDef = player2.AddAtt = player2.AddDef = 0;
+            player1.setAddLvlAtt(0); player1.setAddLvlDef(0);
+            player2.setAddLvlAtt(0); player2.setAddLvlDef(0);
             player1.MaxLP = 100; player1.SetLife(100);
             StartCoroutine(TutorialFunction(1));
         }
@@ -361,16 +362,16 @@ public class GameMasterOffline : GameMaster
             }
         }
 
-        //For turning off the FieryEyes
-        if (player1.GetComponent<Shape_Player>().AdditionalDamage > 0)
+        //For turning off the FieryEyes or others
+        if (player1.GetComponent<Shape_Player>().getAdditionalDamage() > 0)
         {
-            player1.GetComponent<Shape_Player>().AdditionalDamage = 0;
+            player1.GetComponent<Shape_Player>().setAdditionalDamage(0); boostP1 = 0;
             player1.transform.Find("Design").transform.Find("FieryEyes").gameObject.SetActive(false);
             AddText(FightText,"The Attack Boost faded.");
         }
-        if (player2.GetComponent<Shape_Player>().AdditionalDamage > 0)
+        if (player2.GetComponent<Shape_Player>().getAdditionalDamage() > 0)
         {
-            player2.GetComponent<Shape_Player>().AdditionalDamage = 0;
+            player2.GetComponent<Shape_Player>().setAdditionalDamage(0); boostP2 = 0;
             player2.transform.Find("Design").transform.Find("FieryEyes").gameObject.SetActive(false);
             AddText(FightText,"The Attack Boost faded.");
         }
@@ -388,7 +389,7 @@ public class GameMasterOffline : GameMaster
                 if (Probability <= Range)
                 {
                     player1.transform.Find("Design").transform.Find("FieryEyes").gameObject.SetActive(true);
-                    player1.GetComponent<Shape_Player>().AdditionalDamage = PassiveStats[5][PassivesArray[5]-1];
+                    player1.GetComponent<Shape_Player>().setAdditionalDamage(PassiveStats[5][PassivesArray[5] - 1]);
                     AddText(FightText,"Player 1 got angry because he took damage and gained a power boost.");
                 }
             }
@@ -405,7 +406,7 @@ public class GameMasterOffline : GameMaster
                 if (Probability <= Range)
                 {
                     player2.transform.Find("Design").transform.Find("FieryEyes").gameObject.SetActive(true);
-                    player2.GetComponent<Shape_Player>().AdditionalDamage = PassiveStats[5][PassivesArray[5] - 1];
+                    player2.GetComponent<Shape_Player>().setAdditionalDamage(PassiveStats[5][PassivesArray[5] - 1]);
                     AddText(FightText,"Player 2 got angry because he took damage and gained a power boost.");
                 }
             }
