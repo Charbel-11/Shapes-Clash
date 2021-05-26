@@ -9,11 +9,9 @@ class TempOpponent
     public string Username2;
     public int ConnectionID;
     public int ConnectionID2;
-    public int ShapeID;
-    public int ShapeID12;
-    public int ShapeID2;
-    public int ShapeID22;
-    public int ShapeIDUser, ShapeID2User;
+    public int ShapeID, ShapeID12;              //Shape ID of the opponent
+    public int ShapeID2, ShapeID22;             //Shape ID of first player in replays/spectate
+    public int ShapeIDUser, ShapeID2User;       //Shape ID of the current user
     public int Probability;
     public int Probability1;
     public int Probability2;
