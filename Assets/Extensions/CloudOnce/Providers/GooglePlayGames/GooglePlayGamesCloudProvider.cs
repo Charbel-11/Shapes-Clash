@@ -348,7 +348,7 @@ namespace CloudOnce.Internal.Providers
                 if (!achievementFound)
                 {
 #if CLOUDONCE_DEBUG
-                    //Debug.Log(string.Format(
+                    Debug.Log(string.Format(
                         "An achievement ({0}) that doesn't exist in the Achievements class was loaded from native API.", achievement.id));
 #endif
                 }

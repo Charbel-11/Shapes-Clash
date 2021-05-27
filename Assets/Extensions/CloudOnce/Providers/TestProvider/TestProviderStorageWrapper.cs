@@ -33,7 +33,7 @@ namespace CloudOnce.Internal.Providers
             if (!TestProvider.Instance.CloudSaveInitialized || !Cloud.CloudSaveEnabled)
             {
 #if CLOUDONCE_DEBUG
-                //Debug.LogWarning(!TestProvider.Instance.CloudSaveInitialized
+                Debug.LogWarning(!TestProvider.Instance.CloudSaveInitialized
                     ? "Cloud Save has not been initialized, skipping upload and only saving to disk."
                     : "Cloud Save is currently disabled, skipping upload and only saving to disk.");
 #endif
@@ -41,7 +41,7 @@ namespace CloudOnce.Internal.Providers
                 return;
             }
 #if CLOUDONCE_DEBUG
-            //Debug.Log("Simulating cloud save.");
+            Debug.Log("Simulating cloud save.");
 #endif
             cloudOnceEvents.RaiseOnCloudSaveComplete(true);
         }
@@ -54,7 +54,7 @@ namespace CloudOnce.Internal.Providers
             if (!TestProvider.Instance.CloudSaveInitialized || !Cloud.CloudSaveEnabled)
             {
 #if CLOUDONCE_DEBUG
-                //Debug.LogWarning(!TestProvider.Instance.CloudSaveInitialized
+                Debug.LogWarning(!TestProvider.Instance.CloudSaveInitialized
                     ? "Cloud Save has not been initialized, aborting cloud load."
                     : "Cloud Save is currently disabled, aborting cloud load.");
 #endif
@@ -65,13 +65,13 @@ namespace CloudOnce.Internal.Providers
             if (Cloud.IsSignedIn)
             {
 #if CLOUDONCE_DEBUG
-                //Debug.Log("Simulating cloud load.");
+                Debug.Log("Simulating cloud load.");
 #endif
                 var changedKeys = DataManager.GetRandomKeysFromGameData();
                 if (changedKeys.Length > 0)
                 {
 #if CLOUDONCE_DEBUG
-                    //Debug.Log("Simulating new cloud values (randomized).");
+                    Debug.Log("Simulating new cloud values (randomized).");
 #endif
                     cloudOnceEvents.RaiseOnNewCloudValues(changedKeys);
                 }

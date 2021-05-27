@@ -58,7 +58,7 @@ namespace CloudOnce.Internal.Utils
             if (!PlayGamesPlatform.Instance.IsAuthenticated())
             {
 #if CLOUDONCE_DEBUG
-                UnityEngine.//Debug.LogWarning("ShowOverlay can only be called after authentication.");
+                UnityEngine.Debug.LogWarning("ShowOverlay can only be called after authentication.");
 #endif
                 return;
             }
@@ -66,14 +66,14 @@ namespace CloudOnce.Internal.Utils
             if (string.IsNullOrEmpty(id))
             {
 #if CLOUDONCE_DEBUG
-                UnityEngine.//Debug.Log("Showing leaderboards overlay.");
+                UnityEngine.Debug.Log("Showing leaderboards overlay.");
 #endif
                 PlayGamesPlatform.Instance.ShowLeaderboardUI(null, OnShowOverlayCompleted);
             }
             else
             {
 #if CLOUDONCE_DEBUG
-                UnityEngine.//Debug.Log(string.IsNullOrEmpty(internalID)
+                UnityEngine.Debug.Log(string.IsNullOrEmpty(internalID)
                     ? string.Format("Showing {0} leaderboard overlay.", id)
                     : string.Format("Showing {0} ({1}) leaderboard overlay.", internalID, id));
 #endif
@@ -98,12 +98,12 @@ namespace CloudOnce.Internal.Utils
         private static void OnShowOverlayCompleted(UIStatus callback)
         {
 #if CLOUDONCE_DEBUG
-            UnityEngine.//Debug.Log("Leaderboards overlay closed.");
+            UnityEngine.Debug.Log("Leaderboards overlay closed.");
 #endif
             if (callback == UIStatus.NotAuthorized)
             {
 #if CLOUDONCE_DEBUG
-                UnityEngine.//Debug.Log("User logged out from overlay, using guest user from now on.");
+                UnityEngine.Debug.Log("User logged out from overlay, using guest user from now on.");
 #endif
                 GooglePlayGamesCloudProvider.Instance.ActivateGuestUserMode();
             }
@@ -112,7 +112,7 @@ namespace CloudOnce.Internal.Utils
         private static void ReportError(string errorMessage, Action<CloudRequestResult<bool>> callbackAction)
         {
 #if CLOUDONCE_DEBUG
-            UnityEngine.//Debug.LogWarning(errorMessage);
+            UnityEngine.Debug.LogWarning(errorMessage);
 #endif
             CloudOnceUtils.SafeInvoke(callbackAction, new CloudRequestResult<bool>(false, errorMessage));
         }
@@ -122,7 +122,7 @@ namespace CloudOnce.Internal.Utils
             if (response)
             {
 #if CLOUDONCE_DEBUG
-                UnityEngine.//Debug.Log(string.Format("Successfully submitted a score of {0} to {1} ({2}) leaderboard.", score, internalID, id));
+                UnityEngine.Debug.Log(string.Format("Successfully submitted a score of {0} to {1} ({2}) leaderboard.", score, internalID, id));
 #endif
                 CloudOnceUtils.SafeInvoke(callbackAction, new CloudRequestResult<bool>(true));
             }

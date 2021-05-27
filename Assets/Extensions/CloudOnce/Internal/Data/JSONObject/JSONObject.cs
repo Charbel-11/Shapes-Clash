@@ -410,7 +410,7 @@ namespace CloudOnce.Internal
                             result.Add(Keys[i], val.B + string.Empty);
                             break;
                         default:
-                            //UnityEngine.Debug.LogWarning("Omitting object: " + Keys[i] + " in dictionary conversion");
+                            UnityEngine.Debug.LogWarning("Omitting object: " + Keys[i] + " in dictionary conversion");
                             break;
                     }
                 }
@@ -418,7 +418,7 @@ namespace CloudOnce.Internal
                 return result;
             }
 #if CLOUDONCE_DEBUG
-            UnityEngine.//Debug.LogWarning("Tried to turn non-Object JSONObject into a dictionary");
+            UnityEngine.Debug.LogWarning("Tried to turn non-Object JSONObject into a dictionary");
 #endif
             return null;
         }
@@ -436,7 +436,7 @@ namespace CloudOnce.Internal
                     {
                         ObjectType = Type.Null;
 #if CLOUDONCE_DEBUG
-                        UnityEngine.//Debug.LogWarning("Improper (strict) JSON formatting.  First character must be [ or {");
+                        UnityEngine.Debug.LogWarning("Improper (strict) JSON formatting.  First character must be [ or {");
 #endif
                         return;
                     }
@@ -514,7 +514,7 @@ namespace CloudOnce.Internal
                                             {
                                                 ObjectType = Type.Null;
 #if CLOUDONCE_DEBUG
-                                                UnityEngine.//Debug.LogWarning("improper JSON formatting:" + str);
+                                                UnityEngine.Debug.LogWarning("improper JSON formatting:" + str);
 #endif
                                             }
 
@@ -676,7 +676,7 @@ namespace CloudOnce.Internal
             if (depth++ > maxDepth)
             {
 #if CLOUDONCE_DEBUG
-                UnityEngine.//Debug.Log("reached max depth!");
+                UnityEngine.Debug.Log("reached max depth!");
 #endif
                 return;
             }

@@ -55,7 +55,7 @@ namespace CloudOnce.Internal.Editor.Utils
             if (string.IsNullOrEmpty(buddy.EntryValue(requiredDeviceCapabilities)))
             {
 #if CLOUDONCE_DEBUG
-                UnityEngine.//Debug.Log("Adding GameKit to Info.plist.");
+                UnityEngine.Debug.Log("Adding GameKit to Info.plist.");
 #endif
                 buddy.AddArray(requiredDeviceCapabilities);
                 buddy.AddString(PlistBuddyHelper.ToEntryName(requiredDeviceCapabilities, 0), gameKit);
@@ -75,7 +75,7 @@ namespace CloudOnce.Internal.Editor.Utils
                 index++;
             }
 #if CLOUDONCE_DEBUG
-            UnityEngine.//Debug.Log("Adding GameKit to Info.plist.");
+            UnityEngine.Debug.Log("Adding GameKit to Info.plist.");
 #endif
 
             // GameKit was not detected, so we add it

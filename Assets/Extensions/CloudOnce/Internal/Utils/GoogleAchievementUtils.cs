@@ -128,12 +128,12 @@ namespace CloudOnce.Internal.Utils
             if (!GooglePlayGamesCloudProvider.Instance.IsGpgsInitialized)
             {
 #if CLOUDONCE_DEBUG
-                UnityEngine.//Debug.LogWarning("ShowOverlay can only be called after authentication.");
+                UnityEngine.Debug.LogWarning("ShowOverlay can only be called after authentication.");
 #endif
                 return;
             }
 #if CLOUDONCE_DEBUG
-            UnityEngine.//Debug.Log("Showing achievements overlay.");
+            UnityEngine.Debug.Log("Showing achievements overlay.");
 #endif
             PlayGamesPlatform.Instance.ShowAchievementsUI(OnShowOverlayCompleted);
         }
@@ -147,12 +147,12 @@ namespace CloudOnce.Internal.Utils
             if (!GooglePlayGamesCloudProvider.Instance.IsGpgsInitialized)
             {
 #if CLOUDONCE_DEBUG
-                UnityEngine.//Debug.LogWarning("LoadAchievementDescriptions can only be called after authentication.");
+                UnityEngine.Debug.LogWarning("LoadAchievementDescriptions can only be called after authentication.");
 #endif
                 return;
             }
 #if CLOUDONCE_DEBUG
-            UnityEngine.//Debug.Log("Loading achievement descriptions.");
+            UnityEngine.Debug.Log("Loading achievement descriptions.");
 #endif
             PlayGamesPlatform.Instance.LoadAchievementDescriptions(callback);
         }
@@ -166,12 +166,12 @@ namespace CloudOnce.Internal.Utils
             if (!GooglePlayGamesCloudProvider.Instance.IsGpgsInitialized)
             {
 #if CLOUDONCE_DEBUG
-                UnityEngine.//Debug.LogWarning("LoadAchievements can only be called after authentication.");
+                UnityEngine.Debug.LogWarning("LoadAchievements can only be called after authentication.");
 #endif
                 return;
             }
 #if CLOUDONCE_DEBUG
-            UnityEngine.//Debug.Log("Loading achievements.");
+            UnityEngine.Debug.Log("Loading achievements.");
 #endif
             PlayGamesPlatform.Instance.LoadAchievements(callback);
         }
@@ -183,12 +183,12 @@ namespace CloudOnce.Internal.Utils
         private static void OnShowOverlayCompleted(UIStatus callback)
         {
 #if CLOUDONCE_DEBUG
-            UnityEngine.//Debug.Log("Achievements overlay closed.");
+            UnityEngine.Debug.Log("Achievements overlay closed.");
 #endif
             if (callback == UIStatus.NotAuthorized)
             {
 #if CLOUDONCE_DEBUG
-                UnityEngine.//Debug.Log("User logged out from overlay, using guest user from now on.");
+                UnityEngine.Debug.Log("User logged out from overlay, using guest user from now on.");
 #endif
                 GooglePlayGamesCloudProvider.Instance.ActivateGuestUserMode();
             }
@@ -197,7 +197,7 @@ namespace CloudOnce.Internal.Utils
         private static void ReportError(string errorMessage, Action<CloudRequestResult<bool>> callbackAction)
         {
 #if CLOUDONCE_DEBUG
-            UnityEngine.//Debug.LogWarning(errorMessage);
+            UnityEngine.Debug.LogWarning(errorMessage);
 #endif
             CloudOnceUtils.SafeInvoke(callbackAction, new CloudRequestResult<bool>(false, errorMessage));
         }
@@ -207,7 +207,7 @@ namespace CloudOnce.Internal.Utils
             if (response)
             {
 #if CLOUDONCE_DEBUG
-                UnityEngine.//Debug.Log(string.Format("Achievement {0} ({1}) was successfully {2}ed.", internalID, id, action));
+                UnityEngine.Debug.Log(string.Format("Achievement {0} ({1}) was successfully {2}ed.", internalID, id, action));
 #endif
                 CloudOnceUtils.SafeInvoke(callbackAction, new CloudRequestResult<bool>(true));
             }
