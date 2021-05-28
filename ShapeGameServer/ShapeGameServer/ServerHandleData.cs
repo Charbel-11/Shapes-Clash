@@ -886,6 +886,7 @@ namespace ShapeGameServer
             string Emotes = buffer.ReadString();
             string Skins = buffer.ReadString();
             string TrophyRoad = buffer.ReadString();
+            string Passives = buffer.ReadString();
             if (buffer.ReadBool()) { Database.SetDailyRewards(Username, 0); Database.UpdateLastSpin(Username, false); }
             Database.SetAdditionalRewards(Username, buffer.ReadString());
             Database.SetGold(Username, Gold);
@@ -902,6 +903,7 @@ namespace ShapeGameServer
             Database.SetSkins(Username, Skins);
             Database.SetTrophyRoad(Username, TrophyRoad);
             Database.UpdateProfile(Username);
+            Database.SetPassives(Username, Passives);
             buffer.Dispose();
         }
         private static void HandleReconnecting(int ConnectionID, byte[] data)

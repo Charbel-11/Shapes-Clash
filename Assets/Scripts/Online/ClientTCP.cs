@@ -381,6 +381,7 @@ public class ClientTCP
         buffer.WriteString(String.Join(",", PlayerPrefsX.GetIntArray("EmotesUnlockedAr")));
         buffer.WriteString(String.Join(",", PlayerPrefsX.GetIntArray("SkinsUnlockedAr")));
         buffer.WriteString(String.Join("-", PlayerPrefsX.GetStringArray("TrophyRoadUnlocked")));
+        buffer.WriteString(String.Join(",", PlayerPrefsX.GetStringArray("PassivesArray")));
         buffer.WriteBool(Spin);
         buffer.WriteString(String.Join(",",PlayerPrefsX.GetIntArray("AdditionalRewards")));
         SendData(buffer.ToArray());
