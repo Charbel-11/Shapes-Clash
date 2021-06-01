@@ -258,8 +258,8 @@ PlayerSettings:
   AndroidTargetArchitectures: 3
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: C:/Users/Lenovo/Desktop/Shape Game/KeyStore/KeyStore.jks
-  AndroidKeyaliasName: key0
+  AndroidKeystoreName: C:/Users/PC/Desktop/Game/KeyStore/KeyStore.jks
+  AndroidKeyaliasName: 
   AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 1
   AndroidIsGame: 1

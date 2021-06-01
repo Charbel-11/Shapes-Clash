@@ -218,12 +218,13 @@ public class Chest
         {
             LowerBoundGold = 50 + (Arena - 1) * 50;
             UpperBoundGold = 100 + (Arena - 1) * 50;
-            LowerBoundRedBolts = 1 + (Arena - 1) * 2;
-            UpperBoundRedBolts = 3 + (Arena - 1) * 2;
-            LowerBoundDiamonds = UpperBoundDiamonds = 0;
+            LowerBoundRedBolts = 2 + (Arena - 1) * 4;
+            UpperBoundRedBolts = 6 + (Arena - 1) * 4;
+            LowerBoundDiamonds = 0;
+            UpperBoundDiamonds = 2 + (Arena - 1) * 2;
             Gold = Rand.Next(LowerBoundGold, UpperBoundGold + 1);
             RedBolts = Rand.Next(LowerBoundRedBolts, UpperBoundRedBolts + 1);
-            Diamonds = 0;
+            Diamonds = Rand.Next(LowerBoundDiamonds, UpperBoundDiamonds + 1);
             CommonChance = 0;
             RareChance = 0;
             MythicChance = 0;
@@ -236,10 +237,10 @@ public class Chest
         {
             LowerBoundGold = 100 + (Arena - 1) * 50;
             UpperBoundGold = 150 + (Arena - 1) * 50;
-            LowerBoundRedBolts = 3 + (Arena - 1) * 2;
-            UpperBoundRedBolts = 5 + (Arena - 1) * 2;
-            LowerBoundDiamonds = 0;
-            UpperBoundDiamonds = 1 + (Arena - 1) * 1;
+            LowerBoundRedBolts = 6 + (Arena - 1) * 4;
+            UpperBoundRedBolts = 10 + (Arena - 1) * 4;
+            LowerBoundDiamonds = 4;
+            UpperBoundDiamonds = 8 + (Arena - 1) * 2;
             Gold = Rand.Next(LowerBoundGold, UpperBoundGold + 1);
             RedBolts = Rand.Next(LowerBoundRedBolts, UpperBoundRedBolts + 1);
             Diamonds = Rand.Next(LowerBoundDiamonds, UpperBoundDiamonds + 1);
@@ -255,10 +256,10 @@ public class Chest
         {
             LowerBoundGold = 200 + (Arena - 1) * 50;
             UpperBoundGold = 300 + (Arena - 1) * 50;
-            LowerBoundRedBolts = 7 + (Arena - 1) * 2;
-            UpperBoundRedBolts = 10 + (Arena - 1) * 2;
-            LowerBoundDiamonds = 2;
-            UpperBoundDiamonds = 4 + (Arena - 1) * 1;
+            LowerBoundRedBolts = 14 + (Arena - 1) * 4;
+            UpperBoundRedBolts = 20 + (Arena - 1) * 4;
+            LowerBoundDiamonds = 8;
+            UpperBoundDiamonds = 16 + (Arena - 1) * 2;
             Gold = Rand.Next(LowerBoundGold, UpperBoundGold + 1);
             RedBolts = Rand.Next(LowerBoundRedBolts, UpperBoundRedBolts + 1);
             Diamonds = Rand.Next(LowerBoundDiamonds, UpperBoundDiamonds + 1);
@@ -274,10 +275,10 @@ public class Chest
         {
             LowerBoundGold = 350 + (Arena - 1) * 50;
             UpperBoundGold = 500 + (Arena - 1) * 50;
-            LowerBoundRedBolts = 12 + (Arena - 1) * 2;
-            UpperBoundRedBolts = 17 + (Arena - 1) * 2;
-            LowerBoundDiamonds = 4;
-            UpperBoundDiamonds = 8 + (Arena - 1) * 1;
+            LowerBoundRedBolts = 24 + (Arena - 1) * 4;
+            UpperBoundRedBolts = 34 + (Arena - 1) * 4;
+            LowerBoundDiamonds = 14;
+            UpperBoundDiamonds = 20 + (Arena - 1) * 2;
             Gold = Rand.Next(LowerBoundGold, UpperBoundGold + 1);
             RedBolts = Rand.Next(LowerBoundRedBolts, UpperBoundRedBolts + 1);
             Diamonds = Rand.Next(LowerBoundDiamonds, UpperBoundDiamonds + 1);
@@ -293,10 +294,10 @@ public class Chest
         {
             LowerBoundGold = 500 + (Arena - 1) * 50;
             UpperBoundGold = 800 + (Arena - 1) * 50;
-            LowerBoundRedBolts = 16 + (Arena - 1) * 2;
-            UpperBoundRedBolts = 22 + (Arena - 1) * 2;
-            LowerBoundDiamonds = 7;
-            UpperBoundDiamonds = 10 + (Arena - 1) * 1;
+            LowerBoundRedBolts = 32 + (Arena - 1) * 4;
+            UpperBoundRedBolts = 44 + (Arena - 1) * 4;
+            LowerBoundDiamonds = 20;
+            UpperBoundDiamonds = 30 + (Arena - 1) * 2;
             Gold = Rand.Next(LowerBoundGold, UpperBoundGold + 1);
             RedBolts = Rand.Next(LowerBoundRedBolts, UpperBoundRedBolts + 1);
             Diamonds = Rand.Next(LowerBoundDiamonds, UpperBoundDiamonds + 1);

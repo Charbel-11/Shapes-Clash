@@ -38,9 +38,9 @@ public class Passive : MonoBehaviour {
             transform.Find("LevelP1").transform.GetChild(i).GetComponent<Image>().color = new Color(1, 1, 1);
 
         tempC = (lvlP2 == 3) ? ShapeConstants.levelMaxColors[curIdx] : ShapeConstants.levelColors[curIdx];
-        for (int i = 0; i < lvlP1; i++)
+        for (int i = 0; i < lvlP2; i++)
             transform.Find("LevelP2").transform.GetChild(i).GetComponent<Image>().color = tempC;
-        for (int i = lvlP1; i < 3; i++)
+        for (int i = lvlP2; i < 3; i++)
             transform.Find("LevelP2").transform.GetChild(i).GetComponent<Image>().color = new Color(1, 1, 1);
     }
 }
