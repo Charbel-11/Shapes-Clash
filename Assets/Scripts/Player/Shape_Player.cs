@@ -358,10 +358,10 @@ public abstract class Shape_Player : MonoBehaviour {
         return AdditionalDamage;
     }
     public void setAdditionalDamage(int newD) {
+        int Ratio = getOverallAttack() / bulletPower;
         AdditionalDamage = -AdditionalDamage + newD;
         SetAttackPower(attack);
         if (bulletPower > 0) {
-            int Ratio = getOverallAttack() / bulletPower;
             SetBulletPower(bulletPower, Ratio);
         }
         AdditionalDamage = newD;

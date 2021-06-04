@@ -366,13 +366,13 @@ public class GameMasterOffline : GameMaster
         if (player1.GetComponent<Shape_Player>().getAdditionalDamage() > 0)
         {
             player1.GetComponent<Shape_Player>().setAdditionalDamage(0); boostP1 = 0;
-            player1.transform.Find("Design").transform.Find("FieryEyes").gameObject.SetActive(false);
+            if (player1.transform.Find("Design").transform.Find("FieryEyes") != null) { player1.transform.Find("Design").transform.Find("FieryEyes").gameObject.SetActive(false); }
             AddText(FightText,"The Attack Boost faded.");
         }
         if (player2.GetComponent<Shape_Player>().getAdditionalDamage() > 0)
         {
             player2.GetComponent<Shape_Player>().setAdditionalDamage(0); boostP2 = 0;
-            player2.transform.Find("Design").transform.Find("FieryEyes").gameObject.SetActive(false);
+            if (player2.transform.Find("Design").transform.Find("FieryEyes") != null) { player2.transform.Find("Design").transform.Find("FieryEyes").gameObject.SetActive(false); }
             AddText(FightText,"The Attack Boost faded.");
         }
 
