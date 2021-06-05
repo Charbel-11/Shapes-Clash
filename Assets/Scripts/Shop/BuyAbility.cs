@@ -19,15 +19,7 @@ public class BuyAbility : MonoBehaviour
     private int curXP;
     private ShopManager SM;
 
-    private void Start()
-    {
-/*        ShopManager.PassivesLevel = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };   
-        for(int i = 0; i < 8; i++)
-            ShopManager.PassivesLevel[i] = 0;
-        PlayerPrefsX.SetIntArray("PassivesArray", ShopManager.PassivesLevel);
-        ClientTCP.PACKAGE_ChestOpening();
-  */      
-
+    private void Start() { 
         but = GetComponent<Button>();
         but.onClick.AddListener(onClick);
     }
