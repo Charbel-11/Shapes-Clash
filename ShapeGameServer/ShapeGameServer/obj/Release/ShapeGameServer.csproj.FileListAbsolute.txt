@@ -33,3 +33,11 @@ C:\Users\Lenovo\Desktop\Shape Game\V53\ShapeGameServer\ShapeGameServer\obj\Relea
 C:\Users\Lenovo\Desktop\Shape Game\V53\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.csproj.CopyComplete
 C:\Users\Lenovo\Desktop\Shape Game\V53\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.exe
 C:\Users\Lenovo\Desktop\Shape Game\V53\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.pdb
+C:\Users\PC\Desktop\Game\Shapes Clash\ShapeGameServer\ShapeGameServer\bin\Release\ShapeGameServer.exe.config
+C:\Users\PC\Desktop\Game\Shapes Clash\ShapeGameServer\ShapeGameServer\bin\Release\ShapeGameServer.exe
+C:\Users\PC\Desktop\Game\Shapes Clash\ShapeGameServer\ShapeGameServer\bin\Release\ShapeGameServer.pdb
+C:\Users\PC\Desktop\Game\Shapes Clash\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.csprojAssemblyReference.cache
+C:\Users\PC\Desktop\Game\Shapes Clash\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.csproj.CoreCompileInputs.cache
+C:\Users\PC\Desktop\Game\Shapes Clash\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.csproj.CopyComplete
+C:\Users\PC\Desktop\Game\Shapes Clash\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.exe
+C:\Users\PC\Desktop\Game\Shapes Clash\ShapeGameServer\ShapeGameServer\obj\Release\ShapeGameServer.pdb

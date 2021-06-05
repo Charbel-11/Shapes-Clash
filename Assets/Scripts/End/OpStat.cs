@@ -224,9 +224,12 @@ public class OpStat : MonoBehaviour {
             }
         }
         specAb.GetComponentInChildren<Text>().text = (cur ? cur.name : "");
-        if (cur != null) specAb.transform.Find("Image").GetComponent<Image>().sprite = cur.transform.Find("Image").GetComponent<Image>().sprite;
-        else
-        {
+        if (cur != null) {
+            specAb.transform.Find("Image").GetComponent<Image>().enabled = true;
+            specAb.GetComponent<Button>().interactable = true;
+            specAb.transform.Find("Image").GetComponent<Image>().sprite = cur.transform.Find("Image").GetComponent<Image>().sprite;
+        }
+        else {
             specAb.transform.Find("Image").GetComponent<Image>().enabled = false;
             specAb.GetComponent<Button>().interactable = false;
         }

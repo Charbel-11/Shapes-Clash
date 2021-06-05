@@ -322,6 +322,7 @@ public abstract class Shape_Player : MonoBehaviour {
     public void setAddLvlDef(int n) { AddDef = n; }
 
     public void SetBulletPower(int newPower, int Ratio = 1) {
+        if (Ratio == 0) { Debug.LogError("DIVIDING BY 0!!"); Ratio = 1; }
         bulletPower = newPower + (AdditionalDamage / Ratio) + (AddAtt / Ratio);
     }
 

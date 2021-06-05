@@ -14,7 +14,7 @@ public class ClientHandleData
     private static int pLength;
     public static string ReconnectString;
     private static System.Random R = new System.Random();
-    public static int GameVersion = 3; // Needs to be updated everytime we update the Game.
+    public static int GameVersion = 4; // Needs to be updated everytime we update the Game.
 
     public static void InitializePacketListener()
     {

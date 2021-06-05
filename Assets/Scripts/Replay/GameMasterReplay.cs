@@ -48,7 +48,6 @@ public class GameMasterReplay : GameMaster {
 
         otherCall = false;
 
-        //Every ability button has ALL Ids so no need for multiple canvases for each shape
         shapeID1 = TempOpponent.Opponent.ShapeID2;
         shapeID2 = TempOpponent.Opponent.ShapeID;
         Choices1 = TempOpponent.Opponent.Choices1;
@@ -184,8 +183,6 @@ public class GameMasterReplay : GameMaster {
     }
 
     public override IEnumerator Choice() {
-        //player1ChoiceDone = player1.GetChoiceDone();
-        //player2ChoiceDone = player2.GetChoiceDone();
         if (!player1ChoiceDone && !player2ChoiceDone) {
             player1ChoiceDone = true;
             player2ChoiceDone = true;
@@ -417,14 +414,6 @@ public class GameMasterReplay : GameMaster {
             AddText(FightText, p2Name + " won!");
         }
         else {
-            /*if (Mode == 0)
-            {
-                ClientTCP.PACKAGE_ENDGAME(PlayerPrefs.GetString("Username"), TempOpponent.Opponent.Username, TempOpponent.Opponent.ConnectionID, shapeID1, shapeID2);
-            }
-            else if (Mode == 1)
-            {
-                ClientTCP.PACKAGE_ENDGAME(PlayerPrefs.GetString("Username"), TempOpponent.Opponent.Username, TempOpponent.Opponent.ConnectionID, shapeID1, shapeID2, true);
-            }*/
             playerWon = 1;
             AddText(FightText, p1Name + " won!");
             //cameraFight.gameObject.SetActive(false);

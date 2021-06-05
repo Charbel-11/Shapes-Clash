@@ -33,12 +33,14 @@ public class SpinTheWheel : MonoBehaviour
     private void OnEnable()
     {
         spinbut.interactable = true;
+        int consDays = PlayerPrefs.GetInt("ConsDays");
+        if (consDays > 20) { consDays = 20; }
+        transform.parent.Find("Explanation").GetComponent<Text>().text = "Day " + consDays.ToString();
+
         foreach (Text t in texts)
         {
             Int32.TryParse(t.text, out int i);
-            additionalrew = PlayerPrefs.GetInt("ConsDays") * 25;
-            // Add rewards for days > 20
-            if (additionalrew > 500) { additionalrew = 500; Debug.LogError("Reached maximum rewards, the increase is capped at 500. Thank you for playing Shapes Clash !"); };
+            additionalrew = consDays * 25;
             i += additionalrew;
             t.text = i.ToString();
         }
