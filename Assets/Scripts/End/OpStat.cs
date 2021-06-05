@@ -8,7 +8,7 @@ public class OpStat : MonoBehaviour {
     public Sprite[] Shapes;     //Must be in the order Cube/pyramid/...
     public GameObject describer;
     public GameObject PassivesInfo;
-    public GameObject allAbilities; 
+    public GameObject allAbilities;
     public GameObject allSpecials;
 
     public string[] AbilitiesLevel;
@@ -29,8 +29,7 @@ public class OpStat : MonoBehaviour {
     public int opShapeID;
     private int[][] passiveStats;
 
-    public void UpdateOp()
-    {
+    public void UpdateOp() {
         GM = GameObject.Find("Game Manager").GetComponent<GameMaster>();
         topBar = transform.Find("Top Bar");
 
@@ -52,8 +51,7 @@ public class OpStat : MonoBehaviour {
         updatePanel();
     }
 
-    public void UpdateOp2()
-    {
+    public void UpdateOp2() {
         GM = GameObject.Find("Game Manager").GetComponent<GameMaster>();
         topBar = transform.Find("Top Bar");
 
@@ -75,16 +73,14 @@ public class OpStat : MonoBehaviour {
         updatePanel();
     }
 
-    public void updateProfilePanel(string[] s)
-    {
+    public void updateProfilePanel(string[] s) {
         topBar = transform.Find("Top Bar");
 
         string[] PassiveStatsArray = PlayerPrefsX.GetStringArray("PassiveStatsArray");
         passiveStats = ClientHandleData.TransformStringArray(PassiveStatsArray); // 0 = StuckinPlace, 1 = Hardening, 2 = Freeze, 3 = Snowing, 4 = Burn, 5 = FieryEyes, 6 = HelperSpheres, 7 =Fog
 
-        if (s[3] == "N") { opShapeID = 0; Abilities= new int[]{2,2,2,2,2,2}; superID = 101; }
-        else
-        {
+        if (s[3] == "N") { opShapeID = 0; Abilities = new int[] { 2, 2, 2, 2, 2, 2 }; superID = 101; }
+        else {
             string lastDeck = s[3];
             string[] sep = lastDeck.Split(',');
             opShapeID = Int32.Parse(sep[0]);
@@ -92,7 +88,7 @@ public class OpStat : MonoBehaviour {
             for (int i = 0; i < 6; i++)
                 Abilities[i] = Int32.Parse(sep[i + 1]);
             superID = Int32.Parse(sep[7]);
-        } 
+        }
 
         username = s[1];
         opPP = Int32.Parse(s[2].Split(',')[opShapeID]);
@@ -101,16 +97,16 @@ public class OpStat : MonoBehaviour {
         super200Level = s[7].Split(',');
         string[] passivesLevelStr = s[8].Split(',');
         passivesLevel = new int[8];
-        for(int i = 0; i < 8; i++)
+        for (int i = 0; i < 8; i++)
             passivesLevel[i] = Int32.Parse(passivesLevelStr[i]);
         opLevel = Int32.Parse(s[9].Split(',')[opShapeID]);
 
         updatePanel();
     }
 
-    public void updatePanel() { 
+    public void updatePanel() {
         Transform selectedShape = transform.Find("Selected Shape");
-        topBar.Find("Player Name").GetComponent<Text>().text = username; 
+        topBar.Find("Player Name").GetComponent<Text>().text = username;
         selectedShape.transform.Find("Image").GetComponent<Image>().sprite = Shapes[opShapeID];
         selectedShape.transform.Find("PPs").GetComponentInChildren<Text>().text = opPP.ToString();
 
@@ -118,16 +114,13 @@ public class OpStat : MonoBehaviour {
         while (z < ShapeConstants.PPRange.Length && ShapeConstants.PPRange[z] <= opPP) { z++; }
         selectedShape.transform.Find("PPs").GetComponentInChildren<Text>().color = ShapeConstants.PPColors[z];
 
-        for (int i = 0; i < 4; i++)
-        {
+        for (int i = 0; i < 4; i++) {
             Transform curChild = selectedShape.transform.Find("Levels").GetChild(i);
-            if (i == opShapeID)
-            {
+            if (i == opShapeID) {
                 curChild.gameObject.SetActive(true);
                 curChild.GetChild(0).GetChild(0).GetComponent<Text>().text = opLevel.ToString();
             }
-            else
-            {
+            else {
                 curChild.gameObject.SetActive(false);
             }
         }
@@ -166,38 +159,42 @@ public class OpStat : MonoBehaviour {
         GameObject SelectedActive = transform.Find("Selected Actives").gameObject;
         GameObject levelCont;
         int level, curIdx = opShapeID;
-        Shape_Abilities cur = null;
-        for (int i = 0; i < 6; i++)
-        {
+        Shape_Abilities cur;
+        for (int i = 0; i < 6; i++) {
             GameObject Ab = SelectedActive.transform.Find("A" + (i + 1).ToString()).gameObject;
 
             cur = null;
-            foreach (Transform a in allAbilities.transform)
-            {
-                if (a.GetComponent<Shape_Abilities>().ID == Abilities[i])
-                {
+            foreach (Transform a in allAbilities.transform) {
+                if (a.GetComponent<Shape_Abilities>().ID == Abilities[i]) {
                     cur = a.GetComponent<Shape_Abilities>();
                     break;
                 }
             }
-            Ab.GetComponentInChildren<Text>().text = cur.name;
-            if (!cur.common)
-                Ab.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = cur.transform.Find("Image").GetComponent<Image>().sprite;
-            else
-                Ab.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = cur.transform.GetChild(opShapeID).GetComponent<Image>().sprite;
+            Ab.GetComponentInChildren<Text>().text = (cur != null ? cur.name : "");
+            if (cur == null) {
+                Ab.transform.GetChild(0).GetChild(0).GetComponent<Image>().enabled = false;
+                Ab.GetComponent<Button>().interactable = false;
+                level = 0;
+            }
+            else {
+                Ab.transform.GetChild(0).GetChild(0).GetComponent<Image>().enabled = true;
+                Ab.GetComponent<Button>().interactable = true;
+                if (!cur.common)
+                    Ab.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = cur.transform.Find("Image").GetComponent<Image>().sprite;
+                else
+                    Ab.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = cur.transform.GetChild(opShapeID).GetComponent<Image>().sprite;
 
-            if (SelectedActive == null) { print("w zeb"); }
-            levelCont = SelectedActive.transform.Find("LevelA" + (i + 1).ToString()).gameObject;
-            Int32.TryParse(AbilitiesLevel[Abilities[i]], out level);
+                Int32.TryParse(AbilitiesLevel[Abilities[i]], out level);
+            }
+
             Ab.transform.Find("Name").GetComponent<Image>().color = ShapeConstants.bckgNameColor[curIdx];
+            levelCont = SelectedActive.transform.Find("LevelA" + (i + 1).ToString()).gameObject;
 
             tempC = (level == 3) ? ShapeConstants.levelMaxColors[curIdx] : ShapeConstants.levelColors[curIdx];
-            for (int j = 0; j < level; j++)
-            {
+            for (int j = 0; j < level; j++) {
                 levelCont.transform.GetChild(j).GetComponent<Image>().color = tempC;
             }
-            for (int j = level; j < 3; j++)
-            {
+            for (int j = level; j < 3; j++) {
                 levelCont.transform.GetChild(j).GetComponent<Image>().color = new Color(1, 1, 1);
             }
         }
@@ -212,12 +209,9 @@ public class OpStat : MonoBehaviour {
             Int32.TryParse(super100Level[superID - 101], out level);
 
         cur = null;
-        if (level > 0)
-        {
-            foreach (Transform a in allSpecials.transform)
-            {
-                if (a.GetComponent<Shape_Abilities>().ID == superID)
-                {
+        if (level > 0) {
+            foreach (Transform a in allSpecials.transform) {
+                if (a.GetComponent<Shape_Abilities>().ID == superID) {
                     cur = a.GetComponent<Shape_Abilities>();
                     break;
                 }
@@ -243,8 +237,7 @@ public class OpStat : MonoBehaviour {
             levelCont.transform.GetChild(j).GetComponent<Image>().color = new Color(1, 1, 1);
     }
 
-    public void OpenExplanatoryPanel(int i)
-    {
+    public void OpenExplanatoryPanel(int i) {
         describer.SetActive(true);
         if (i == 6)
             describer.GetComponent<DescribeMe>().showMe(superID);
@@ -252,11 +245,9 @@ public class OpStat : MonoBehaviour {
             describer.GetComponent<DescribeMe>().showMe(Abilities[i]);
     }
 
-    public void OpenPassivePanel(int ID)
-    {
+    public void OpenPassivePanel(int ID) {
         PassivesInfo.gameObject.SetActive(true);
-        for (int i = 0; i < PassivesInfo.transform.childCount; i++)
-        {
+        for (int i = 0; i < PassivesInfo.transform.childCount; i++) {
             PassivesInfo.transform.GetChild(i).gameObject.SetActive(i == ID);
             if (i == ID)
                 PassivesInfo.transform.GetChild(i).GetComponent<ShowPassive>().updateInfo();
