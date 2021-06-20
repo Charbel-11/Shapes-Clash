@@ -106,7 +106,6 @@ public class PlayerCollision : MonoBehaviour {
             AttackPower = player.getOverallAttack();
             isfirsttime = false;
         }
-        print("there" + IDOfAbility);
 
         //If the opponent used fountain attack
         if (col.tag == "Fountain" && IDOfAbility == 4) {
@@ -237,12 +236,10 @@ public class PlayerCollision : MonoBehaviour {
         }
 
         IDOfAbility = player.GetIdOfAnimUsed();
-        print("here" + IDOfAbility);
         if ((IDOfAbility == 3 || IDOfAbility == 17 || IDOfAbility == 21) && otherPlayer.GetIdOfAnimUsed() != 24) {
             int AttPow = other.GetComponent<BulletPlayer>().bulletPower; 
 
             if (AttPow > AttackPower) {
-                print("SSS");
                 playerAnim.SetInteger("ID", -1);
 
                 other.GetComponent<BulletPlayer>().bulletPower -= AttackPower;

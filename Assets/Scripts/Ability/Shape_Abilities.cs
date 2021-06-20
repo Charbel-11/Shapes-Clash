@@ -48,9 +48,9 @@ public class Shape_Abilities : MonoBehaviour {
             else if (!TempOpponent.Opponent.Abilities.ContainsKey(ID))
                 TempOpponent.Opponent.Abilities.Add(ID, UseAbility);
 
-            if (ID < 100)
+            if (ID <= 100)
                 Int32.TryParse(TempOpponent.Opponent.AbLevelArray[ID], out AbLevel);
-            else if ((ID > 100) && (ID < 200))
+            else if (ID < 200)
                 Int32.TryParse(TempOpponent.Opponent.Super100[ID - 101], out AbLevel);
             else if (ID > 200)
                 Int32.TryParse(TempOpponent.Opponent.Super200[ID - 201], out AbLevel);
@@ -59,24 +59,13 @@ public class Shape_Abilities : MonoBehaviour {
         {
             if (!GameMaster.doneInit) { return; }
             onlineP2 = false;
-            if (!(PlayerPrefs.GetInt("BotOnline") == 1)) {
-                if (ID < 100)
-                    Int32.TryParse(GameMaster.AbLevelArray[ID], out AbLevel);
-                else if ((ID > 100) && (ID < 200))
-                    Int32.TryParse(GameMaster.Super100[ID - 101], out AbLevel);
-                else if (ID > 200)
-                    Int32.TryParse(GameMaster.Super200[ID - 201], out AbLevel);
+            if (ID <= 100)
+                Int32.TryParse(GameMaster.AbLevelArray[ID], out AbLevel);
+            else if (ID < 200)
+                Int32.TryParse(GameMaster.Super100[ID - 101], out AbLevel);
+            else if (ID > 200)
+                Int32.TryParse(GameMaster.Super200[ID - 201], out AbLevel);
 
-            }
-            else {
-                if (ID < 100)
-                    Int32.TryParse(TempOpponent.Opponent.AbLevelArray[ID], out AbLevel);
-                else if ((ID > 100) && (ID < 200))
-                    Int32.TryParse(TempOpponent.Opponent.Super100[ID - 101], out AbLevel);
-                else if (ID > 200)
-                    Int32.TryParse(TempOpponent.Opponent.Super200[ID - 201], out AbLevel);
-
-            }
             //Needed?
             if (transform.root.gameObject.name == "Player1" && (GameMaster.Spectate || GameMaster.Replay) && !TempOpponent.Opponent.Abilities2.ContainsKey(ID))
                 TempOpponent.Opponent.Abilities2.Add(ID, UseAbility);

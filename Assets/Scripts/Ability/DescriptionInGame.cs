@@ -34,8 +34,8 @@ public class DescriptionInGame : MonoBehaviour {
             if (!p1 && !v2) { addAtt = GM.player2.getAddLvlAttack(); addDef = GM.player2.getAddLvlDef(); }
             else if (!p1 && v2) { addAtt = GM.player12.getAddLvlAttack(); addDef = GM.player12.getAddLvlDef(); }
 
-            Attack.text = att.ToString() + (att > 0 ? " +" + addAtt.ToString() : "");
-            Def.text = def.ToString() + (def > 0 ? " +" + addDef.ToString() : "");
+            Attack.text = att.ToString() + (att > 0 ? "+" + addAtt.ToString() : "");
+            Def.text = def.ToString() + (def > 0 ? "+" + addDef.ToString() : "");
 
             curRarity = GameMaster.rarity[ID];
             rarity = transform.Find("Rarity").gameObject;
@@ -93,7 +93,6 @@ public class DescriptionInGame : MonoBehaviour {
             AbilityName.text = "Level " + abLvl + " " + curAb.name;
             AbilityName.color = new Color(1f, 1f, 1f);
         }
-
         else {
             if (ID < 200)
                 Int32.TryParse(GameMaster.Super100[ID - 101], out abLvl);
@@ -115,7 +114,7 @@ public class DescriptionInGame : MonoBehaviour {
             rarity = transform.Find("Rarity").gameObject;
             rarity.GetComponent<Image>().color = ShapeConstants.rarityColors[curRarity];
 
-            Attack.text = temp[abLvl - 1].ToString() + " +" + addAtt.ToString();
+            Attack.text = temp[abLvl - 1].ToString() + "+" + addAtt.ToString();
 
             foreach (Transform go in transform.parent.transform) {
                 if (go.GetComponent<Shape_Abilities>() == null) { continue; }
