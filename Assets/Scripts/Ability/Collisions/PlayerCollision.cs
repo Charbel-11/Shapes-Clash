@@ -102,14 +102,14 @@ public class PlayerCollision : MonoBehaviour {
             else { LastCol = col.gameObject; }
         }
 
-
         if (isfirsttime && (col.tag == "BulletP1" || col.tag == "BulletP2" || col.tag == "Fire")) {
             AttackPower = player.getOverallAttack();
             isfirsttime = false;
         }
+        print("there" + IDOfAbility);
 
         //If the opponent used fountain attack
-        if (col.tag == "Fountain" && player.GetIdOfAnimUsed() == 4) {
+        if (col.tag == "Fountain" && IDOfAbility == 4) {
             AttackPower = player.getOverallAttack();
             int Att2 = otherPlayer.getOverallAttack();
             if (AttackPower > Att2) {
@@ -129,22 +129,14 @@ public class PlayerCollision : MonoBehaviour {
             }
         }
 
-        //If Eye of Horus was used the opponent is hit unless he escapes
-        //if (col.tag == "Laser" && player.GetEscapeType() != "Below" && player.GetEscapeType() != "Straight")
-        //playerAnim.SetBool("Hit", true);
-        //If the other player has used tackle and this player hasn't
-        //else if (col.tag == "Player" && (otherPlayerAbilityId == 3 || otherPlayerAbilityId == 17 || otherPlayerAbilityId == 21))
-        //playerAnim.SetBool("Hit", true);
         //If both player have used tackle or equivalent
         if ((IDOfAbility == 3 || IDOfAbility == 17 || IDOfAbility == 21) && (otherPlayerAbilityId == 3 || otherPlayerAbilityId == 17 || otherPlayerAbilityId == 21) && col.tag == "Player") {
             AttackPower = player.getOverallAttack();
             int AttackPower2 = otherPlayer.getOverallAttack();
             if (AttackPower > AttackPower2) {
-                //otherPlayer.GetComponent<Animator>().SetBool("Hit", true);
                 otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
             }
             else if (AttackPower2 > AttackPower) {
-                //playerAnim.SetBool("Hit", true);
                 playerAnim.SetInteger("ID", -1);
             }
             else {
@@ -154,7 +146,6 @@ public class PlayerCollision : MonoBehaviour {
         }
         //If the other player has used shadow attack and this player hasn't
         else if ((IDOfAbility != 4 && IDOfAbility < 100) && otherPlayerAbilityId == 4 && col.tag == "Player") {
-            //playerAnim.SetBool("Hit", true);
             if (IDOfAbility == 31)
                 player.transform.Find("FireLaser").gameObject.SetActive(false);
         }
@@ -167,7 +158,6 @@ public class PlayerCollision : MonoBehaviour {
                 AttackPower = 0;
 
                 otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
-                col.gameObject.SetActive(false);
 
                 IDOfAbility = -1;
                 playerAnim.SetInteger("ID", -1);
@@ -183,18 +173,6 @@ public class PlayerCollision : MonoBehaviour {
                 playerAnim.SetInteger("ID", -1);
             }
         }
-        /*        //If a player is hit by a bullet;  seems useless as we can't satisfy both bulletp1 tag and null bulletp1
-                else if ((col.tag == "BulletP1" || col.tag == "BulletP2") && IDOfAbility != 3 && IDOfAbility != 17 && IDOfAbility != 21) {
-                    if (col.tag == "BulletP1") {
-                        if (col.GetComponent<BulletPlayer1>() == null && col.GetComponent<BulletPlayer2>().isMate)
-                            Destroy(col.gameObject);
-                    }
-                    else {
-                        if (col.GetComponent<BulletPlayer2>() == null && col.GetComponent<BulletPlayer1>().isMate)
-                            Destroy(col.gameObject);
-                    }
-                }
-        */
         else if (((col.tag == "BulletP1" && !isP1) || (col.tag == "BulletP2" && isP1)) && (IDOfAbility == 3 || IDOfAbility == 17 || IDOfAbility == 21) && otherPlayerAbilityId < 100) {
             int BulletPower = col.GetComponent<BulletPlayer>().bulletPower;
             if (BulletPower == AttackPower) {
@@ -213,10 +191,6 @@ public class PlayerCollision : MonoBehaviour {
                     otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
 
                 col.gameObject.SetActive(false);
-            }
-            else if (BulletPower > AttackPower) {
-                //if (!col.GetComponent<BulletPlayer1>().isMate)
-                //playerAnim.SetBool("Hit", true);
             }
         }
         else if ((col.tag == "Fire") && (IDOfAbility != 3 && IDOfAbility != 17 && IDOfAbility != 21 && IDOfAbility != 4 && IDOfAbility != 7)) {
@@ -242,9 +216,6 @@ public class PlayerCollision : MonoBehaviour {
             col.gameObject.SetActive(false);
             otherPlayer.GetComponent<Animator>().SetInteger("ID", -1);
         }
-        else if (col.tag == "Ice") {
-            //playerAnim.SetBool("Hit", true);
-        }
     }
     private void OnParticleCollision(GameObject other) {
         if (isP1) { GM.HitFace1 = true; }
@@ -266,12 +237,13 @@ public class PlayerCollision : MonoBehaviour {
         }
 
         IDOfAbility = player.GetIdOfAnimUsed();
+        print("here" + IDOfAbility);
         if ((IDOfAbility == 3 || IDOfAbility == 17 || IDOfAbility == 21) && otherPlayer.GetIdOfAnimUsed() != 24) {
             int AttPow = other.GetComponent<BulletPlayer>().bulletPower; 
 
             if (AttPow > AttackPower) {
+                print("SSS");
                 playerAnim.SetInteger("ID", -1);
-                //playerAnim.SetBool("Hit", true);
 
                 other.GetComponent<BulletPlayer>().bulletPower -= AttackPower;
                 Collider.enabled = false;
@@ -286,7 +258,6 @@ public class PlayerCollision : MonoBehaviour {
             }
         }
         else if (otherPlayer.GetIdOfAnimUsed() != 24) {
-            //playerAnim.SetBool("Hit", true);
             Collider.enabled = false;
         }
     }
