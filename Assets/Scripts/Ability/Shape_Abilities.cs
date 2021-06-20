@@ -82,7 +82,7 @@ public class Shape_Abilities : MonoBehaviour {
 
         //Gets the atck/def stat of the ability
         //When implemented and tested, remove all start functions from all the abilities.
-        if (ID > 0 && ID < 100) {
+        if (ID > 0 && ID <= 100) {
             for (int i = 0; i < 3; i++) {
                 AttArr[i] = GameMaster.StatsArr[ID][i];
                 DefArr[i] = GameMaster.StatsArr[ID][i + 3];
@@ -91,14 +91,14 @@ public class Shape_Abilities : MonoBehaviour {
             if (Bot.EscapeAbilities.Contains(ID) && player is Sphere_Player)
                 EP_Needed -= 1;
         }
-        else if (ID >= 100 && ID < 200) {
+        else if (ID < 200) {
             for (int i = 0; i < 3; i++) {
                 AttArr[i] = GameMaster.Super100StatsArr[ID - 101][i];
                 DefArr[i] = GameMaster.Super100StatsArr[ID - 101][i + 3];
             }
             EP_Needed = GameMaster.Super100StatsArr[ID - 101][6];
         }
-        else if (ID >= 200) {
+        else {
             for (int i = 0; i < 3; i++) {
                 AttArr[i] = GameMaster.Super200StatsArr[ID - 201][i];
                 DefArr[i] = GameMaster.Super200StatsArr[ID - 201][i + 3];

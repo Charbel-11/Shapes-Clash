@@ -58,8 +58,7 @@ public class Bot : MonoBehaviour {
 
     //Make the shape choice on the selection screen if the bot option is selected
     //Same for online, prepare a random shape
-    public void StartFunction()
-    {
+    public void StartFunction() {
         GM = GameObject.Find("Game Manager").GetComponent<GameMaster>();
         shapeIndex = GM.shapeID2;
 
@@ -73,24 +72,21 @@ public class Bot : MonoBehaviour {
             curSpecial = CubeSpecial;
             selectedIDs[8] = 1;
         }
-        else if (shapeIndex == 1)
-        {
+        else if (shapeIndex == 1) {
             curAtck = PyrAtck;
             curDef = PyrDef;
             curOthers = PyrOthers;
             curSpecial = PyrSpecial;
             selectedIDs[8] = 22;
         }
-        else if (shapeIndex == 2)
-        {
+        else if (shapeIndex == 2) {
             curAtck = StarAtck;
             curDef = StarDef;
             curOthers = StarOthers;
             curSpecial = StarSpecial;
             selectedIDs[8] = 23;
         }
-        else if (shapeIndex == 3)
-        {
+        else if (shapeIndex == 3) {
             curAtck = SphereAtck;
             curDef = SphereDef;
             curOthers = SphereOthers;
@@ -98,42 +94,33 @@ public class Bot : MonoBehaviour {
             selectedIDs[8] = 42;
         }
 
-        if (GM.shapeID1 == 0)
-        { pAtck = new List<int>(CubeAtck); pDef = new List<int>(CubeDef); pOthers = new List<int>(CubeOthers); pSpecial = new List<int>(CubeSpecial); }
-        else if (GM.shapeID1 == 1)
-        { pAtck = new List<int>(PyrAtck); pDef = new List<int>(PyrDef); pOthers = new List<int>(PyrOthers); pSpecial = new List<int>(PyrSpecial); }
-        else if (GM.shapeID1 == 2)
-        { pAtck = new List<int>(StarAtck); pDef = new List<int>(StarDef); pOthers = new List<int>(StarOthers); pSpecial = new List<int>(StarSpecial); }
-        else if (GM.shapeID1 == 3)
-        { pAtck = new List<int>(SphereAtck); pDef = new List<int>(SphereDef); pOthers = new List<int>(SphereOthers); pSpecial = new List<int>(SphereSpecial); }
+        if (GM.shapeID1 == 0) { pAtck = new List<int>(CubeAtck); pDef = new List<int>(CubeDef); pOthers = new List<int>(CubeOthers); pSpecial = new List<int>(CubeSpecial); }
+        else if (GM.shapeID1 == 1) { pAtck = new List<int>(PyrAtck); pDef = new List<int>(PyrDef); pOthers = new List<int>(PyrOthers); pSpecial = new List<int>(PyrSpecial); }
+        else if (GM.shapeID1 == 2) { pAtck = new List<int>(StarAtck); pDef = new List<int>(StarDef); pOthers = new List<int>(StarOthers); pSpecial = new List<int>(StarSpecial); }
+        else if (GM.shapeID1 == 3) { pAtck = new List<int>(SphereAtck); pDef = new List<int>(SphereDef); pOthers = new List<int>(SphereOthers); pSpecial = new List<int>(SphereSpecial); }
 
-        for (int i = 0; i < 7; i++) { selectedIDs[i] = -1; } selectedIDs[7] = 0;
+        for (int i = 0; i < 7; i++) { selectedIDs[i] = -1; }
+        selectedIDs[7] = 0;
         initializeAbilities();
     }
 
-    public void initializeAbilities()
-    {
+    public void initializeAbilities() {
         int attackNum, defNum, othersNum;
 
         int r = Random.Range(1, 11);
-        if (r <= 5)
-        {
+        if (r <= 5) {
             attackNum = 4; defNum = 1; othersNum = 1;
         }
-        else
-        {
+        else {
             attackNum = 3; defNum = 2; othersNum = 1;
         }
 
-        for (int i = 0; i < attackNum; i++)
-        {
+        for (int i = 0; i < attackNum; i++) {
             bool newAb = false;
-            while (!newAb)
-            {
+            while (!newAb) {
                 r = Random.Range(0, curAtck.Length);
                 newAb = true;
-                for (int j = 0; j < 7; j++)
-                {
+                for (int j = 0; j < 7; j++) {
                     if (selectedIDs[j] == curAtck[r]) { newAb = false; break; }
                 }
             }
@@ -141,15 +128,12 @@ public class Bot : MonoBehaviour {
             botAb.Add(new WeightedID(selectedIDs[i], 0));
         }
 
-        for (int i = 0; i < defNum; i++)
-        {
+        for (int i = 0; i < defNum; i++) {
             bool newAb = false;
-            while (!newAb)
-            {
+            while (!newAb) {
                 r = Random.Range(0, curDef.Length);
                 newAb = true;
-                for (int j = 0; j < 7; j++)
-                {
+                for (int j = 0; j < 7; j++) {
                     if (selectedIDs[j] == curDef[r]) { newAb = false; break; }
                 }
             }
@@ -157,15 +141,12 @@ public class Bot : MonoBehaviour {
             botAb.Add(new WeightedID(selectedIDs[i + attackNum], 1));
         }
 
-        for (int i = 0; i < othersNum; i++)
-        {
+        for (int i = 0; i < othersNum; i++) {
             bool newAb = false;
-            while (!newAb)
-            {
+            while (!newAb) {
                 r = Random.Range(0, curOthers.Length);
                 newAb = true;
-                for (int j = 0; j < 7; j++)
-                {
+                for (int j = 0; j < 7; j++) {
                     if (selectedIDs[j] == curOthers[r]) { newAb = false; break; }
                 }
             }
@@ -179,13 +160,10 @@ public class Bot : MonoBehaviour {
         botAb.Add(new WeightedID(0, 2));
         botAb.Add(new WeightedID(selectedIDs[8], 0));
 
-        for (int i = 0; i < 9; i++)
-        {
+        for (int i = 0; i < 9; i++) {
             if (i == 6) { continue; }
-            foreach (Transform go in AbilitiesContainer.transform)
-            {
-                if (go.GetComponent<Shape_Abilities>().ID == selectedIDs[i])
-                {
+            foreach (Transform go in AbilitiesContainer.transform) {
+                if (go.GetComponent<Shape_Abilities>().ID == selectedIDs[i]) {
                     Abilities[i] = go.gameObject;
                     AbilitiesDic.Add(botAb[i], go.gameObject);
                     go.GetComponent<Shape_Abilities>().Awake();
@@ -194,18 +172,15 @@ public class Bot : MonoBehaviour {
             }
         }
 
-        foreach (Transform go in specialAbilitiesContainer.transform)
-        {
-            if (go.GetComponent<Shape_Abilities>().ID == selectedIDs[6])
-            {
+        foreach (Transform go in specialAbilitiesContainer.transform) {
+            if (go.GetComponent<Shape_Abilities>().ID == selectedIDs[6]) {
                 Abilities[6] = go.gameObject;
                 AbilitiesDic.Add(botAb[6], go.gameObject);
                 go.GetComponent<Shape_Abilities>().Awake();
             }
         }
 
-        if (GameMaster.botOnline)
-        {
+        if (GameMaster.botOnline) {
             int[] IDs = { 0, 0, 0, 0, 0, 0 };
             for (int i = 0; i < 6; i++) { IDs[i] = selectedIDs[i]; }
             int superID = selectedIDs[6];
@@ -215,31 +190,28 @@ public class Bot : MonoBehaviour {
     }
 
     //Consider cases where an ability can't be chosen in the next rounds, maybe check if button is interactible instead
-    public void makeChoice()
-    {
+    public void makeChoice() {
         bool attack = Random.Range(0f, 1.25f) >= OppState;
         if (!attack)
             attack = CheckDefWeights(botAb);
+
         List<WeightedID> filteredList = FilterTypes(botAb, attack ? 0 : 1);
         int r = GetRandomIndex(filteredList.Count);
         GameObject G;
         AbilitiesDic.TryGetValue(filteredList[r], out G);
         G.GetComponent<Shape_Abilities>().updateState();
         int i = 0;
-        while (i < filteredList.Count && (CheckEP(r, filteredList) || !G.GetComponent<Button>().interactable || (filteredList[r].type == 0) != attack) || checkifused(filteredList[r].ID))
-        {
-            i++; if(i >= filteredList.Count) { break; }
+        while (i < filteredList.Count && (CheckEP(r, filteredList) || !G.GetComponent<Button>().interactable || (filteredList[r].type == 0) != attack) || checkifused(filteredList[r].ID)) {
+            i++; if (i >= filteredList.Count) { break; }
             r = GetRandomIndex(filteredList.Count - i) + i;
             AbilitiesDic.TryGetValue(filteredList[r], out G);
             G.GetComponent<Shape_Abilities>().updateState();
         }
-        if (i >= filteredList.Count && !Abilities[8].GetComponent<Button>().interactable)
-        {
+        if (i >= filteredList.Count && !Abilities[8].GetComponent<Button>().interactable) {
             usedIDs.Add(0);
             Abilities[7].GetComponent<Shape_Abilities>().UseAbility();
         }
-        else if (i >= filteredList.Count)
-        {
+        else if (i >= filteredList.Count) {
             int ran = R.Next(7, 9);
 
             if (ran == 7)
@@ -248,29 +220,25 @@ public class Bot : MonoBehaviour {
                 usedIDs.Add(Abilities[8].GetComponent<Shape_Abilities>().ID);
 
             Abilities[ran].GetComponent<Shape_Abilities>().UseAbility();
-            
+
         }
-        else
-        {
+        else {
             usedIDs.Add(filteredList[r].ID);
             G.GetComponent<Shape_Abilities>().UseAbility();
         }
     }
 
-    private bool checkifused(int ID)
-    {
+    private bool checkifused(int ID) {
         if (usedIDs.Count < 2)
             return false;
 
         return (usedIDs[usedIDs.Count - 1] == ID && usedIDs[usedIDs.Count - 2] == ID);
     }
 
-    private int GetRandomIndex(int listsize)
-    {
+    private int GetRandomIndex(int listsize) {
         int i = R.Next(0, 101);
         int j = 0;
-        while(listsize - j > 0)
-        {
+        while (listsize - j > 0) {
             if (i < (10 + 15 * j))
                 return listsize - (j + 1);
             j++;
@@ -278,29 +246,24 @@ public class Bot : MonoBehaviour {
         return 0;
     }
 
-    private bool CheckDefWeights(List<WeightedID> ListToCheck)
-    {
-        foreach(WeightedID i in ListToCheck)
-        {
+    private bool CheckDefWeights(List<WeightedID> ListToCheck) {
+        foreach (WeightedID i in ListToCheck) {
             if (i.Weight >= 1 && i.type == 1)
                 return false;
         }
         return true;
     }
 
-    private List<WeightedID> FilterTypes(List<WeightedID> IDs, int type)
-    {
+    private List<WeightedID> FilterTypes(List<WeightedID> IDs, int type) {
         List<WeightedID> newList = new List<WeightedID>();
-        foreach(WeightedID i in IDs)
-        {
-            if (i.type == type || (i.type!= 1 && type == 0))
+        foreach (WeightedID i in IDs) {
+            if (i.type == type || (i.type != 1 && type == 0))
                 newList.Add(i);
         }
         return newList;
     }
 
-    public void UpdateBot()
-    {
+    public void UpdateBot() {
         if (0.5 <= OppState && OppState <= 1)
             OppState = 0.6f;
         else
@@ -315,20 +278,18 @@ public class Bot : MonoBehaviour {
         OppState += GetWeight(ID);
         if (GM.player2Life <= 50) { OppState += (float)(-GM.player2Life + 50) / 40; }
         if (GM.player1Life <= 50) { OppState -= (float)(-GM.player1Life + 50) / 40; }
-        if (BoostAbilities.Contains(GM.player2.GetIdOfAnimUsed())) { OppState -= 1;}
-        if(OppState < 0) { OppState = 0; }
-        else if(OppState > 1) { OppState = 1; }
+        if (BoostAbilities.Contains(GM.player2.GetIdOfAnimUsed())) { OppState -= 1; }
+        if (OppState < 0) { OppState = 0; }
+        else if (OppState > 1) { OppState = 1; }
 
-        foreach(WeightedID i in botAb)
-        {
+        foreach (WeightedID i in botAb) {
             i.Weight = 0;
-            WeightID(i,OppAbilities);
+            WeightID(i, OppAbilities);
         }
         botAb.Sort(WeightedID.CompareWeightedIDs);
     }
 
-    private float GetWeight(int ID)
-    {
+    private float GetWeight(int ID) {
         if (BoostAbilities.Contains(ID))
             return 0.5f;
         else if (pAtck.Contains(ID))
@@ -336,32 +297,26 @@ public class Bot : MonoBehaviour {
         else if (pDef.Contains(ID))
             return -0.1f;
         else
-            return 0;       
+            return 0;
     }
 
-    private void WeightID(WeightedID ID, List<int> Abilities)
-    {
+    private void WeightID(WeightedID ID, List<int> Abilities) {
         if (ID.type == 3) { ID.Weight = 100; return; }
-        if(ID.type == 2) { ID.Weight = 0; return; }
-        if (BoostAbilities.Contains(ID.ID))
-        {
+        if (ID.type == 2) { ID.Weight = 0; return; }
+        if (BoostAbilities.Contains(ID.ID)) {
             ID.Weight += (GM.player2Life - 40) / 10;
             return;
         }
         List<int> relevantIDs = FilterIDs(Abilities, ID);
 
-        if(ID.type == 0)
-        {
+        if (ID.type == 0) {
             int EscapePotential = 6;
-            foreach(int i in relevantIDs)
-            {
+            foreach (int i in relevantIDs) {
                 int dir = FindDirection(i);
                 if (dir == ID.direction && EscapeAbilities.Contains(i) && !pAtck.Contains(i))
                     ID.Weight += 3;
-                else if (dir != ID.direction && EscapeAbilities.Contains(i) && !pAtck.Contains(i))
-                { ID.Weight -= 2; EscapePotential -= 6; }
-                else if (dir == ID.direction && EscapeAbilities.Contains(i) && pAtck.Contains(i))
-                    { ID.Weight += 1; EscapePotential -= 2; }
+                else if (dir != ID.direction && EscapeAbilities.Contains(i) && !pAtck.Contains(i)) { ID.Weight -= 2; EscapePotential -= 6; }
+                else if (dir == ID.direction && EscapeAbilities.Contains(i) && pAtck.Contains(i)) { ID.Weight += 1; EscapePotential -= 2; }
                 else if (dir != ID.direction && EscapeAbilities.Contains(i) && pAtck.Contains(i))
                     ID.Weight -= 1;
                 else if (dir == ID.direction && pDef.Contains(i))
@@ -375,10 +330,8 @@ public class Bot : MonoBehaviour {
             ID.Weight += Mathf.CeilToInt((float)G.GetComponent<Shape_Abilities>().AttPow / 5);
             ID.Weight += EscapePotential;
         }
-        else if(ID.type == 1 && !EscapeAbilities.Contains(ID.ID))
-        {
-            foreach(int i in relevantIDs)
-            {
+        else if (ID.type == 1 && !EscapeAbilities.Contains(ID.ID)) {
+            foreach (int i in relevantIDs) {
                 int dir = FindDirection(i);
                 if (dir == ID.direction)
                     ID.Weight += 2;
@@ -388,10 +341,8 @@ public class Bot : MonoBehaviour {
             AbilitiesDic.TryGetValue(ID, out GameObject G);
             ID.Weight += Mathf.CeilToInt((float)G.GetComponent<Shape_Abilities>().DefPow / 10);
         }
-        else if(ID.type == 1 && EscapeAbilities.Contains(ID.ID))
-        {
-            foreach(int i in relevantIDs)
-            {
+        else if (ID.type == 1 && EscapeAbilities.Contains(ID.ID)) {
+            foreach (int i in relevantIDs) {
                 int dir = FindDirection(i);
                 if (dir == ID.direction)
                     ID.Weight -= 1;
@@ -402,21 +353,18 @@ public class Bot : MonoBehaviour {
 
     }
 
-    private List<int> FilterIDs(List<int> AbilitiesDic, WeightedID ID)
-    {
+    private List<int> FilterIDs(List<int> AbilitiesDic, WeightedID ID) {
         List<int> newList = new List<int>();
-        foreach(int i in AbilitiesDic)
-        {
+        foreach (int i in AbilitiesDic) {
             if (ID.type == 0 && (pAtck.Contains(i) || pDef.Contains(i) || EscapeAbilities.Contains(i)))
                 newList.Add(i);
-            else if (ID.type == 1  && (pAtck.Contains(i)))
+            else if (ID.type == 1 && (pAtck.Contains(i)))
                 newList.Add(i);
         }
         return newList;
     }
 
-    private bool CheckEP(int r, List<WeightedID> list)
-    {
+    private bool CheckEP(int r, List<WeightedID> list) {
         if (list[r].ID < 100)
             return GameMaster.StatsArr[list[r].ID][6] > GM.player2.GetEP();
         else if (list[r].ID < 200)
@@ -425,8 +373,7 @@ public class Bot : MonoBehaviour {
             return GameMaster.Super200StatsArr[list[r].ID - 201][6] > GM.player2.GetEP();
     }
 
-    public static int FindDirection(int ID)
-    {
+    public static int FindDirection(int ID) {
         if (Bot.Above.Contains(ID))
             return 0;
         else if (Bot.Below.Contains(ID))
@@ -437,20 +384,17 @@ public class Bot : MonoBehaviour {
             return -1;
     }
 }
-public class WeightedID
-{
-    public int ID,Weight,type,direction;
+public class WeightedID {
+    public int ID, Weight, type, direction;
     //type: 0 Attack,1 Defense,2 Other, 3 Super
-    public WeightedID(int ID,int type)
-    {
+    public WeightedID(int ID, int type) {
         this.ID = ID;
         Weight = 0;
         this.type = type;
         direction = Bot.FindDirection(ID);
     }
 
-    public static int CompareWeightedIDs(WeightedID ID1, WeightedID ID2)
-    {
+    public static int CompareWeightedIDs(WeightedID ID1, WeightedID ID2) {
         if (ID1.Weight > ID2.Weight)
             return -1;
         else if (ID1.Weight < ID2.Weight)
@@ -459,8 +403,7 @@ public class WeightedID
             return 0;
     }
 
-    public override string ToString()
-    {
+    public override string ToString() {
         string name;
         if (ID >= 0 && ID <= 100)
             name = ShapeConstants.NamesArray[ID];
@@ -471,5 +414,4 @@ public class WeightedID
 
         return name + " : " + Weight;
     }
-
 }

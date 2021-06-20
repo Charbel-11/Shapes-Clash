@@ -327,7 +327,6 @@ public abstract class Shape_Player : MonoBehaviour {
     }
 
     public void SetAttackPower(int[] newPower) {
-        print(attack[2] + " " + newPower[2] + " " + AddAtt + " " + AdditionalDamage);
         newPower.CopyTo(attack, 0);
         int attackDir = 0;
         for (int i = 0; i < 3; i++) {

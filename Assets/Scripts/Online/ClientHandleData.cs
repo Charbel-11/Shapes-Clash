@@ -6,8 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
-public class ClientHandleData
-{
+public class ClientHandleData {
     private static ByteBuffer PlayerBuffer;
     public delegate void PacketF(byte[] Data);
     public static Dictionary<int, PacketF> PacketListener;
@@ -16,8 +15,7 @@ public class ClientHandleData
     private static System.Random R = new System.Random();
     public static int GameVersion = 4; // Needs to be updated everytime we update the Game.
 
-    public static void InitializePacketListener()
-    {
+    public static void InitializePacketListener() {
         PacketListener = new Dictionary<int, PacketF>
         {
             { (int)ServerPackages.SMsg, HandleMessage },
@@ -43,8 +41,7 @@ public class ClientHandleData
         };
     }
 
-    public static void HandleData(byte[] data)
-    {
+    public static void HandleData(byte[] data) {
         string s = "", s2 = "";
         foreach (byte bb in data) { s = s + " " + bb.ToString(); s2 = s2 + " " + (char)bb; }
         Debug.Log(s + " or " + s2);
@@ -64,8 +61,7 @@ public class ClientHandleData
         }
 
         pLength = PlayerBuffer.ReadInteger(false);      //Doesn't advance before all the packet is here
-        while (pLength >= 4 && pLength <= PlayerBuffer.Length() - 4)
-        {
+        while (pLength >= 4 && pLength <= PlayerBuffer.Length() - 4) {
             PlayerBuffer.ReadInteger();
             int packageID = PlayerBuffer.ReadInteger();
             pLength -= 4;
@@ -83,8 +79,7 @@ public class ClientHandleData
 
         if (pLength < 4) { PlayerBuffer.Clear(); }
     }
-    private static void HandleMessage(byte[] data)
-    {
+    private static void HandleMessage(byte[] data) {
         ByteBuffer buffer = new ByteBuffer();
         buffer.WriteBytes(data);
         string msg = buffer.ReadString();
@@ -104,38 +99,30 @@ public class ClientHandleData
         }
         else if (msg == "BRD")      //Battle Request Denied
         {
-            if (SceneManager.GetActiveScene().name == "MainMenuScene")
-            {
+            if (SceneManager.GetActiveScene().name == "MainMenuScene") {
                 GameObject.Find("SelectionManager").GetComponent<SelectionManager>().rejectedFriendly();
             }
         }
-        else if (msg == "LifePoints")
-        {
+        else if (msg == "LifePoints") {
             int LP1 = GameObject.Find("Player1").GetComponent<Shape_Player>().GetLife();
             int LP2 = GameObject.Find("Player2").GetComponent<Shape_Player>().GetLife();
             int ConnID = buffer.ReadInteger();
-            ClientTCP.PACKAGE_LifePoints(LP1, LP2, ConnID,buffer.ReadInteger());
+            ClientTCP.PACKAGE_LifePoints(LP1, LP2, ConnID, buffer.ReadInteger());
         }
-        else if (msg == "Taken")
-        {
+        else if (msg == "Taken") {
             GameObject.Find("LoginPanel").GetComponent<Login>().taken();
         }
-        else if (msg == "Leave")
-        {
+        else if (msg == "Leave") {
             SceneManager.LoadScene("MainMenuScene");
         }
-        else if (msg == "Leave1")
-        {
-            if (SceneManager.GetActiveScene().name == "MainMenuScene")
-            {
+        else if (msg == "Leave1") {
+            if (SceneManager.GetActiveScene().name == "MainMenuScene") {
                 GameObject Panel = GameObject.Find("Priority Messages").transform.Find("FriendlyBattleRequest").gameObject;
                 if (Panel.activeSelf) { Panel.SetActive(false); }
-                else if (TempOpponent.Opponent.Accepting)
-                {
+                else if (TempOpponent.Opponent.Accepting) {
                     TempOpponent.Opponent.Accepting = false;
                     TempOpponent.Opponent.FriendlyBattle = false;
-                    if (ValuesChange.SwitchScenes.TryGetValue("MainMenu", out UnityEngine.Events.UnityEvent Function))
-                    {
+                    if (ValuesChange.SwitchScenes.TryGetValue("MainMenu", out UnityEngine.Events.UnityEvent Function)) {
                         Function.Invoke();
                     }
                 }
@@ -144,16 +131,13 @@ public class ClientHandleData
                 //Debug.Log("Friendly Battle Canceled");
             }
         }
-        else if (msg == "Reconnect")
-        {
+        else if (msg == "Reconnect") {
             int OtherConnID = buffer.ReadInteger();
-            if (!GameMaster.StopEvaluating)
-            {
+            if (!GameMaster.StopEvaluating) {
                 ClientTCP.PACKAGE_Reconnect(OtherConnID);
                 GameMaster.Disconnected = false;
             }
-            else
-            {
+            else {
                 GameMasterOnline GM = GameObject.Find("Game Manager").GetComponent<GameMasterOnline>();
                 GM.ReconnectFunction(OtherConnID);
             }
@@ -163,41 +147,35 @@ public class ClientHandleData
             GameMaster.Disconnected = true;
             GameMaster.DisconnectedFirstTime = true;
             Shape_Player Player2 = GameObject.Find("Player2").GetComponent<Shape_Player>();
-            if (!Player2.GetChoiceDone())
-            {
+            if (!Player2.GetChoiceDone()) {
                 if (TempOpponent.Opponent.Abilities.TryGetValue(0, out TempOpponent.Method method))
                     method.Invoke();
             }
         }
-        else if(msg == "D2")
-        {
-            
+        else if (msg == "D2") {
+
             GameObject.Find("Game Manager").GetComponent<GameMasterOnline>().Disc.SetActive(true);
             buffer.Dispose();
             return;
         }
-        else if (msg == "Connect")
-        {
+        else if (msg == "Connect") {
             ClientTCP.Reconnecting = true;
             ClientTCP.InitializeClientSocket(ClientManager.serverIP, ClientManager.serverPort);
         }
-        else if (msg == "CheckIP")
-        {
+        else if (msg == "CheckIP") {
             ClientTCP.PACKAGE_DEBUG("CheckIP", buffer.ReadString() + "/" + PlayerPrefs.GetString("Username"));
         }
         else if (msg == "OC")       //Online Check
         {
             ClientTCP.PACKAGE_DEBUG(msg, "", buffer.ReadInteger());
         }
-        else if(msg == "SS")        //Stop Searching
+        else if (msg == "SS")        //Stop Searching
         {
-            if(SceneManager.GetActiveScene().name == "MainMenuScene" && GameObject.Find("SelectionManager"))
-            {
+            if (SceneManager.GetActiveScene().name == "MainMenuScene" && GameObject.Find("SelectionManager")) {
                 GameObject.Find("SelectionManager").GetComponent<SelectionManager>().Cancel.GetComponent<CancelSearch>().Cancel();
             }
         }
-        else if(msg == "Done")
-        {
+        else if (msg == "Done") {
             MainMenuController.JustRegistered = false;
             GameObject.Find("MainMenuController").GetComponent<MainMenuController>().Set();
         }
@@ -223,8 +201,7 @@ public class ClientHandleData
         {
             GameObject.Find("Menu Manager").GetComponent<ValuesChange>().ShowMessage("Your friend is not in a game");
         }
-        else if(msg == "ReconnectBot")
-        {
+        else if (msg == "ReconnectBot") {
             TempOpponent.Opponent.BotRoomNum = buffer.ReadInteger();
             ReconnectString = buffer.ReadString();
             string[] ReconnectStringBot = ReconnectString.Split(',');
@@ -232,7 +209,7 @@ public class ClientHandleData
             TempOpponent.Opponent.AbLevelArray = ReconnectStringBot[77].Split('|');
             TempOpponent.Opponent.Super100 = PlayerPrefsX.GetStringArray("Super100Array");
             TempOpponent.Opponent.Super200 = PlayerPrefsX.GetStringArray("Super200Array");
-            Int32.TryParse(ReconnectStringBot[76],out TempOpponent.Opponent.ShapeID);
+            Int32.TryParse(ReconnectStringBot[76], out TempOpponent.Opponent.ShapeID);
             TempOpponent.Opponent.Passives = PlayerPrefsX.GetIntArray("PassivesArray");
             Int32.TryParse(ReconnectStringBot[78], out TempOpponent.Opponent.OpPP);
             TempOpponent.Opponent.OpLvl = PlayerPrefsX.GetIntArray("Level")[PlayerPrefs.GetInt("ShapeSelectedID")];
@@ -248,27 +225,22 @@ public class ClientHandleData
             SceneManager.LoadScene("PassThePhone");
             return;
         }
-        else if(msg == "WrongSecretCode")
-        {
+        else if (msg == "WrongSecretCode") {
             GameObject.Find("LoginPanel").GetComponent<Login>().WrongCode();
         }
-        else if(msg == "DN")
-        {
+        else if (msg == "DN") {
             PlayerPrefs.SetInt("DN", 1);
         }
-        else if(msg == "ABU")
-        {
+        else if (msg == "ABU") {
             Debug.LogError("???");
             GameObject panel;
-            if (panel = GameObject.Find("Canvas"))
-            {
+            if (panel = GameObject.Find("Canvas")) {
                 panel.transform.Find("ABU").gameObject.SetActive(true);
             }
         }
         buffer.Dispose();
     }
-    private static void HandleLogin(byte[] data)
-    {
+    private static void HandleLogin(byte[] data) {
         if (GameObject.Find("LoginPanel")) GameObject.Find("LoginPanel").GetComponent<Login>().accepted();
         int i = 0;
         bool firsttime = true;
@@ -279,10 +251,8 @@ public class ClientHandleData
         string Level = buffer.ReadString();
         string[] Lvl1 = Level.Split(',');
         int[] LevelArray = new int[Lvl1.Length];
-        foreach (string c in Lvl1)
-        {
-            if (firsttime)
-            {
+        foreach (string c in Lvl1) {
+            if (firsttime) {
                 i = 0;
                 firsttime = false;
             }
@@ -293,10 +263,8 @@ public class ClientHandleData
         string XP = buffer.ReadString();
         string[] XP1 = XP.Split(',');
         int[] XPArray = new int[XP1.Length];
-        foreach (string c in XP1)
-        {
-            if (firsttime)
-            {
+        foreach (string c in XP1) {
+            if (firsttime) {
                 i = 0;
                 firsttime = false;
             }
@@ -308,10 +276,8 @@ public class ClientHandleData
         string[] PP1 = PP.Split(',');
         int[] PPArray = new int[PP1.Length];
         int AllPP = 0;
-        foreach (string c in PP1)
-        {
-            if (firsttime)
-            {
+        foreach (string c in PP1) {
+            if (firsttime) {
                 i = 0;
                 firsttime = false;
             }
@@ -338,8 +304,7 @@ public class ClientHandleData
         string[] ShapePriceS = ShapePriceStr.Split(',');
         int[] ShapePrice = new int[ShapePriceS.Length];
         i = 0;
-        foreach (string c in ShapePriceS)
-        {
+        foreach (string c in ShapePriceS) {
             Int32.TryParse(c, out ShapePrice[i]);
             i++;
         }
@@ -347,8 +312,7 @@ public class ClientHandleData
         string[] ChestSlotPricesStr = ChestSlotStr.Split(',');
         int[] ChestSlotPrices = new int[ChestSlotPricesStr.Length];
         i = 0;
-        foreach (string c in ChestSlotPricesStr)
-        {
+        foreach (string c in ChestSlotPricesStr) {
             Int32.TryParse(c, out ChestSlotPrices[i]);
             i++;
         }
@@ -357,8 +321,7 @@ public class ClientHandleData
         string Pas = buffer.ReadString();
         string[] PassivesStr = Pas.Split(',');
         int[] Passives = new int[PassivesStr.Length];
-        foreach (string c in PassivesStr)
-        {
+        foreach (string c in PassivesStr) {
             Int32.TryParse(c, out Passives[i]);
             i++;
         }
@@ -387,8 +350,7 @@ public class ClientHandleData
         int Winstreak = buffer.ReadInteger();
         string IDs = buffer.ReadString();
         int[] RecentIDs;
-        if (IDs == "N")
-        {
+        if (IDs == "N") {
             RecentIDs = PlayerPrefsX.GetIntArray("RecentIDs");
             if (RecentIDs.Length > 0 && RecentIDs[0] != -1) {
                 ChestCode.OldRecentShapeIDs = PlayerPrefsX.GetIntArray("RecentIDs");
@@ -396,13 +358,11 @@ public class ClientHandleData
                 ChestCode.OpenIt = true;
             }
         }
-        else
-        {
+        else {
             string[] RecentIDsStr = IDs.Split(',');
             RecentIDs = new int[RecentIDsStr.Length];
             i = 0;
-            foreach (string d in RecentIDsStr)
-            {
+            foreach (string d in RecentIDsStr) {
                 Int32.TryParse(d, out RecentIDs[i]);
                 i++;
             }
@@ -411,8 +371,7 @@ public class ClientHandleData
         string[] Slots = ChestSlots.Split(',');
         int[] SlotsAr = new int[Slots.Length];
         i = 0;
-        foreach (string c in Slots)
-        {
+        foreach (string c in Slots) {
             Int32.TryParse(c, out SlotsAr[i]);
             i++;
         }
@@ -423,8 +382,7 @@ public class ClientHandleData
         string[] AbRarety = AbilitiesRarety.Split(',');
         int[] RaretyAr = new int[AbRarety.Length];
         i = 0;
-        foreach (string c in AbRarety)
-        {
+        foreach (string c in AbRarety) {
             Int32.TryParse(c, out RaretyAr[i]);
             i++;
         }
@@ -432,8 +390,7 @@ public class ClientHandleData
         string[] BackgroundsStr = Bg.Split(',');
         int[] Backgrounds = new int[BackgroundsStr.Length];
         i = 0;
-        foreach (string s in BackgroundsStr)
-        {
+        foreach (string s in BackgroundsStr) {
             Int32.TryParse(s, out Backgrounds[i]);
             i++;
         }
@@ -444,8 +401,7 @@ public class ClientHandleData
         string[] BgPriceStr = BgPrice.Split(',');
         int[] BgPriceAr = new int[BgPriceStr.Length];
         i = 0;
-        foreach (string s in BgPriceStr)
-        {
+        foreach (string s in BgPriceStr) {
             Int32.TryParse(s, out BgPriceAr[i]);
             i++;
         }
@@ -453,8 +409,7 @@ public class ClientHandleData
         string[] EmotesPriceStr = EmotesPrice.Split(',');
         int[] EmotesPriceAr = new int[EmotesPriceStr.Length];
         i = 0;
-        foreach (string s in EmotesPriceStr)
-        {
+        foreach (string s in EmotesPriceStr) {
             Int32.TryParse(s, out EmotesPriceAr[i]);
             i++;
         }
@@ -462,8 +417,7 @@ public class ClientHandleData
         string[] SkinsPriceStr = SkinsPrice.Split(',');
         int[] SkinsPriceAr = new int[SkinsPriceStr.Length];
         i = 0;
-        foreach (string s in SkinsPriceStr)
-        {
+        foreach (string s in SkinsPriceStr) {
             Int32.TryParse(s, out SkinsPriceAr[i]);
             i++;
         }
@@ -471,8 +425,7 @@ public class ClientHandleData
         string[] CoinPriceStr = CoinPrice.Split(',');
         int[] CoinPriceAr = new int[CoinPriceStr.Length];
         i = 0;
-        foreach (string s in CoinPriceStr)
-        {
+        foreach (string s in CoinPriceStr) {
             Int32.TryParse(s, out CoinPriceAr[i]);
             i++;
         }
@@ -480,8 +433,7 @@ public class ClientHandleData
         string[] CoinRewardStr = CoinReward.Split(',');
         int[] CoinRewardAr = new int[CoinRewardStr.Length];
         i = 0;
-        foreach (string s in CoinRewardStr)
-        {
+        foreach (string s in CoinRewardStr) {
             Int32.TryParse(s, out CoinRewardAr[i]);
             i++;
         }
@@ -491,8 +443,7 @@ public class ClientHandleData
         string[] SkinsUnlockedStr = SkinsUnlocked.Split(',');
         int[] SkinsUnlockedAr = new int[SkinsUnlockedStr.Length];
         i = 0;
-        foreach (string s in SkinsUnlockedStr)
-        {
+        foreach (string s in SkinsUnlockedStr) {
             Int32.TryParse(s, out SkinsUnlockedAr[i]);
             i++;
         }
@@ -500,8 +451,7 @@ public class ClientHandleData
         string[] EmotesUnlockedStr = EmotesUnlocked.Split(',');
         int[] EmotesUnlockedAr = new int[EmotesUnlockedStr.Length];
         i = 0;
-        foreach (string s in EmotesUnlockedStr)
-        {
+        foreach (string s in EmotesUnlockedStr) {
             Int32.TryParse(s, out EmotesUnlockedAr[i]);
             i++;
         }
@@ -512,8 +462,7 @@ public class ClientHandleData
         string[] maxPPstrAr = maxPPstr.Split(',');
         int[] maxPP = new int[maxPPstrAr.Length];
         i = 0;
-        foreach(string s in maxPPstrAr)
-        {
+        foreach (string s in maxPPstrAr) {
             Int32.TryParse(s, out maxPP[i]);
             i++;
         }
@@ -523,18 +472,15 @@ public class ClientHandleData
         string[] AdsRemStrAr = Dec[1].Split(',');
         int[] AdsRem = new int[AdsRemStrAr.Length];
         i = 0;
-        foreach (string s in AdsRemStrAr)
-        {
+        foreach (string s in AdsRemStrAr) {
             Int32.TryParse(s, out AdsRem[i]);
             i++;
         }
         string SecretCode = buffer.ReadString();
         MainMenuController.JustRegistered = true;
         i = 0;
-        foreach(int j in LevelArray)
-        {
-            if (j > 0)
-            {
+        foreach (int j in LevelArray) {
+            if (j > 0) {
                 MainMenuController.JustRegistered = false;
                 if (LevelArray[PlayerPrefs.GetInt("ShapeSelectedID")] < 1)
                     PlayerPrefs.SetInt("ShapeSelectedID", i);
@@ -547,21 +493,18 @@ public class ClientHandleData
         string[] addrewstatsstr = buffer.ReadString().Split(',');
         int[] addrewstats = new int[addrewstatsstr.Length];
         i = 0;
-        foreach(string s in addrewstatsstr)
-        {
+        foreach (string s in addrewstatsstr) {
             Int32.TryParse(s, out addrewstats[i]);
             i++;
         }
         string[] addrewstr = buffer.ReadString().Split(',');
         int[] addrew = new int[addrewstr.Length];
         i = 0;
-        foreach (string s in addrewstr)
-        {
+        foreach (string s in addrewstr) {
             Int32.TryParse(s, out addrew[i]);
             i++;
         }
-        if (GameVersion != buffer.ReadInteger())
-        {
+        if (GameVersion != buffer.ReadInteger()) {
             GameObject.Find("ClientManager").GetComponent<ClientManager>().UpdatePanel.SetActive(true);
             return;
         }
@@ -644,8 +587,7 @@ public class ClientHandleData
             SceneManager.LoadScene("MainMenuScene");            //Don't do that if we are reconnecting though
         buffer.Dispose();
     }
-    private static void HandleGoingToBattle(byte[] data)
-    {
+    private static void HandleGoingToBattle(byte[] data) {
         GameObject go = GameObject.Find("CancelPanel");
         GameObject goP = go.transform.parent.Find("FoundPanel").gameObject;
         goP.SetActive(true);
@@ -655,16 +597,14 @@ public class ClientHandleData
 
         int i = 0;
         ByteBuffer buffer = new ByteBuffer();
-        buffer.WriteBytes(data);       
+        buffer.WriteBytes(data);
         string SceneToLoad = buffer.ReadString();
-        if (SceneToLoad == "PassThePhone")
-        {
+        if (SceneToLoad == "PassThePhone") {
             TempOpponent.Opponent.Username = buffer.ReadString();
             TempOpponent.Opponent.Username = CheckBotUsername(TempOpponent.Opponent.Username);
             string[] Ar = PlayerPrefsX.GetStringArray("AbilitiesArray");
             int[] counter = new int[3] { 0, 0, 0 };
-            foreach(string s in Ar)
-            {
+            foreach (string s in Ar) {
                 if (s.Equals("0") || s.Equals("1"))
                     counter[0]++;
                 else if (s.Equals("2"))
@@ -679,10 +619,9 @@ public class ClientHandleData
             TempOpponent.Opponent.ShapeID = R.Next(0, 4);
             TempOpponent.Opponent.Passives = PlayerPrefsX.GetIntArray("PassivesArray");
             TempOpponent.Opponent.OpPP = PlayerPrefsX.GetIntArray("PP")[TempOpponent.Opponent.ShapeIDUser] + R.Next(-14, 15);
-            if(TempOpponent.Opponent.OpPP < 0) { TempOpponent.Opponent.OpPP = 0;}
+            if (TempOpponent.Opponent.OpPP < 0) { TempOpponent.Opponent.OpPP = 0; }
             TempOpponent.Opponent.OpLvl = PlayerPrefsX.GetIntArray("Level")[TempOpponent.Opponent.ShapeIDUser];
-            for (int j = 0; j < Ar.Length; j++)
-            {
+            for (int j = 0; j < Ar.Length; j++) {
                 int ran = R.Next(0, Ar.Length + 1);
                 if (ran < counter[0])
                     TempOpponent.Opponent.AbLevelArray[j] = "1";
@@ -691,11 +630,12 @@ public class ClientHandleData
                 else
                     TempOpponent.Opponent.AbLevelArray[j] = "3";
             }
-            TempOpponent.Opponent.AbLevelArray[new int[] { 1, 22, 23, 42 }[TempOpponent.Opponent.ShapeID]] = TempOpponent.Opponent.OpLvl <= 2 ? "1" : (TempOpponent.Opponent.OpLvl <= 4 ? "2" : "3");
-            PlayerPrefs.SetInt("BotOnline",1);
+            //            TempOpponent.Opponent.AbLevelArray[new int[] { 1, 22, 23, 42 }[TempOpponent.Opponent.ShapeID]] = TempOpponent.Opponent.OpLvl <= 2 ? "1" : (TempOpponent.Opponent.OpLvl <= 4 ? "2" : "3");
+            TempOpponent.Opponent.AbLevelArray[new int[] { 1, 22, 23, 42 }[TempOpponent.Opponent.ShapeID]] = "1";
+            PlayerPrefs.SetInt("BotOnline", 1);
             TempOpponent.Opponent.BotRoomNum = buffer.ReadInteger();
             //Send info to server for spectate
-            ClientTCP.PACKAGE_DEBUG("BotSpectate",String.Join("|", new String[] { TempOpponent.Opponent.OpPP.ToString(), TempOpponent.Opponent.OpLvl.ToString(), String.Join(",", TempOpponent.Opponent.AbLevelArray), TempOpponent.Opponent.ShapeID.ToString(), TempOpponent.Opponent.Username }), TempOpponent.Opponent.BotRoomNum);
+            ClientTCP.PACKAGE_DEBUG("BotSpectate", String.Join("|", new String[] { TempOpponent.Opponent.OpPP.ToString(), TempOpponent.Opponent.OpLvl.ToString(), String.Join(",", TempOpponent.Opponent.AbLevelArray), TempOpponent.Opponent.ShapeID.ToString(), TempOpponent.Opponent.Username }), TempOpponent.Opponent.BotRoomNum);
             SceneManager.LoadScene(SceneToLoad);
             buffer.Dispose();
             return;
@@ -737,14 +677,12 @@ public class ClientHandleData
         TempOpponent.Opponent.OpLvl2 = OpLvl2;
         TempOpponent.Opponent.AbIDs = new int[AbsAr.Length];
         TempOpponent.Opponent.AbIDs2 = new int[AbsAr2.Length];
-        foreach (string c in AbsAr)
-        {
+        foreach (string c in AbsAr) {
             Int32.TryParse(c, out TempOpponent.Opponent.AbIDs[i]);
             i++;
         }
         i = 0;
-        foreach (string c in AbsAr2)
-        {
+        foreach (string c in AbsAr2) {
             Int32.TryParse(c, out TempOpponent.Opponent.AbIDs2[i]);
             i++;
         }
@@ -754,66 +692,52 @@ public class ClientHandleData
         TempOpponent.Opponent.SuperID = SuperID;
         TempOpponent.Opponent.SuperID2 = SuperID2;
         i = 0;
-        foreach (string c in PassivesArray)
-        {
+        foreach (string c in PassivesArray) {
             Int32.TryParse(c, out TempOpponent.Opponent.Passives[i]);
             i++;
         }
         SceneManager.LoadScene(SceneToLoad);
         buffer.Dispose();
     }
-    private static void HandleGettingProbability(byte[] data)
-    {
+    private static void HandleGettingProbability(byte[] data) {
         ByteBuffer buffer = new ByteBuffer();
         buffer.WriteBytes(data);
         int prob = buffer.ReadInteger();
         int PlayerNumber = buffer.ReadInteger();
         string Username = buffer.ReadString();
-        if (Username == "")
-        {
-            if (PlayerNumber == 1)
-            {
+        if (Username == "") {
+            if (PlayerNumber == 1) {
                 TempOpponent.Opponent.Probability = prob;
                 TempOpponent.Opponent.GotProb1 = true;
             }
-            else if (PlayerNumber == 2)
-            {
-                if (!TempOpponent.Opponent.GotProb2)
-                {
+            else if (PlayerNumber == 2) {
+                if (!TempOpponent.Opponent.GotProb2) {
                     TempOpponent.Opponent.Probability2 = prob;
                     TempOpponent.Opponent.GotProb2 = true;
                 }
-                else
-                {
+                else {
                     TempOpponent.Opponent.Probability21 = prob;
                     TempOpponent.Opponent.GotProb21 = true;
                 }
             }
         }
-        else
-        {
-            if (Username == TempOpponent.Opponent.Username)
-            {
-                if (!TempOpponent.Opponent.GotProb2)
-                {
+        else {
+            if (Username == TempOpponent.Opponent.Username) {
+                if (!TempOpponent.Opponent.GotProb2) {
                     TempOpponent.Opponent.Probability2 = prob;
                     TempOpponent.Opponent.GotProb2 = true;
                 }
-                else
-                {
+                else {
                     TempOpponent.Opponent.Probability21 = prob;
                     TempOpponent.Opponent.GotProb21 = true;
                 }
             }
-            else if (Username == TempOpponent.Opponent.Username2)
-            {
-                if (!TempOpponent.Opponent.GotProb1)
-                {
+            else if (Username == TempOpponent.Opponent.Username2) {
+                if (!TempOpponent.Opponent.GotProb1) {
                     TempOpponent.Opponent.Probability = prob;
                     TempOpponent.Opponent.GotProb1 = true;
                 }
-                else
-                {
+                else {
                     TempOpponent.Opponent.Probability1 = prob;
                     TempOpponent.Opponent.GotProb11 = true;
                 }
@@ -821,22 +745,19 @@ public class ClientHandleData
         }
         buffer.Dispose();
     }
-    private static void HandleGivingChoice(byte[] data)
-    {
+    private static void HandleGivingChoice(byte[] data) {
         ByteBuffer buffer = new ByteBuffer();
         buffer.WriteBytes(data);
         ClientTCP.PACKAGE_GiveChoice();
         buffer.Dispose();
     }
-    private static void HandleReceivingChoice(byte[] data)
-    {
+    private static void HandleReceivingChoice(byte[] data) {
         ByteBuffer buffer = new ByteBuffer();
         buffer.WriteBytes(data);
         bool ChoiceDone = buffer.ReadBool();
         int IDChosen = buffer.ReadInteger();
         bool Spectate = buffer.ReadBool();
-        if (!Spectate)
-        {
+        if (!Spectate) {
             if (IDChosen == 53) //53 is for switch shape
                 GameObject.Find("Game Manager").GetComponent<GameMasterOnline>().switchShape2();
             else //Need cheeck
@@ -851,8 +772,7 @@ public class ClientHandleData
                     if (!ChoiceDone) GameObject.Find("Game Manager").GetComponent<GameMasterOnline>().player22.SetChoiceDone(ChoiceDone);
                     GameObject.Find("Game Manager").GetComponent<GameMasterOnline>().player22.SetIdOfAnimUSed(IDChosen);
                 }
-                else   
-                {
+                else {
                     if (IDChosen != -1 && TempOpponent.Opponent.Abilities.TryGetValue(IDChosen, out method))
                         method.Invoke();
 
@@ -862,57 +782,43 @@ public class ClientHandleData
                 }
             }
         }
-        else
-        {
+        else {
             TempOpponent.Method method;
             string Username = buffer.ReadString();
             bool Player2 = buffer.ReadBool();
             int ID2 = 0;
-            if (Player2)
-            {
+            if (Player2) {
                 ID2 = buffer.ReadInteger();
             }
-            if (Username == TempOpponent.Opponent.Username)
-            {
-                if (TempOpponent.Opponent.Abilities.TryGetValue(IDChosen, out method) && IDChosen != -1)
-                {
+            if (Username == TempOpponent.Opponent.Username) {
+                if (TempOpponent.Opponent.Abilities.TryGetValue(IDChosen, out method) && IDChosen != -1) {
                     method.Invoke();
                 }
                 if (!ChoiceDone)
                     GameObject.Find("Player2").GetComponent<Shape_Player>().SetChoiceDone(ChoiceDone);
                 GameObject.Find("Player2").GetComponent<Shape_Player>().SetIdOfAnimUSed(IDChosen);
-                if (Player2)
-                {
-                    if (TempOpponent.Opponent.Abilities2.TryGetValue(ID2, out method) && IDChosen != -1)
-                    {
+                if (Player2) {
+                    if (TempOpponent.Opponent.Abilities2.TryGetValue(ID2, out method) && IDChosen != -1) {
                         method.Invoke();
                     }
                     GameObject.Find("Player1").GetComponent<Shape_Player>().SetIdOfAnimUSed(ID2);
                     string Name;
-                    if (ID2 > 100)
-                    {
-                        if (TempOpponent.Opponent.AbNames.TryGetValue(ID2, out Name))
-                        {
-                            if (!TempOpponent.Opponent.SpecAbs.Contains(ID2))
-                            {
+                    if (ID2 > 100) {
+                        if (TempOpponent.Opponent.AbNames.TryGetValue(ID2, out Name)) {
+                            if (!TempOpponent.Opponent.SpecAbs.Contains(ID2)) {
                                 TempOpponent.Opponent.SpecAbs.Add(ID2);
-                                if (GameMasterSpectate.SpecialAb.transform.Find("QMark").GetComponent<RectTransform>().localScale.x == 1)
-                                {
+                                if (GameMasterSpectate.SpecialAb.transform.Find("QMark").GetComponent<RectTransform>().localScale.x == 1) {
                                     GameMasterSpectate.SpecialAb.transform.Find(Name).gameObject.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
                                     GameMasterSpectate.SpecialAb.transform.Find("QMark").GetComponent<RectTransform>().localScale = new Vector3(0, 1, 1);
                                 }
                             }
                         }
                     }
-                    else if (TempOpponent.Opponent.AbNames.TryGetValue(ID2, out Name) && ID2 < 100 && IDChosen < 100 && IDChosen != 0 && IDChosen != 1 && IDChosen != 22 && IDChosen != 23 && IDChosen != 42)
-                    {
-                        if (!TempOpponent.Opponent.SpecAbs.Contains(ID2))
-                        {
+                    else if (TempOpponent.Opponent.AbNames.TryGetValue(ID2, out Name) && ID2 < 100 && IDChosen < 100 && IDChosen != 0 && IDChosen != 1 && IDChosen != 22 && IDChosen != 23 && IDChosen != 42) {
+                        if (!TempOpponent.Opponent.SpecAbs.Contains(ID2)) {
                             TempOpponent.Opponent.SpecAbs.Add(ID2);
-                            foreach (GameObject G in GameMasterSpectate.Abilities)
-                            {
-                                if (G.transform.Find("QMark").GetComponent<RectTransform>().localScale.x == 1)
-                                {
+                            foreach (GameObject G in GameMasterSpectate.Abilities) {
+                                if (G.transform.Find("QMark").GetComponent<RectTransform>().localScale.x == 1) {
                                     G.transform.Find(Name).gameObject.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
                                     G.transform.Find("QMark").GetComponent<RectTransform>().localScale = new Vector3(0, 1, 1);
                                     break;
@@ -922,34 +828,26 @@ public class ClientHandleData
                     }
                 }
             }
-            else if (Username == TempOpponent.Opponent.Username2)
-            {
-                if (TempOpponent.Opponent.Abilities2.TryGetValue(IDChosen, out method) && IDChosen != -1)
-                {
+            else if (Username == TempOpponent.Opponent.Username2) {
+                if (TempOpponent.Opponent.Abilities2.TryGetValue(IDChosen, out method) && IDChosen != -1) {
                     method.Invoke();
                 }
                 if (!ChoiceDone)
                     GameObject.Find("Player1").GetComponent<Shape_Player>().SetChoiceDone(ChoiceDone);
                 GameObject.Find("Player1").GetComponent<Shape_Player>().SetIdOfAnimUSed(IDChosen);
-                if (Player2)
-                {
-                    if (TempOpponent.Opponent.Abilities.TryGetValue(ID2, out method) && IDChosen != -1)
-                    {
+                if (Player2) {
+                    if (TempOpponent.Opponent.Abilities.TryGetValue(ID2, out method) && IDChosen != -1) {
                         method.Invoke();
                     }
                     GameObject.Find("Player2").GetComponent<Shape_Player>().SetIdOfAnimUSed(ID2);
                 }
                 string Name;
-                if (IDChosen > 100)
-                {
+                if (IDChosen > 100) {
                     //Debug.Log("Entered the Special ability condition");
-                    if (TempOpponent.Opponent.AbNames.TryGetValue(IDChosen, out Name))
-                    {
-                        if (!TempOpponent.Opponent.SpecAbs.Contains(IDChosen))
-                        {
+                    if (TempOpponent.Opponent.AbNames.TryGetValue(IDChosen, out Name)) {
+                        if (!TempOpponent.Opponent.SpecAbs.Contains(IDChosen)) {
                             TempOpponent.Opponent.SpecAbs.Add(IDChosen);
-                            if (GameMasterSpectate.SpecialAb.transform.Find("QMark").GetComponent<RectTransform>().localScale.x == 1)
-                            {
+                            if (GameMasterSpectate.SpecialAb.transform.Find("QMark").GetComponent<RectTransform>().localScale.x == 1) {
                                 //Debug.Log(Name);
                                 GameMasterSpectate.SpecialAb.transform.Find(Name).gameObject.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
                                 GameMasterSpectate.SpecialAb.transform.Find("QMark").GetComponent<RectTransform>().localScale = new Vector3(0, 1, 1);
@@ -957,15 +855,11 @@ public class ClientHandleData
                         }
                     }
                 }
-                else if (TempOpponent.Opponent.AbNames.TryGetValue(IDChosen, out Name) && IDChosen < 100 && IDChosen != 0 && IDChosen != 1 && IDChosen != 22 && IDChosen != 23 && IDChosen != 42)
-                {
-                    if (!TempOpponent.Opponent.SpecAbs.Contains(IDChosen))
-                    {
+                else if (TempOpponent.Opponent.AbNames.TryGetValue(IDChosen, out Name) && IDChosen < 100 && IDChosen != 0 && IDChosen != 1 && IDChosen != 22 && IDChosen != 23 && IDChosen != 42) {
+                    if (!TempOpponent.Opponent.SpecAbs.Contains(IDChosen)) {
                         TempOpponent.Opponent.SpecAbs.Add(IDChosen);
-                        foreach (GameObject G in GameMasterSpectate.Abilities)
-                        {
-                            if (G.transform.Find("QMark").GetComponent<RectTransform>().localScale.x == 1)
-                            {
+                        foreach (GameObject G in GameMasterSpectate.Abilities) {
+                            if (G.transform.Find("QMark").GetComponent<RectTransform>().localScale.x == 1) {
                                 G.transform.Find(Name).GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
                                 G.transform.Find("QMark").GetComponent<RectTransform>().localScale = new Vector3(0, 1, 1);
                                 break;
@@ -978,8 +872,7 @@ public class ClientHandleData
         }
         buffer.Dispose();
     }
-    private static void HandleEndgame(byte[] data)
-    {
+    private static void HandleEndgame(byte[] data) {
         ByteBuffer buffer = new ByteBuffer();
         buffer.WriteBytes(data);
         string PP = buffer.ReadString();
@@ -987,8 +880,7 @@ public class ClientHandleData
         int[] PPArray = new int[PP1.Length];
         int i = 0;
         int AllPP = 0;
-        foreach (string c in PP1)
-        {
+        foreach (string c in PP1) {
             Int32.TryParse(c, out PPArray[i]);
             AllPP += PPArray[i];
             i++;
@@ -1019,23 +911,19 @@ public class ClientHandleData
         int Winstreak = buffer.ReadInteger();
         string IDs = buffer.ReadString();
         int[] RecentIDs;
-        if (IDs == "N")
-        {
+        if (IDs == "N") {
             RecentIDs = new int[] { -1 };
-            if (PlayerPrefs.GetInt("Winstreak") != 0)
-            {
+            if (PlayerPrefs.GetInt("Winstreak") != 0) {
                 ChestCode.OldRecentShapeIDs = PlayerPrefsX.GetIntArray("RecentIDs");
                 ChestCode.OldWS = PlayerPrefs.GetInt("Winstreak");
                 ChestCode.OpenIt = true;
             }
         }
-        else
-        {
+        else {
             string[] RecentIDsStr = IDs.Split(',');
             RecentIDs = new int[RecentIDsStr.Length];
             i = 0;
-            foreach (string d in RecentIDsStr)
-            {
+            foreach (string d in RecentIDsStr) {
                 Int32.TryParse(d, out RecentIDs[i]);
                 i++;
             }
@@ -1044,8 +932,7 @@ public class ClientHandleData
         string[] maxPPstrAr = maxPPstr.Split(',');
         int[] maxPP = new int[maxPPstrAr.Length];
         i = 0;
-        foreach (string s in maxPPstrAr)
-        {
+        foreach (string s in maxPPstrAr) {
             Int32.TryParse(s, out maxPP[i]);
             i++;
         }
@@ -1058,8 +945,7 @@ public class ClientHandleData
         PlayerPrefs.Save();
         buffer.Dispose();
     }
-    public static void HandleGettingLeaderboard(byte[] data)
-    {
+    public static void HandleGettingLeaderboard(byte[] data) {
         ByteBuffer buffer = new ByteBuffer();
         buffer.WriteBytes(data);
         string Leaderboard = buffer.ReadString();
@@ -1067,8 +953,7 @@ public class ClientHandleData
         TempOpponent.Opponent.Lbupdated = true;
         buffer.Dispose();
     }
-    public static void HandleDisconnect(byte[] data)
-    {
+    public static void HandleDisconnect(byte[] data) {
         ByteBuffer buffer = new ByteBuffer();
         buffer.WriteBytes(data);
         string PP = buffer.ReadString();
@@ -1076,8 +961,7 @@ public class ClientHandleData
         int[] PPArray = new int[PP1.Length];
         int i = 0;
         int AllPP = 0;
-        foreach (string c in PP1)
-        {
+        foreach (string c in PP1) {
             Int32.TryParse(c, out PPArray[i]);
             AllPP += PPArray[i];
             i++;
@@ -1088,8 +972,7 @@ public class ClientHandleData
         string[] RecentIDsStr = IDs.Split(',');
         int[] RecentIDs = new int[RecentIDsStr.Length];
         i = 0;
-        foreach (string d in RecentIDsStr)
-        {
+        foreach (string d in RecentIDsStr) {
             Int32.TryParse(d, out RecentIDs[i]);
             i++;
         }
@@ -1101,8 +984,7 @@ public class ClientHandleData
         SceneManager.LoadScene("MainMenuScene");
         buffer.Dispose();
     }
-    public static void HandleReceivingAbilities(byte[] data)
-    {
+    public static void HandleReceivingAbilities(byte[] data) {
         bool firsttime = true;
         int i = 0;
         ByteBuffer buffer = new ByteBuffer();
@@ -1117,10 +999,8 @@ public class ClientHandleData
         string Level = buffer.ReadString();
         string[] Lvl1 = Level.Split(',');
         int[] LevelArray = new int[Lvl1.Length];
-        foreach (string c in Lvl1)
-        {
-            if (firsttime)
-            {
+        foreach (string c in Lvl1) {
+            if (firsttime) {
                 i = 0;
                 firsttime = false;
             }
@@ -1131,10 +1011,8 @@ public class ClientHandleData
         string XP = buffer.ReadString();
         string[] XP1 = XP.Split(',');
         int[] XPArray = new int[XP1.Length];
-        foreach (string c in XP1)
-        {
-            if (firsttime)
-            {
+        foreach (string c in XP1) {
+            if (firsttime) {
                 i = 0;
                 firsttime = false;
             }
@@ -1145,10 +1023,8 @@ public class ClientHandleData
         string PP = buffer.ReadString();
         string[] PP1 = PP.Split(',');
         int[] PPArray = new int[PP1.Length];
-        foreach (string c in PP1)
-        {
-            if (firsttime)
-            {
+        foreach (string c in PP1) {
+            if (firsttime) {
                 i = 0;
                 firsttime = false;
             }
@@ -1160,8 +1036,7 @@ public class ClientHandleData
         string Pas = buffer.ReadString();
         string[] PassivesStr = Pas.Split(',');
         int[] Passives = new int[PassivesStr.Length];
-        foreach (string c in PassivesStr)
-        {
+        foreach (string c in PassivesStr) {
             Int32.TryParse(c, out Passives[i]);
             i++;
         }
@@ -1171,8 +1046,7 @@ public class ClientHandleData
         string[] BackgroundsStr = Bg.Split(',');
         int[] Backgrounds = new int[BackgroundsStr.Length];
         i = 0;
-        foreach (string s in BackgroundsStr)
-        {
+        foreach (string s in BackgroundsStr) {
             Int32.TryParse(s, out Backgrounds[i]);
             i++;
         }
@@ -1180,8 +1054,7 @@ public class ClientHandleData
         string[] SkinsUnlockedStr = SkinsUnlocked.Split(',');
         int[] SkinsUnlockedAr = new int[SkinsUnlockedStr.Length];
         i = 0;
-        foreach (string s in SkinsUnlockedStr)
-        {
+        foreach (string s in SkinsUnlockedStr) {
             Int32.TryParse(s, out SkinsUnlockedAr[i]);
             i++;
         }
@@ -1189,8 +1062,7 @@ public class ClientHandleData
         string[] EmotesUnlockedStr = EmotesUnlocked.Split(',');
         int[] EmotesUnlockedAr = new int[EmotesUnlockedStr.Length];
         i = 0;
-        foreach (string s in EmotesUnlockedStr)
-        {
+        foreach (string s in EmotesUnlockedStr) {
             Int32.TryParse(s, out EmotesUnlockedAr[i]);
             i++;
         }
@@ -1213,8 +1085,7 @@ public class ClientHandleData
         PlayerPrefs.Save();
         buffer.Dispose();
     }
-    public static void HandleReceivingStats(byte[] data)
-    {
+    public static void HandleReceivingStats(byte[] data) {
         ByteBuffer buffer = new ByteBuffer();
         buffer.WriteBytes(data);
         string Stats = buffer.ReadString();
@@ -1228,8 +1099,7 @@ public class ClientHandleData
         string[] ShapePriceS = ShapePriceStr.Split(',');
         int[] ShapePrice = new int[ShapePriceS.Length];
         int i = 0;
-        foreach (string c in ShapePriceS)
-        {
+        foreach (string c in ShapePriceS) {
             Int32.TryParse(c, out ShapePrice[i]);
             i++;
         }
@@ -1237,8 +1107,7 @@ public class ClientHandleData
         string[] ChestSlotPricesStr = ChestSlotStr.Split(',');
         int[] ChestSlotPrices = new int[ChestSlotPricesStr.Length];
         i = 0;
-        foreach (string c in ChestSlotPricesStr)
-        {
+        foreach (string c in ChestSlotPricesStr) {
             Int32.TryParse(c, out ChestSlotPrices[i]);
             i++;
         }
@@ -1247,8 +1116,7 @@ public class ClientHandleData
         string[] AbRarety = AbilitiesRarety.Split(',');
         int[] RaretyAr = new int[AbRarety.Length];
         i = 0;
-        foreach (string c in AbRarety)
-        {
+        foreach (string c in AbRarety) {
             Int32.TryParse(c, out RaretyAr[i]);
             i++;
         }
@@ -1259,8 +1127,7 @@ public class ClientHandleData
         string[] BgPriceStr = BgPrice.Split(',');
         int[] BgPriceAr = new int[BgPriceStr.Length];
         i = 0;
-        foreach (string s in BgPriceStr)
-        {
+        foreach (string s in BgPriceStr) {
             Int32.TryParse(s, out BgPriceAr[i]);
             i++;
         }
@@ -1268,8 +1135,7 @@ public class ClientHandleData
         string[] EmotesPriceStr = EmotesPrice.Split(',');
         int[] EmotesPriceAr = new int[EmotesPriceStr.Length];
         i = 0;
-        foreach (string s in EmotesPriceStr)
-        {
+        foreach (string s in EmotesPriceStr) {
             Int32.TryParse(s, out EmotesPriceAr[i]);
             i++;
         }
@@ -1277,8 +1143,7 @@ public class ClientHandleData
         string[] SkinsPriceStr = SkinsPrice.Split(',');
         int[] SkinsPriceAr = new int[SkinsPriceStr.Length];
         i = 0;
-        foreach (string s in SkinsPriceStr)
-        {
+        foreach (string s in SkinsPriceStr) {
             Int32.TryParse(s, out SkinsPriceAr[i]);
             i++;
         }
@@ -1286,8 +1151,7 @@ public class ClientHandleData
         string[] CoinPriceStr = CoinPrice.Split(',');
         int[] CoinPriceAr = new int[CoinPriceStr.Length];
         i = 0;
-        foreach (string s in CoinPriceStr)
-        {
+        foreach (string s in CoinPriceStr) {
             Int32.TryParse(s, out CoinPriceAr[i]);
             i++;
         }
@@ -1295,8 +1159,7 @@ public class ClientHandleData
         string[] CoinRewardStr = CoinReward.Split(',');
         int[] CoinRewardAr = new int[CoinRewardStr.Length];
         i = 0;
-        foreach (string s in CoinRewardStr)
-        {
+        foreach (string s in CoinRewardStr) {
             Int32.TryParse(s, out CoinRewardAr[i]);
             i++;
         }
@@ -1324,28 +1187,24 @@ public class ClientHandleData
         PlayerPrefs.Save();
         buffer.Dispose();
     }
-    public static void HandleEmotes(byte[] data)
-    {
+    public static void HandleEmotes(byte[] data) {
         ByteBuffer buffer = new ByteBuffer();
         buffer.WriteBytes(data);
         int ID = buffer.ReadInteger();
         string Username = buffer.ReadString();
         GameMaster GM = GameObject.Find("Game Manager").GetComponent<GameMaster>();
-        if (Username == "" || Username == TempOpponent.Opponent.Username)
-        {
+        if (Username == "" || Username == TempOpponent.Opponent.Username) {
             GameMaster.animatorPlayer2.SetInteger("EID", ID);
             GM.SetAnim(2);
 
         }
-        else if (Username == TempOpponent.Opponent.Username2)
-        {
+        else if (Username == TempOpponent.Opponent.Username2) {
             GameMaster.animatorPlayer1.SetInteger("EID", ID);
             GM.SetAnim(1);
         }
         buffer.Dispose();
     }
-    public static void HandleFriendsList(byte[] data)
-    {
+    public static void HandleFriendsList(byte[] data) {
         ByteBuffer buffer = new ByteBuffer();
         buffer.WriteBytes(data);
         string FriendsList = buffer.ReadString();
@@ -1363,24 +1222,21 @@ public class ClientHandleData
         TempOpponent.Opponent.FLupdated = true;
         buffer.Dispose();
     }
-    public static void HandleFriendly(byte[] data)
-    {
+    public static void HandleFriendly(byte[] data) {
         ByteBuffer buffer = new ByteBuffer();
         buffer.WriteBytes(data);
         int RoomNum = buffer.ReadInteger();
         string Username = buffer.ReadString();
         TempOpponent.Opponent.Username = Username;
         TempOpponent.Opponent.RoomNum = RoomNum;
-        if (SceneManager.GetActiveScene().name == "MainMenuScene")
-        {
+        if (SceneManager.GetActiveScene().name == "MainMenuScene") {
             GameObject Panel = GameObject.Find("Priority Messages").transform.Find("FriendlyBattleRequest").gameObject;
             Panel.SetActive(true);
             Panel.GetComponent<FriendlyRequest>().GetOn();
         }
         buffer.Dispose();
     }
-    public static void HandleSpectate(byte[] data)
-    {
+    public static void HandleSpectate(byte[] data) {
         ByteBuffer buffer = new ByteBuffer();
         buffer.WriteBytes(data);
         string Username1 = buffer.ReadString();
@@ -1415,8 +1271,7 @@ public class ClientHandleData
         string[] PassivesStr = Passives1.Split(',');
         int[] PassivesAr1 = new int[PassivesStr.Length];
         int i = 0;
-        foreach (string c in PassivesStr)
-        {
+        foreach (string c in PassivesStr) {
             Int32.TryParse(c, out PassivesAr1[i]);
             i++;
         }
@@ -1424,8 +1279,7 @@ public class ClientHandleData
         string[] PassivesStr2 = Passives2.Split(',');
         int[] PassivesAr2 = new int[PassivesStr2.Length];
         i = 0;
-        foreach (string c in PassivesStr2)
-        {
+        foreach (string c in PassivesStr2) {
             Int32.TryParse(c, out PassivesAr2[i]);
             i++;
         }
@@ -1444,8 +1298,7 @@ public class ClientHandleData
         SceneManager.LoadScene("SpectateScene");
         buffer.Dispose();
     }
-    public static void HandleLP(byte[] data)
-    {
+    public static void HandleLP(byte[] data) {
         ByteBuffer buffer = new ByteBuffer();
         buffer.WriteBytes(data);
         int LP1 = buffer.ReadInteger();
@@ -1453,8 +1306,7 @@ public class ClientHandleData
         GameMaster GM = GameObject.Find("Game Manager").GetComponent<GameMaster>();
         string Rec = buffer.ReadString();
         int EP1 = buffer.ReadInteger(); int EP2 = buffer.ReadInteger(); int round = buffer.ReadInteger();
-        if(buffer.ReadInteger() == ClientTCP.LPID)
-        {
+        if (buffer.ReadInteger() == ClientTCP.LPID) {
             GM.player1.SetLife(LP1);
             GM.player2.SetLife(LP2);
             GM.round = round;
@@ -1464,8 +1316,7 @@ public class ClientHandleData
         //give proof whether he's p1 or p2
         buffer.Dispose();
     }
-    public static void HandleChest(byte[] data)
-    {
+    public static void HandleChest(byte[] data) {
         ByteBuffer buffer = new ByteBuffer();
         buffer.WriteBytes(data);
         int Time = buffer.ReadInteger();
@@ -1479,37 +1330,31 @@ public class ClientHandleData
         ChestSlot.GotChest[ChestNum] = true;
         buffer.Dispose();
     }
-    public static void HandleReplay(byte[] data)
-    {
+    public static void HandleReplay(byte[] data) {
         ByteBuffer buffer = new ByteBuffer();
         buffer.WriteBytes(data);
         string Replay = buffer.ReadString();
         string[] Replays = Replay.Split('|');
         string[] ReplayNew;
         int i = 0;
-        if (Replays[0] != "N")
-        {
+        if (Replays[0] != "N") {
             string[] Ar = Replays[0].Split('/');
             ReplayNew = new string[Ar.Length * Replays.Length];
-            foreach (string c in Replays)
-            {
+            foreach (string c in Replays) {
                 string[] d = c.Split('/');
-                foreach (string e in d)
-                {
+                foreach (string e in d) {
                     ReplayNew[i] = e;
                     i++;
                 }
             }
         }
-        else
-        {
+        else {
             ReplayNew = new string[] { "N" };
         }
         PlayerPrefsX.SetStringArray("Replay", ReplayNew);
         buffer.Dispose();
     }
-    public static void HandleReconnecting(byte[] data)
-    {
+    public static void HandleReconnecting(byte[] data) {
         ByteBuffer buffer = new ByteBuffer();
         buffer.WriteBytes(data);
         int LP1 = buffer.ReadInteger();
@@ -1553,8 +1398,7 @@ public class ClientHandleData
         TempOpponent.Opponent.AbIDs = new int[AbsAr.Length];
         TempOpponent.Opponent.AbIDs2 = PlayerPrefsX.GetIntArray("ActiveAbilityID" + PlayerPrefs.GetInt("ShapeSelectedID"));     //Is that OK?
         int i = 0;
-        foreach (string c in AbsAr)
-        {
+        foreach (string c in AbsAr) {
             Int32.TryParse(c, out TempOpponent.Opponent.AbIDs[i]);
             i++;
         }
@@ -1563,8 +1407,7 @@ public class ClientHandleData
         TempOpponent.Opponent.Super200 = Super200Array;
         TempOpponent.Opponent.SuperID = SuperID;
         i = 0;
-        foreach (string c in PassivesArray)
-        {
+        foreach (string c in PassivesArray) {
             Int32.TryParse(c, out TempOpponent.Opponent.Passives[i]);
             i++;
         }
@@ -1577,8 +1420,7 @@ public class ClientHandleData
         string[] PlaceHolder = Choices1.Split(',');
         int[] Holder = new int[PlaceHolder.Length];
         int j = 0;
-        foreach (string d in PlaceHolder)
-        {
+        foreach (string d in PlaceHolder) {
             Int32.TryParse(d, out Holder[j]);
             j++;
         }
@@ -1587,8 +1429,7 @@ public class ClientHandleData
         PlaceHolder = Choices2.Split(',');
         Holder = new int[PlaceHolder.Length];
         j = 0;
-        foreach (string d in PlaceHolder)
-        {
+        foreach (string d in PlaceHolder) {
             Int32.TryParse(d, out Holder[j]);
             j++;
         }
@@ -1597,8 +1438,7 @@ public class ClientHandleData
         PlaceHolder = Probs1.Split(',');
         Holder = new int[PlaceHolder.Length];
         j = 0;
-        foreach (string d in PlaceHolder)
-        {
+        foreach (string d in PlaceHolder) {
             Int32.TryParse(d, out Holder[j]);
             j++;
         }
@@ -1607,8 +1447,7 @@ public class ClientHandleData
         PlaceHolder = Probs2.Split(',');
         Holder = new int[PlaceHolder.Length];
         j = 0;
-        foreach (string d in PlaceHolder)
-        {
+        foreach (string d in PlaceHolder) {
             Int32.TryParse(d, out Holder[j]);
             j++;
         }
@@ -1621,13 +1460,11 @@ public class ClientHandleData
         SceneManager.LoadScene("OnlineBattleScene");
         buffer.Dispose();
     }
-    public static void HandleProfile(byte[] data)
-    {
+    public static void HandleProfile(byte[] data) {
         ByteBuffer buffer = new ByteBuffer();
         buffer.WriteBytes(data);
         bool Outdated = buffer.ReadBool();
-        if (Outdated)
-        {
+        if (Outdated) {
             TempOpponent.Opponent.profile = buffer.ReadString();
         }
         TempOpponent.Opponent.changed = Outdated;
@@ -1635,69 +1472,56 @@ public class ClientHandleData
         buffer.Dispose();
     }
 
-    public static string TransformToString(int[][] intArr)
-    {
+    public static string TransformToString(int[][] intArr) {
         string[][] AbilitiesArraystr = new string[intArr.Length][];
         string Abilities = "";
         bool firsttime = true;
-        try
-        {
+        try {
             int i = 0;
-            foreach (int[] c in intArr)
-            {
+            foreach (int[] c in intArr) {
                 AbilitiesArraystr[i] = new string[7];
-                for (int j = 0; j < 7; j++)
-                {
+                for (int j = 0; j < 7; j++) {
                     AbilitiesArraystr[i][j] = c[j].ToString();
                 }
                 i++;
             }
-            foreach (string[] d in AbilitiesArraystr)
-            {
-                if (firsttime)
-                {
+            foreach (string[] d in AbilitiesArraystr) {
+                if (firsttime) {
                     Abilities = String.Join(",", d);
                     firsttime = false;
                 }
-                else
-                {
+                else {
                     Abilities = Abilities + "-" + String.Join(",", d);
                 }
             }
 
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             Console.WriteLine(e.ToString());
             throw;
         }
         return Abilities;
     }
-    public static int[][][] TransformToArrayShop(string Shop)
-    {
+    public static int[][][] TransformToArrayShop(string Shop) {
         string[] String1 = Shop.Split('|');
         string[][] String2 = new string[String1.Length][];
         int Count = 0;
-        foreach (string c in String1)
-        {
+        foreach (string c in String1) {
             String2[Count] = c.Split('/');
             Count++;
         }
         int[][][] ShopArray = new int[String2.Length][][];
         string[][][] String3 = new string[String2.Length][][];
         int Count2 = 0;
-        foreach (string[] d in String2)
-        {
+        foreach (string[] d in String2) {
             int Count3 = 0;
             ShopArray[Count2] = new int[d.Length][];
-            foreach (string e in d)
-            {
+            foreach (string e in d) {
                 int Count4 = 0;
                 String3[Count2] = new string[d.Length][];
                 String3[Count2][Count3] = e.Split(',');
                 ShopArray[Count2][Count3] = new int[String3[Count2][Count3].Length];
-                foreach (string Str in String3[Count2][Count3])
-                {
+                foreach (string Str in String3[Count2][Count3]) {
                     Int32.TryParse(Str, out ShopArray[Count2][Count3][Count4]);
                     Count4++;
                 }
@@ -1707,18 +1531,15 @@ public class ClientHandleData
         }
         return ShopArray;
     }
-    public static int[][] TransformStringArray(string[] array)
-    {
+    public static int[][] TransformStringArray(string[] array) {
         int i = 0;
         string[][] StatsArraystr = new string[array.Length][];
         int[][] StatsArray = new int[array.Length][];
-        foreach (string c in array)
-        {
+        foreach (string c in array) {
             int j = 0;
             StatsArraystr[i] = c.Split(',');
             StatsArray[i] = new int[StatsArraystr[i].Length];
-            foreach (string d in StatsArraystr[i])
-            {
+            foreach (string d in StatsArraystr[i]) {
                 Int32.TryParse(d, out StatsArray[i][j]);
                 j++;
             }
@@ -1726,20 +1547,16 @@ public class ClientHandleData
         }
         return StatsArray;
     }
-    private static string CheckBotUsername(string username)
-    {
+    private static string CheckBotUsername(string username) {
         string[] botProfiles = PlayerPrefsX.GetStringArray("BotProfiles");
-        foreach(string s in botProfiles)
-        {
-            while (s.Split('|')[1].Equals(username))
-            {
+        foreach (string s in botProfiles) {
+            while (s.Split('|')[1].Equals(username)) {
                 username = username + R.Next(0, 10);
             }
         }
         return username;
     }
-    private static int[] SArrayToIArray(string[] Ar)
-    {
+    private static int[] SArrayToIArray(string[] Ar) {
         int[] newAr = new int[Ar.Length];
         for (int i = 0; i < Ar.Length; i++)
             Int32.TryParse(Ar[i], out newAr[i]);
