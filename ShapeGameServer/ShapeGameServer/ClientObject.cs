@@ -59,7 +59,7 @@ namespace ShapeGameServer
                 if (myStream == null) { Console.WriteLine("Stream is null"); return; }
                 if (result == null) { CloseConnection(); return; }
                 int readBytes = myStream.EndRead(result);
-                if (readBytes <= 0) //Not getting any data
+                if (readBytes <= 0  && authenticated) //Not getting any data
                 {
                     //CloseConnection();
                     OldUsername = Username;
