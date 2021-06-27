@@ -10,11 +10,11 @@ namespace ShapeGameServer
         {
             //To get the output in a file
 
-            /*FileStream filestream = new FileStream("out.txt", FileMode.Create);
+            FileStream filestream = new FileStream("out.txt", FileMode.Create);
             var streamwriter = new StreamWriter(filestream);
             streamwriter.AutoFlush = true;
             Console.SetOut(streamwriter);
-            Console.SetError(streamwriter);*/
+            Console.SetError(streamwriter);
 
             InitializeConsoleThread();
             ServerHandleData.InitializePacketListener();

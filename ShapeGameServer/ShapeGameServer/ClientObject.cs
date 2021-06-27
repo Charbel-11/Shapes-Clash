@@ -66,6 +66,7 @@ namespace ShapeGameServer {
                     Task.Delay(4000).ContinueWith(t => CheckForConnection());
                     return;
                 }
+                else if (readBytes <= 0) { CloseConnection(); return; }
 
                 byte[] newBytes = new byte[readBytes];
                 Array.Copy(ReceiveBuffer, newBytes, readBytes);
