@@ -7,10 +7,8 @@ using MySql.Data.MySqlClient;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ShapeGameServer
-{
-    class ServerTCP
-    {
+namespace ShapeGameServer {
+    class ServerTCP {
         private static TcpListener ServerSocket;    //The server basically
         public static ConcurrentDictionary<int, ClientObject> ClientObjects;
         public static ConcurrentDictionary<int, TempPlayer> TempPlayers;
@@ -31,8 +29,7 @@ namespace ShapeGameServer
         public static int C = 0;
         private static Random R = new Random();
 
-        public static void InitializeServer()
-        {
+        public static void InitializeServer() {
             AbilitiesStoringClass.InitializeAbilitiesArray();
             AbilitiesStatsStr = AbilitiesStoringClass.TransformToString(AbilitiesStoringClass.AbilitiesArray);
             PassivesStats = AbilitiesStoringClass.TransformToString(AbilitiesStoringClass.PassivesArray);
@@ -57,8 +54,7 @@ namespace ShapeGameServer
             InitializeClientObjects();
             InitializeServerSocket();
         }
-        public static MySqlConnection CreateSQLConnection()
-        {
+        public static MySqlConnection CreateSQLConnection() {
             MySqlConnection Connection;
             string user = "root";
             string password = "";
@@ -73,37 +69,31 @@ namespace ShapeGameServer
             catch (Exception e) { Console.WriteLine(e.ToString()); }
             return Connection;
         }
-        private static void InitializeClientObjects()
-        {
+        private static void InitializeClientObjects() {
             ClientObjects = new ConcurrentDictionary<int, ClientObject>();
             TempPlayers = new ConcurrentDictionary<int, TempPlayer>();
             IPDictionary = new ConcurrentDictionary<string, ClientObject>();
             ClientObject.ConnectionIDs = new ConcurrentDictionary<string, int>();
 
-            for (int i = 1; i < Constants.Max_Rooms; i++)
-            {
+            for (int i = 1; i < Constants.Max_Rooms; i++) {
                 RoomInstance.unusedRooms.Enqueue(i);
                 RoomInstance._room[i] = new Room();
                 RoomInstance._room[i].roomIndex = i;
                 RoomInstance._room[i].SpectatorIDs = new List<int>();
             }
         }
-        private static void InitializeServerSocket()
-        {
+        private static void InitializeServerSocket() {
             ServerSocket = new TcpListener(IPAddress.Any, 8080);
             ServerSocket.Start();
             ServerSocket.BeginAcceptTcpClient(ClientConnectCallback, null); //Once we get a connection, ClientConnectCallback is called
         }
-        private static void ClientConnectCallback(IAsyncResult result)
-        {
-            try
-            {
+        private static void ClientConnectCallback(IAsyncResult result) {
+            try {
                 TcpClient tempClient = ServerSocket.EndAcceptTcpClient(result); //Accepts the connection and creates its corresponding TcpClient
                 ServerSocket.BeginAcceptTcpClient(ClientConnectCallback, null); //Open the connection again for other players
 
                 string[] IPs = tempClient.Client.RemoteEndPoint.ToString().Split(':');
-                if (IPDictionary.TryGetValue(IPs[0], out ClientObject C))
-                {
+                if (IPDictionary.TryGetValue(IPs[0], out ClientObject C)) {
                     C.Socket = tempClient;
 
                     C.Socket.NoDelay = true;
@@ -118,7 +108,7 @@ namespace ShapeGameServer
 
                     PACKET_SendMessage(C.ConnectionID, "CheckIP", 0, IPs[0]);
 
-                    Console.WriteLine("Connection incoming from {0}", C.IP);
+                    Console.WriteLine("Connection incoming again from {0}", C.IP);
                     return;
                 }
                 Random ran = new Random();
@@ -128,33 +118,29 @@ namespace ShapeGameServer
                 ClientObjects[curID] = new ClientObject(tempClient, curID);
                 TempPlayers[curID] = new TempPlayer();
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 Console.WriteLine(e.ToString());
-            }        
+            }
         }
 
-        public static void SendDataTo(int ConnectionID, byte[] data)
-        {
+        public static void SendDataTo(int ConnectionID, byte[] data) {
             if (!ClientObjects.ContainsKey(ConnectionID)) { Console.WriteLine("No such connectionID"); return; }
-            if (ClientObjects[ConnectionID].Socket == null)
-            {
-                ClientObjects[ConnectionID].BufferList.Add(data);       
+            if (ClientObjects[ConnectionID].Socket == null) {
+                ClientObjects[ConnectionID].BufferList.Add(data);
                 return;
             }
 
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger(data.GetUpperBound(0) - data.GetLowerBound(0) + 1);
-            buffer.WriteBytes(data); 
+            buffer.WriteBytes(data);
             byte[] tmp = buffer.ToArray();
 
-            Console.WriteLine("Send data to " + ConnectionID + "  PacketLength is: " + (data.GetUpperBound(0) - data.GetLowerBound(0) + 1)+ "  ByteArray length is: " + tmp.Length);
+            Console.WriteLine("Send data to " + ConnectionID + "  PacketLength is: " + (data.GetUpperBound(0) - data.GetLowerBound(0) + 1) + "  ByteArray length is: " + tmp.Length);
 
             ClientObjects[ConnectionID].myStream.BeginWrite(tmp, 0, tmp.Length, null, null);
             buffer.Dispose();
         }
-        public static void PACKET_SendMessage(int ConnectionID, string msg, int ConnID = 0, string IP = "", int LPID = -1)
-        {
+        public static void PACKET_SendMessage(int ConnectionID, string msg, int ConnID = 0, string IP = "", int LPID = -1) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SMsg);
             buffer.WriteString(msg);
@@ -164,8 +150,7 @@ namespace ShapeGameServer
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
         }
-        public static void PACKET_Login(int ConnectionID, string username)
-        {
+        public static void PACKET_Login(int ConnectionID, string username) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SLogin);
             buffer.WriteString(username);
@@ -217,14 +202,12 @@ namespace ShapeGameServer
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
         }
-        public static void PACKET_SendToMatchmaking(int ConnectionID, string otherplayerusername, int OtherPlayerConnectionID, int OtherPlayerShapeChosenID, int OtherPlayerShapeID2, string AbIDs, string AbIDs2, int OpPP,int OpPP2, int OpLvl, int OpLvl2, int OtherPlayerSuperID, int OtherPlayerSuperID2, int SkinID, int SkinID2, int Mode = 0,bool Bot = false)
-        {
+        public static void PACKET_SendToMatchmaking(int ConnectionID, string otherplayerusername, int OtherPlayerConnectionID, int OtherPlayerShapeChosenID, int OtherPlayerShapeID2, string AbIDs, string AbIDs2, int OpPP, int OpPP2, int OpLvl, int OpLvl2, int OtherPlayerSuperID, int OtherPlayerSuperID2, int SkinID, int SkinID2, int Mode = 0, bool Bot = false) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SSendToBattle);
-            if (Bot)
-            {
+            if (Bot) {
                 buffer.WriteString("PassThePhone");
-                buffer.WriteString(AbilitiesStoringClass.botNames[R.Next(0, AbilitiesStoringClass.botNames.Length)] + R.Next(0,10).ToString());
+                buffer.WriteString(AbilitiesStoringClass.botNames[R.Next(0, AbilitiesStoringClass.botNames.Length)] + R.Next(0, 10).ToString());
                 buffer.WriteInteger(TempPlayers[ConnectionID].Room);
                 SendDataTo(ConnectionID, buffer.ToArray());
                 buffer.Dispose();
@@ -254,8 +237,7 @@ namespace ShapeGameServer
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
         }
-        public static void PACKET_SendProbability(int ConnectionID, int PlayerNumber, int Probability, string Username = "")
-        {
+        public static void PACKET_SendProbability(int ConnectionID, int PlayerNumber, int Probability, string Username = "") {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SGiveProbability);
             buffer.WriteInteger(Probability);
@@ -264,31 +246,27 @@ namespace ShapeGameServer
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
         }
-        public static void PACKET_GetChoice(int ConnectionID)
-        {
+        public static void PACKET_GetChoice(int ConnectionID) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SGetChoice);
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
         }
-        public static void PACKET_SendingChoice(int ConnectionID, bool Choicedone, int IDchosen, bool Spectate = false, string Username = "", bool Player2 = false, int ID2 = 0)
-        {
+        public static void PACKET_SendingChoice(int ConnectionID, bool Choicedone, int IDchosen, bool Spectate = false, string Username = "", bool Player2 = false, int ID2 = 0) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SSendChoice);
             buffer.WriteBool(Choicedone);
             buffer.WriteInteger(IDchosen);
             buffer.WriteBool(Spectate);
-            if (Spectate)
-            {
+            if (Spectate) {
                 buffer.WriteString(Username);
                 buffer.WriteBool(Player2);
-                if (Player2) { buffer.WriteInteger(ID2); }         
+                if (Player2) { buffer.WriteInteger(ID2); }
             }
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
         }
-        public static void PACKET_Endgame(int ConnectionID, string Username)
-        {
+        public static void PACKET_Endgame(int ConnectionID, string Username) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SEndgame);
             buffer.WriteString(Database.GetPP(Username));
@@ -299,46 +277,38 @@ namespace ShapeGameServer
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
         }
-        public static void PACKET_Leaderboard(int ConnectionID, int ShapeID)
-        {
+        public static void PACKET_Leaderboard(int ConnectionID, int ShapeID) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SLeaderboard);
             buffer.WriteString(Database.GetRanking(ShapeID));
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
         }
-        public static void PACKET_Disconnect(int ConnectionID, int PP1, int PP2, string Username, string Otherplayerusername, int ShapeIDdisc, int ShapeIDOther)
-        {
+        public static void PACKET_Disconnect(int ConnectionID, int PP1, int PP2, string Username, string Otherplayerusername, int ShapeIDdisc, int ShapeIDOther) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SDisconnect);
             int PPdiff = PP1 - PP2;
-            if (PPdiff >= 10)
-            {
+            if (PPdiff >= 10) {
                 Database.SetPP(Username, PP1 + 1, ShapeIDOther);
                 Database.SetPP(Otherplayerusername, PP2 - 1, ShapeIDdisc);
             }
-            else if (PPdiff < 10 && PPdiff >= 5)
-            {
+            else if (PPdiff < 10 && PPdiff >= 5) {
                 Database.SetPP(Username, PP1 + 2, ShapeIDOther);
                 Database.SetPP(Otherplayerusername, PP2 - 2, ShapeIDdisc);
             }
-            else if (PPdiff < 5 && PPdiff >= 0)
-            {
+            else if (PPdiff < 5 && PPdiff >= 0) {
                 Database.SetPP(Username, PP1 + 3, ShapeIDOther);
                 Database.SetPP(Otherplayerusername, PP2 - 3, ShapeIDdisc);
             }
-            else if (PPdiff < 0 && PPdiff >= -5)
-            {
+            else if (PPdiff < 0 && PPdiff >= -5) {
                 Database.SetPP(Username, PP1 + 4, ShapeIDOther);
                 Database.SetPP(Otherplayerusername, PP2 - 4, ShapeIDdisc);
             }
-            else if (PPdiff < -5 && PPdiff >= -10)
-            {
+            else if (PPdiff < -5 && PPdiff >= -10) {
                 Database.SetPP(Username, PP1 + 5, ShapeIDOther);
                 Database.SetPP(Otherplayerusername, PP2 - 5, ShapeIDdisc);
             }
-            else if (PPdiff < -10)
-            {
+            else if (PPdiff < -10) {
                 Database.SetPP(Username, PP1 + 6, ShapeIDOther);
                 Database.SetPP(Otherplayerusername, PP2 - 6, ShapeIDdisc);
             }
@@ -353,8 +323,7 @@ namespace ShapeGameServer
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
         }
-        public static void PACKET_GiveAbilities(int ConnectionID, string Username)
-        {
+        public static void PACKET_GiveAbilities(int ConnectionID, string Username) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SGiveAbilities);
             buffer.WriteString(Database.GetAbilities(Username));
@@ -374,8 +343,7 @@ namespace ShapeGameServer
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
         }
-        public static void PACKET_GiveStats(int ConnectionID)
-        {
+        public static void PACKET_GiveStats(int ConnectionID) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SGiveStats);
             buffer.WriteString(AbilitiesStatsStr);
@@ -399,8 +367,7 @@ namespace ShapeGameServer
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
         }
-        public static void PACKET_Emotes(int ConnectionID, int ID, string Username = "")
-        {
+        public static void PACKET_Emotes(int ConnectionID, int ID, string Username = "") {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SEmotes);
             buffer.WriteInteger(ID);
@@ -408,8 +375,7 @@ namespace ShapeGameServer
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
         }
-        public static void PACKET_GiveList(int ConnectionID, string List)
-        {
+        public static void PACKET_GiveList(int ConnectionID, string List) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SGiveList);
             string[] FO = List.Split('/');
@@ -419,8 +385,7 @@ namespace ShapeGameServer
             int[] shape = new int[Friends.Length];
             int[] inGame = new int[Friends.Length];
             int i = 0;
-            foreach (string c in Friends)
-            {
+            foreach (string c in Friends) {
                 if (ClientObject.ConnectionIDs.ContainsKey(c))
                     inGame[i] = TempPlayers[ClientObject.ConnectionIDs[c]].inMatch ? 1 : 0;
                 else
@@ -429,11 +394,9 @@ namespace ShapeGameServer
                 string allPP = Database.GetPP(c);
                 string allLvls = Database.GetLevel(c);
                 string lastDeck = Database.GetLastDeck(c);
-                if (lastDeck == "N")
-                {
+                if (lastDeck == "N") {
                     string[] lvls = allLvls.Split(',');
-                    for(int kk = 0; kk < 4; kk++)
-                    {
+                    for (int kk = 0; kk < 4; kk++) {
                         if (lvls[kk] != "0") { shape[i] = kk; break; }
                     }
                 }
@@ -454,8 +417,7 @@ namespace ShapeGameServer
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
         }
-        public static void PACKET_FriendlyBattle(int ConnectionID, int RoomNum, string Username)
-        {
+        public static void PACKET_FriendlyBattle(int ConnectionID, int RoomNum, string Username) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SFriendly);
             buffer.WriteInteger(RoomNum);
@@ -463,8 +425,7 @@ namespace ShapeGameServer
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
         }
-        public static void PACKET_Spectate(int ConnectionID, string Username, string Username2, int ConnectionID1, int ConnectionID2, int ShapeID1, int ShapeID2, int PP1, int PP2, int Lvl1, int Lvl2,string BotAbs = "")
-        {
+        public static void PACKET_Spectate(int ConnectionID, string Username, string Username2, int ConnectionID1, int ConnectionID2, int ShapeID1, int ShapeID2, int PP1, int PP2, int Lvl1, int Lvl2, string BotAbs = "") {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SSpectate);
             buffer.WriteString(Username);
@@ -488,8 +449,7 @@ namespace ShapeGameServer
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
         }
-        public static void PACKET_LP(int ConnectionID, int LP1, int LP2, string Rec,int EP1,int EP2,int round,int LPID)
-        {
+        public static void PACKET_LP(int ConnectionID, int LP1, int LP2, string Rec, int EP1, int EP2, int round, int LPID) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SLP);
             buffer.WriteInteger(LP1);
@@ -500,8 +460,7 @@ namespace ShapeGameServer
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
         }
-        public static void PACKET_Chest(int ConnectionID, int Time, int ChestNum)
-        {
+        public static void PACKET_Chest(int ConnectionID, int Time, int ChestNum) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SChest);
             buffer.WriteInteger(Time);
@@ -509,16 +468,14 @@ namespace ShapeGameServer
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
         }
-        public static void PACKET_Replay(int ConnectionID, string Username)
-        {
+        public static void PACKET_Replay(int ConnectionID, string Username) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SReplay);
             buffer.WriteString(Database.GetReplay(Username));
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
         }
-        public static void PACKET_Reconnect(int ConnectionID, int LP1, int LP2, int EP1, int EP2, int Round, string Choices1, string Choices2, string Probs1, string Probs2, int Mode, int Index, string Username2, int OtherConnID, string ReconnectString, int ChoiceID)
-        {
+        public static void PACKET_Reconnect(int ConnectionID, int LP1, int LP2, int EP1, int EP2, int Round, string Choices1, string Choices2, string Probs1, string Probs2, int Mode, int Index, string Username2, int OtherConnID, string ReconnectString, int ChoiceID) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteInteger((int)ServerPackages.SReconnect);
             buffer.WriteInteger(LP1);
@@ -557,9 +514,8 @@ namespace ShapeGameServer
 
             SendDataTo(ConnectionID, buffer.ToArray());
             buffer.Dispose();
-        } 
-        public static void PACKET_Profile(int ConnectionID, string Username, int v)
-        {
+        }
+        public static void PACKET_Profile(int ConnectionID, string Username, int v) {
             string p = Database.GetProfile(Username);
             string[] Profile = p.Split('|');
             Int32.TryParse(Profile[0], out int Version);

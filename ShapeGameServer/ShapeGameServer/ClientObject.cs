@@ -4,11 +4,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 
-namespace ShapeGameServer
-{
+namespace ShapeGameServer {
     //Represents each connected client on the server
-    class ClientObject
-    {
+    class ClientObject {
         public static ConcurrentDictionary<string, int> ConnectionIDs;
         public static ConcurrentDictionary<string, int[]> UsernamesDisc = new ConcurrentDictionary<string, int[]>();
         public static ConcurrentDictionary<string, int[]> UsernamesDiscFriendly = new ConcurrentDictionary<string, int[]>();
@@ -26,8 +24,7 @@ namespace ShapeGameServer
         public string Username, OldUsername;
         public bool StopReading = false;
 
-        public ClientObject(TcpClient _Socket, int _ConnectionID)
-        {
+        public ClientObject(TcpClient _Socket, int _ConnectionID) {
             if (_Socket == null) return;
 
             Socket = _Socket;
@@ -45,21 +42,20 @@ namespace ShapeGameServer
             IP = Socket.Client.RemoteEndPoint.ToString();
 
             myStream.BeginRead(ReceiveBuffer, 0, Socket.ReceiveBufferSize, ReceiveCallback, null);  //Starting to listen to the stream
-            //Once we receive data, ReceiveCallback is called
-       
+                                                                                                    //Once we receive data, ReceiveCallback is called
+
             Console.WriteLine("Connection incoming from {0}", IP);
         }
 
         //When we receive data, this Async function is called
-        public void ReceiveCallback(IAsyncResult result)
-        {
+        public void ReceiveCallback(IAsyncResult result) {
             if (StopReading) { return; }
             try {
                 if (Socket == null) { Console.WriteLine("Socket is null"); return; }
                 if (myStream == null) { Console.WriteLine("Stream is null"); return; }
                 if (result == null) { CloseConnection(); return; }
                 int readBytes = myStream.EndRead(result);
-                if (readBytes <= 0  && authenticated) //Not getting any data
+                if (readBytes <= 0 && authenticated) //Not getting any data
                 {
                     //CloseConnection();
                     OldUsername = Username;
@@ -75,75 +71,66 @@ namespace ShapeGameServer
                 Array.Copy(ReceiveBuffer, newBytes, readBytes);
                 ServerHandleData.HandleData(ConnectionID, newBytes);
 
-                if (ReceiveBuffer== null) { Console.WriteLine("Rec Buff is null"); return; }
+                if (ReceiveBuffer == null) { Console.WriteLine("Rec Buff is null"); return; }
                 else if (Socket == null) { Console.WriteLine("Socket is null"); return; }
                 else if (myStream == null) { Console.WriteLine("Stream is null"); return; }
                 myStream.BeginRead(ReceiveBuffer, 0, Socket.ReceiveBufferSize, ReceiveCallback, null);  //In case we need to receive more data
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 Console.WriteLine(ex.ToString());
                 if (StopReading) { return; }
                 CloseConnection();
             }
         }
 
-        public void CloseConnection()
-        {
-            Console.WriteLine("Connection from {0} has been terminated", IP);
+        public void CloseConnection() {
             authenticated = false;
+            Console.WriteLine("Connection from {0} has been terminated", IP);
 
             if (buffer != null) { buffer.Dispose(); buffer = null; }
             ServerTCP.IPDictionary.TryRemove(IP, out ClientObject zzz);
-            if (Username == "N" || Username == null)
-            {
+            if (Username == "N" || Username == null) {
                 Socket.Close();
                 Socket = null;
                 return;
             }
 
+            if (Socket != null) { Socket.Close(); Socket = null; }
+
             Database.SetOnline(Username, false);
             if (ConnectionIDs != null) { ConnectionIDs.TryRemove(Username, out int vv); }
 
             TempPlayer tempP = ServerTCP.TempPlayers[ConnectionID];
-            if (tempP.Spectating)
-            {
+            if (tempP.Spectating) {
                 tempP.Spectating = false;
                 RoomInstance._room[tempP.SpecRoom].SpectatorIDs.Remove(ConnectionID);
                 tempP.SpecRoom = 0;
             }
 
             int roomNum = tempP.Room;
-            if (roomNum != 0)
-            {
+            if (roomNum != 0) {
                 Room room = RoomInstance._room[roomNum];
-                if (room.Bot)
-                {
+                if (room.Bot) {
                     room.DiscRecTimes[0] = DateTime.Now;
                     int[] Ar = new int[2];
                     Ar[0] = roomNum;
                     Ar[1] = -1; //Put -1 instead of the other ConnID so that i know it's a bot.
                     UsernamesDisc.TryAdd(Username, Ar);
                 }
-                else if (room.ConnectionID[1] != 0 && room.ConnectionID[0] != 0)
-                {
+                else if (room.ConnectionID[1] != 0 && room.ConnectionID[0] != 0) {
                     int OtherConnID = (ConnectionID == room.ConnectionID[0] ? room.ConnectionID[1] : room.ConnectionID[0]);
                     room.Usernames.TryGetValue(OtherConnID, out string OtherUsername);
 
                     //If the other player disconnected before, end the game
-                    if (UsernamesDisc.TryRemove(OtherUsername, out int[] aa))
-                    {
-                        RoomInstance.instance.LeaveRoom(ConnectionID, room.GameMode, roomNum);                       
+                    if (UsernamesDisc.TryRemove(OtherUsername, out int[] aa)) {
+                        RoomInstance.instance.LeaveRoom(ConnectionID, room.GameMode, roomNum);
                     }
-                    else
-                    {
-                        if(room.GameMode == 2)
-                        {
+                    else {
+                        if (room.GameMode == 2) {
                             ServerTCP.PACKET_SendMessage(OtherConnID, "D2");
-                            RoomInstance.instance.LeaveRoom(ConnectionID, room.GameMode, roomNum);                            
+                            RoomInstance.instance.LeaveRoom(ConnectionID, room.GameMode, roomNum);
                         }
-                        else
-                        {
+                        else {
                             int[] Ar = new int[2] { roomNum, OtherConnID };
                             UsernamesDisc.TryAdd(Username, Ar);
                             ServerTCP.PACKET_SendMessage(OtherConnID, "D");
@@ -194,21 +181,17 @@ namespace ShapeGameServer
                     #endregion
                 }
                 //While searching or if the other player already disconnected
-                else { RoomInstance.instance.LeaveRoom(ConnectionID, room.GameMode, roomNum); } 
+                else { RoomInstance.instance.LeaveRoom(ConnectionID, room.GameMode, roomNum); }
             }
             tempP.Room = 0;
-
-            if (Socket != null) { Socket.Close(); Socket = null; }
 
             ServerTCP.TempPlayers.TryRemove(ConnectionID, out TempPlayer ww);
             ServerTCP.ClientObjects.TryRemove(ConnectionID, out ClientObject wtv);
         }
 
-        private void CheckForConnection()
-        {
+        private void CheckForConnection() {
             if (Socket == null) { CloseConnection(); }
-            else
-            {
+            else {
                 foreach (byte[] data in BufferList)
                     ServerTCP.SendDataTo(ConnectionID, data);
                 BufferList.Clear();

@@ -4,16 +4,13 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using MySql;
-namespace ShapeGameServer
-{
-    public class ServerHandleData
-    {
+namespace ShapeGameServer {
+    public class ServerHandleData {
         public static int totalLen = 0; //Debug variable
         public delegate void PacketF(int ConnectionID, byte[] Data);    //Signature of functions of type (int, byte[])
         public static Dictionary<int, PacketF> PacketListener;          //Maps functionID -> function; read-only hence thread-safe
 
-        public static void InitializePacketListener()
-        {
+        public static void InitializePacketListener() {
             PacketListener = new Dictionary<int, PacketF> {
                 { (int)ClientPackages.CLogin, HandleLogin },
                 { (int)ClientPackages.CNewAccount, HandleRegister },
@@ -40,10 +37,8 @@ namespace ShapeGameServer
             };
         }
 
-        public static bool HandleAuth(int ConnectionID)
-        {
-            if (ServerTCP.ClientObjects[ConnectionID].buffer.Length() < 12)
-            {
+        public static bool HandleAuth(int ConnectionID) {
+            if (ServerTCP.ClientObjects[ConnectionID].buffer.Length() < 12) {
                 ServerTCP.ClientObjects[ConnectionID].CloseConnection();
                 return false;
             }
@@ -51,14 +46,12 @@ namespace ShapeGameServer
             int len = ServerTCP.ClientObjects[ConnectionID].buffer.ReadInteger();
             int id1 = ServerTCP.ClientObjects[ConnectionID].buffer.ReadInteger();
             int id2 = ServerTCP.ClientObjects[ConnectionID].buffer.ReadInteger();
-            if (len == 8 && id1 == 1000000007 && id2 == 5793973)
-            {
+            if (len == 8 && id1 == 1000000007 && id2 == 5793973) {
                 ServerTCP.ClientObjects[ConnectionID].authenticated = true;
                 Console.WriteLine(ConnectionID + " was successfully authenticated");
                 return true;
             }
-            else
-            {
+            else {
                 ServerTCP.ClientObjects[ConnectionID].CloseConnection();
                 Console.WriteLine(ConnectionID + " is fake");
                 return false;
@@ -70,8 +63,7 @@ namespace ShapeGameServer
         //and only when all data are here (length>=plength), the loop will be entered
         public static void HandleData(int ConnectionID, byte[] data)        //Static method is fine since each thread has its own stack space
         {
-            try
-            {
+            try {
                 foreach (byte bb in data) { Console.Write(bb + " "); }
                 Console.Write('\n');
                 foreach (byte bb in data) { Console.Write((char)bb); }
@@ -87,15 +79,13 @@ namespace ShapeGameServer
                     ServerTCP.ClientObjects[ConnectionID].buffer = new ByteBuffer();
 
                 ServerTCP.ClientObjects[ConnectionID].buffer.WriteBytes(buffer);
-                if (!ServerTCP.ClientObjects[ConnectionID].authenticated)
-                {
+                if (!ServerTCP.ClientObjects[ConnectionID].authenticated) {
                     bool a = HandleAuth(ConnectionID);
                     if (!a) { return; }
                     if (ServerTCP.ClientObjects[ConnectionID].buffer.Length() == 0) { return; }
                 }
 
-                if (ServerTCP.ClientObjects[ConnectionID].buffer.Length() < 4)
-                {
+                if (ServerTCP.ClientObjects[ConnectionID].buffer.Length() < 4) {
                     Console.WriteLine("Buffer is too empty");
                     ServerTCP.ClientObjects[ConnectionID].buffer.Clear();
                     return;
@@ -126,27 +116,22 @@ namespace ShapeGameServer
 
                 if (pLength < 4 && ServerTCP.ClientObjects.ContainsKey(ConnectionID)) { ServerTCP.ClientObjects[ConnectionID].buffer.Clear(); }
             }
-            catch(Exception e)
-            {
+            catch (Exception e) {
                 Console.WriteLine(e.ToString());
             }
         }
-       
-        private static void HandleRegister(int ConnectionID, byte[] data)
-        {
+
+        private static void HandleRegister(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             string username = buffer.ReadString();
-            if(username[0] == '/')
-            {
+            if (username[0] == '/') {
                 string User = Database.CheckSecretCode(username);
-                if (Database.Online(User))
-                {
+                if (Database.Online(User)) {
                     ServerTCP.PACKET_SendMessage(ConnectionID, "ABU");
                     return;
                 }
-                else if (ClientObject.ConnectionIDs.TryGetValue(username, out int ConnID))
-                {
+                else if (ClientObject.ConnectionIDs.TryGetValue(username, out int ConnID)) {
                     ServerTCP.PACKET_SendMessage(ConnID, "DN"); //Tell the game client to not let the player reconnect
                 }
 
@@ -156,8 +141,7 @@ namespace ShapeGameServer
                     ServerTCP.PACKET_SendMessage(ConnectionID, "WrongSecretCode");
                 return;
             }
-            if (Database.AccountExists(username))
-            {
+            if (Database.AccountExists(username)) {
                 ServerTCP.PACKET_SendMessage(ConnectionID, "Taken");
                 return;
             }
@@ -169,35 +153,30 @@ namespace ShapeGameServer
             //If username already here, remove than add otherwise just add
             ClientObject.ConnectionIDs.TryRemove(username, out int prevID);
             ClientObject.ConnectionIDs.TryAdd(username, ConnectionID);
-            
+
             Database.SetOnline(username, true);
             Database.UpdateProfile(username);
             ServerTCP.PACKET_Login(ConnectionID, username);
             buffer.Dispose();
         }
-        private static void HandleLogin(int ConnectionID, byte[] data)
-        {
+        private static void HandleLogin(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             string username = buffer.ReadString();
-            if (username == "N")
-            {
+            if (username == "N") {
                 ServerTCP.PACKET_SendMessage(ConnectionID, "Create Username");
                 return;
             }
-            else if (!Database.AccountExists(username))
-            {
+            else if (!Database.AccountExists(username)) {
                 ServerTCP.PACKET_SendMessage(ConnectionID, "Wrong Username");
                 return;
             }
 
-            if(Database.Online(username))
-            {
+            if (Database.Online(username)) {
                 ServerTCP.PACKET_SendMessage(ConnectionID, "ABU");
                 return;
             }
-            else if (ClientObject.ConnectionIDs.TryGetValue(username, out int ConnID))
-            {
+            else if (ClientObject.ConnectionIDs.TryGetValue(username, out int ConnID)) {
                 ServerTCP.PACKET_SendMessage(ConnID, "DN"); //Tell the game client to not let the player reconnect
             }
 
@@ -206,22 +185,18 @@ namespace ShapeGameServer
 
             ClientObject.ConnectionIDs.TryRemove(username, out int prevID);
             ClientObject.ConnectionIDs.TryAdd(username, ConnectionID);
-            
+
             int Option = 0;
             string rec = "";
-            if (ClientObject.UsernamesDisc.TryGetValue(username, out int[] Ar))
-            {
-                if(Ar[1] == -1)
-                {
+            if (ClientObject.UsernamesDisc.TryGetValue(username, out int[] Ar)) {
+                if (Ar[1] == -1) {
                     rec = RoomInstance.instance.HandleBotReconnect(Ar[0], ConnectionID);
                     Option = 2;
                 }
-                else if(RoomInstance._room[Ar[0]].ConnectionID[1] != 0 && RoomInstance._room[Ar[0]].ConnectionID[0] != 0)
-                {
+                else if (RoomInstance._room[Ar[0]].ConnectionID[1] != 0 && RoomInstance._room[Ar[0]].ConnectionID[0] != 0) {
                     Option = 1;
                 }
-                else
-                {
+                else {
                     ClientObject.UsernamesDisc.TryRemove(username, out int[] aa);
                 }
             }
@@ -230,11 +205,10 @@ namespace ShapeGameServer
             Database.UpdateLastSpin(username, true);
             ServerTCP.PACKET_Login(ConnectionID, username);
             if (Option == 1) { ServerTCP.PACKET_SendMessage(Ar[1], "Reconnect", ConnectionID); } //Message sent to the still online player
-            else if(Option == 2) { ServerTCP.PACKET_SendMessage(ConnectionID, "ReconnectBot", Ar[0], rec); ClientObject.UsernamesDisc.TryRemove(username, out int[] aa); }
+            else if (Option == 2) { ServerTCP.PACKET_SendMessage(ConnectionID, "ReconnectBot", Ar[0], rec); ClientObject.UsernamesDisc.TryRemove(username, out int[] aa); }
             buffer.Dispose();
         }
-        private static void HandleBattleOnline(int ConnectionID, byte[] data)
-        {
+        private static void HandleBattleOnline(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             string username = buffer.ReadString();
@@ -248,26 +222,22 @@ namespace ShapeGameServer
             int Choice = buffer.ReadInteger();
             int SkinID = buffer.ReadInteger();
             int SkinID2 = buffer.ReadInteger();
-            if (Choice == 0)
-            {
+            if (Choice == 0) {
                 RoomInstance.instance.JoinOrCreateRoom(ConnectionID, username, ShapeChosenID, ShapeChosenID2, AbilitiesID, AbilitiesID2, SuperID, SuperID2, GameMode, SkinID, SkinID2);
             }
-            else if (Choice == 1)
-            {
+            else if (Choice == 1) {
                 string OtherUsername = buffer.ReadString();
                 ClientObject.ConnectionIDs.TryGetValue(OtherUsername, out int OtherConnID);
                 int RoomNum = RoomInstance.instance.FriendlyBattle(ConnectionID, username, ShapeChosenID, ShapeChosenID2, AbilitiesID, AbilitiesID2, SuperID, SuperID2, OtherConnID, SkinID, SkinID2);
                 ServerTCP.PACKET_FriendlyBattle(OtherConnID, RoomNum, username);
             }
-            else if (Choice == 2)
-            {
+            else if (Choice == 2) {
                 int Roomnum = buffer.ReadInteger();
                 RoomInstance.instance.JoinFriendlyBattle(ConnectionID, username, ShapeChosenID, ShapeChosenID2, AbilitiesID, AbilitiesID2, Roomnum, SuperID, SuperID2, SkinID, SkinID2);
             }
             buffer.Dispose();
         }
-        private static void HandleGiveProbability(int ConnectionID, byte[] data)
-        {
+        private static void HandleGiveProbability(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             int OtherPlayerConnectionID = buffer.ReadInteger();
@@ -277,35 +247,27 @@ namespace ShapeGameServer
             bool Disc = buffer.ReadBool();
             Random rand = new Random();
             int Probability = rand.Next(0, 101);
-            if (!Disc)
-            {
+            if (!Disc) {
                 ServerTCP.PACKET_SendProbability(ConnectionID, 1, Probability);
                 if (!ClientObject.UsernamesDisc.ContainsKey(OtherUsername))
                     ServerTCP.PACKET_SendProbability(OtherPlayerConnectionID, 2, Probability);
 
                 int room = ServerTCP.TempPlayers[ConnectionID].Room;
-                if (room != 0)
-                {
-                    if (RoomInstance._room[room].SpectatorIDs.Count != 0)
-                    {
-                        foreach (int c in RoomInstance._room[room].SpectatorIDs)
-                        {
+                if (room != 0) {
+                    if (RoomInstance._room[room].SpectatorIDs.Count != 0) {
+                        foreach (int c in RoomInstance._room[room].SpectatorIDs) {
                             ServerTCP.PACKET_SendProbability(c, 1, Probability, Username);
                         }
                     }
                 }
             }
-            else
-            {
+            else {
                 ServerTCP.PACKET_SendProbability(ConnectionID, 2, Probability);
 
                 int room = ServerTCP.TempPlayers[ConnectionID].Room;
-                if (room != 0)
-                {
-                    if (RoomInstance._room[room].SpectatorIDs.Count != 0)
-                    {
-                        foreach (int c in RoomInstance._room[room].SpectatorIDs)
-                        {
+                if (room != 0) {
+                    if (RoomInstance._room[room].SpectatorIDs.Count != 0) {
+                        foreach (int c in RoomInstance._room[room].SpectatorIDs) {
                             ServerTCP.PACKET_SendProbability(c, 1, Probability, OtherUsername);
                         }
                     }
@@ -313,16 +275,14 @@ namespace ShapeGameServer
             }
             buffer.Dispose();
         }
-        private static void HandleGiveOtherPlayerChoice(int ConnectionID, byte[] data)
-        {
+        private static void HandleGiveOtherPlayerChoice(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             int OtherPlayerConnectionID = buffer.ReadInteger();
             ServerTCP.PACKET_GetChoice(OtherPlayerConnectionID);
             buffer.Dispose();
         }
-        private static void HandleReceivingChoice(int ConnectionID, byte[] data)
-        {
+        private static void HandleReceivingChoice(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             bool Choicedone = buffer.ReadBool();
@@ -332,37 +292,31 @@ namespace ShapeGameServer
             string OtherPlayerUsername = buffer.ReadString();
             bool Player2 = buffer.ReadBool();
 
-            if (OtherPlayerConnectionID != -1 && !ClientObject.UsernamesDisc.ContainsKey(OtherPlayerUsername))
-            {
-               ServerTCP.PACKET_SendingChoice(OtherPlayerConnectionID, Choicedone, IDChosen);
+            if (OtherPlayerConnectionID != -1 && !ClientObject.UsernamesDisc.ContainsKey(OtherPlayerUsername)) {
+                ServerTCP.PACKET_SendingChoice(OtherPlayerConnectionID, Choicedone, IDChosen);
             }
 
             int room = ServerTCP.TempPlayers[ConnectionID].Room;
-            if (RoomInstance._room[room].SpectatorIDs.Count != 0)
-            { 
+            if (RoomInstance._room[room].SpectatorIDs.Count != 0) {
                 int ID2 = 0;
-                if(Player2)
+                if (Player2)
                     ID2 = buffer.ReadInteger();
-                foreach (int c in RoomInstance._room[room].SpectatorIDs)
-                {
+                foreach (int c in RoomInstance._room[room].SpectatorIDs) {
                     ServerTCP.PACKET_SendingChoice(c, Choicedone, IDChosen, true, Username, Player2, ID2);
                 }
             }
             buffer.Dispose();
         }
-        private static void HandleEndGame(int ConnectionID, byte[] data)
-        {
+        private static void HandleEndGame(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             int LooserConnID = buffer.ReadInteger();
             string Username = buffer.ReadString();
-            if (LooserConnID == -1)
-            {
+            if (LooserConnID == -1) {
                 int shapeID = buffer.ReadInteger();
                 int playerWon = buffer.ReadInteger();
                 int botPP = buffer.ReadInteger();
-                if(playerWon == 0)
-                {
+                if (playerWon == 0) {
                     RoomInstance.instance.LeaveRoom(ConnectionID, 1, ServerTCP.TempPlayers[ConnectionID].Room);
                     Database.UpdateProfile(Username);
                     buffer.Dispose();
@@ -372,13 +326,12 @@ namespace ShapeGameServer
                 string[] pp1Array = pp1str.Split(',');
                 int[] pp1Arrayint = new int[pp1Array.Length];
                 int j = 0;
-                foreach (string c in pp1Array)
-                {
+                foreach (string c in pp1Array) {
                     Int32.TryParse(c, out pp1Arrayint[j]);
                     j++;
                 }
                 int pp1 = pp1Arrayint[shapeID];
-                int ppdiff = pp1 - botPP; ppdiff = playerWon == 1 ? ppdiff : -ppdiff;             
+                int ppdiff = pp1 - botPP; ppdiff = playerWon == 1 ? ppdiff : -ppdiff;
                 int ppAdded = 0;
                 if (ppdiff >= 10) { ppAdded = 1; }
                 if (ppdiff < 10 && ppdiff >= 5) { ppAdded = 2; }
@@ -403,8 +356,7 @@ namespace ShapeGameServer
             int GameMode = buffer.ReadInteger();
             bool Friendly = buffer.ReadBool();
             bool Draw = buffer.ReadBool();
-            if (Friendly || Draw)
-            {
+            if (Friendly || Draw) {
                 /*
                 Database.SetReplay(Username, Replay + "/" + 0);
                 string[] Components1 = Replay.Split('/');
@@ -446,8 +398,7 @@ namespace ShapeGameServer
                 */
                 if (Friendly)
                     RoomInstance.instance.LeaveFriendly(ConnectionID);
-                else
-                {
+                else {
                     RoomInstance.instance.LeaveRoom(ConnectionID, GameMode, ServerTCP.TempPlayers[ConnectionID].Room);
                     Database.UpdateProfile(Username);
                     Database.UpdateProfile(OtherPlayerUsername);
@@ -458,8 +409,7 @@ namespace ShapeGameServer
             string[] PP1Array = PP1str.Split(',');
             int[] PP1Arrayint = new int[PP1Array.Length];
             int i = 0;
-            foreach (string c in PP1Array)
-            {
+            foreach (string c in PP1Array) {
                 Int32.TryParse(c, out PP1Arrayint[i]);
                 i++;
             }
@@ -468,20 +418,19 @@ namespace ShapeGameServer
             string[] PP2Array = PP2str.Split(',');
             int[] PP2Arrayint = new int[PP2Array.Length];
             i = 0;
-            foreach (string c in PP2Array)
-            {
+            foreach (string c in PP2Array) {
                 Int32.TryParse(c, out PP2Arrayint[i]);
                 i++;
             }
             int PP2 = PP2Arrayint[OtherShapeID];
-            int PPdiff = PP1 - PP2;                 
+            int PPdiff = PP1 - PP2;
             int PPAdded = 0;
-            if (PPdiff >= 10) { PPAdded = 1; }                         
+            if (PPdiff >= 10) { PPAdded = 1; }
             if (PPdiff < 10 && PPdiff >= 5) { PPAdded = 2; }
             if (PPdiff < 5 && PPdiff >= 0) { PPAdded = 3; }
             if (PPdiff < 0 && PPdiff >= -5) { PPAdded = 4; }
             if (PPdiff < -5 && PPdiff >= -10) { PPAdded = 5; }
-            if (PPdiff < -10) { PPAdded = 6; }    
+            if (PPdiff < -10) { PPAdded = 6; }
             if (GameMode == 2) { PPAdded = 0; }         //2v2 is not competitve
             #region OldReplayCode
             /*Database.SetReplay(Username, Replay + "/" + PPAdded);
@@ -533,57 +482,47 @@ namespace ShapeGameServer
             Database.UpdateProfile(OtherPlayerUsername);
             buffer.Dispose();
         }
-        private static void HandleDebug(int ConnectionID, byte[] data)
-        {
+        private static void HandleDebug(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             string msg = buffer.ReadString();
-            if (msg == "No")
-            {
+            if (msg == "No") {
                 string Username = buffer.ReadString();
                 int OtherConnectionID;
                 ClientObject.ConnectionIDs.TryGetValue(Username, out OtherConnectionID);
                 RoomInstance.instance.LeaveFriendly(OtherConnectionID, true);
                 return;
             }
-            else if (msg == "SpectatorOut")
-            {
-                if (RoomInstance._room[ServerTCP.TempPlayers[ConnectionID].SpecRoom].SpectatorIDs.Count != 0)
-                {
+            else if (msg == "SpectatorOut") {
+                if (RoomInstance._room[ServerTCP.TempPlayers[ConnectionID].SpecRoom].SpectatorIDs.Count != 0) {
                     RoomInstance._room[ServerTCP.TempPlayers[ConnectionID].SpecRoom].SpectatorIDs.Remove(ConnectionID);
                     ServerTCP.TempPlayers[ConnectionID].Spectating = false;
                     ServerTCP.TempPlayers[ConnectionID].SpecRoom = 0;
                 }
             }
-            else if (msg == "ResetW")
-            {
+            else if (msg == "ResetW") {
                 string Username = buffer.ReadString();
                 Database.SetRecentIDs(Username, -1);
                 Database.SetWinstreak(Username, 0);
                 return;
             }
-            else if (msg == "SendChest")
-            {
+            else if (msg == "SendChest") {
                 string Username = buffer.ReadString();
                 int ChestNum = buffer.ReadInteger();
                 ServerTCP.PACKET_Chest(ConnectionID, Database.GetChest(Username, ChestNum), ChestNum);
                 return;
             }
-            else if (msg == "Test")
-            {
+            else if (msg == "Test") {
                 return;
             }
-            else if (msg == "GiveLP")
-            {
+            else if (msg == "GiveLP") {
                 int ConnID = buffer.ReadInteger();
-                ServerTCP.PACKET_SendMessage(ConnID, "LifePoints", ConnectionID,"",buffer.ReadInteger());
+                ServerTCP.PACKET_SendMessage(ConnID, "LifePoints", ConnectionID, "", buffer.ReadInteger());
                 return;
             }
-            else if (msg == "CheckIP")
-            {
+            else if (msg == "CheckIP") {
                 string[] IPUsername = buffer.ReadString().Split('/');
-                if (ServerTCP.ClientObjects[ConnectionID].OldUsername != IPUsername[1])
-                {
+                if (ServerTCP.ClientObjects[ConnectionID].OldUsername != IPUsername[1]) {
                     ServerTCP.PACKET_SendMessage(ConnectionID, "Connect");
                     ServerTCP.ClientObjects[ConnectionID].StopReading = true;
                     ServerTCP.ClientObjects[ConnectionID].CloseConnection();
@@ -591,14 +530,12 @@ namespace ShapeGameServer
                 ServerTCP.IPDictionary.TryRemove(IPUsername[0], out ClientObject ws);
                 return;
             }
-            else if (msg == "Profile")
-            {
+            else if (msg == "Profile") {
                 string Username = buffer.ReadString();
                 int version = buffer.ReadInteger();
                 ServerTCP.PACKET_Profile(ConnectionID, Username, version);
             }
-            else if (msg == "LastDeck")
-            {
+            else if (msg == "LastDeck") {
                 string[] LastDeckAr = buffer.ReadString().Split(',');
                 string[] newArr = new string[] { LastDeckAr[1], LastDeckAr[2], LastDeckAr[3], LastDeckAr[4], LastDeckAr[5], LastDeckAr[6], LastDeckAr[7], LastDeckAr[8] };
                 Database.SetLastDeck(LastDeckAr[0], String.Join(",", newArr));
@@ -611,8 +548,7 @@ namespace ShapeGameServer
                 buffer.Dispose();
                 return;
             }
-            else if (msg == "ShapeChoice")
-            {
+            else if (msg == "ShapeChoice") {
                 Database.SetLvl(buffer.ReadString(), 1, buffer.ReadInteger());
                 ServerTCP.PACKET_SendMessage(ConnectionID, "Done");
                 buffer.Dispose();
@@ -626,8 +562,7 @@ namespace ShapeGameServer
                 string[] List = Friends.Split(',');
                 string[] newList = new string[List.Length - 1];
                 int i = 0;
-                foreach (string c in List)
-                {
+                foreach (string c in List) {
                     if (!c.Equals(Usernames[1])) { newList[i++] = c; }
                 }
                 Database.AddFriend(Usernames[0], String.Join(",", newList), true);
@@ -635,15 +570,13 @@ namespace ShapeGameServer
                 buffer.Dispose();
                 return;
             }
-            else if (msg == "BotReconnectString")
-            {
+            else if (msg == "BotReconnectString") {
                 string ReconnectString = buffer.ReadString();
                 RoomInstance._room[buffer.ReadInteger()].ReconnectString = ReconnectString;
                 buffer.Dispose();
                 return;
             }
-            else if (msg == "BotSpectate")
-            {               
+            else if (msg == "BotSpectate") {
                 string[] BotArray = buffer.ReadString().Split('|');
                 Room R = RoomInstance._room[buffer.ReadInteger()];
                 Int32.TryParse(BotArray[3], out int ID); Int32.TryParse(BotArray[0], out int PP); Int32.TryParse(BotArray[1], out int Lvl);
@@ -651,21 +584,17 @@ namespace ShapeGameServer
                 buffer.Dispose();
                 return;
             }
-            else if(msg == "Offline")
-            {
+            else if (msg == "Offline") {
                 string username = buffer.ReadString();
-                if (Database.AccountExists(username))
-                {
+                if (Database.AccountExists(username)) {
                     Database.SetOnline(username, false);
                 }
                 buffer.Dispose();
                 return;
             }
-            else if(msg == "Online")
-            {
+            else if (msg == "Online") {
                 string username = buffer.ReadString();
-                if (Database.AccountExists(username))
-                {
+                if (Database.AccountExists(username)) {
                     Database.SetOnline(username, true);
                 }
                 buffer.Dispose();
@@ -674,61 +603,52 @@ namespace ShapeGameServer
             Console.WriteLine(msg);
             buffer.Dispose();
         }
-        private static void HandleSendingLeaderboard(int ConnectionID, byte[] data)
-        {
+        private static void HandleSendingLeaderboard(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             int ShapeID = buffer.ReadInteger();
             ServerTCP.PACKET_Leaderboard(ConnectionID, ShapeID);
             buffer.Dispose();
         }
-        private static void HandleGivingAbilities(int ConnectionID, byte[] data)
-        {
+        private static void HandleGivingAbilities(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             string username = buffer.ReadString();
             ServerTCP.PACKET_GiveAbilities(ConnectionID, username);
             buffer.Dispose();
         }
-        private static void HandleMainMenu(int ConnectionID, byte[] data)
-        {
+        private static void HandleMainMenu(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             bool Searching = buffer.ReadBool();
             int GameMode = buffer.ReadInteger();
-            if (Searching)
-            {
+            if (Searching) {
                 if (ServerTCP.TempPlayers[ConnectionID].Room > 0)
                     RoomInstance.instance.LeaveRoom(ConnectionID, GameMode, ServerTCP.TempPlayers[ConnectionID].Room);
                 else
                     ServerTCP.TempPlayers[ConnectionID].Stop = true;
             }
-            else
-            {
-                if (ServerTCP.TempPlayers[ConnectionID].Room > 0)
-                {
+            else {
+                if (ServerTCP.TempPlayers[ConnectionID].Room > 0) {
                     RoomInstance.instance.LeaveRoom(ConnectionID, GameMode, ServerTCP.TempPlayers[ConnectionID].Room);
                 }
             }
             buffer.Dispose();
         }
-        private static void HandleGivingStats(int ConnectionID, byte[] data)
-        {
+        private static void HandleGivingStats(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             ServerTCP.PACKET_GiveStats(ConnectionID);
             buffer.Dispose();
         }
-        private static void HandleEmotes(int ConnectionID, byte[] data)
-        {
+        private static void HandleEmotes(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             int ID = buffer.ReadInteger();
             int ConnID = buffer.ReadInteger();
             string Username = buffer.ReadString();
             ServerTCP.PACKET_Emotes(ConnID, ID);
-            if (Username != "")
-            {
+            if (Username != "") {
                 /*if (RoomInstance._room[ServerTCP.TempPlayers[ConnectionID].Room].SpectatorIDs != "")
                 {
                     string[] Spec = RoomInstance._room[ServerTCP.TempPlayers[ConnectionID].Room].SpectatorIDs.Split(',');
@@ -746,18 +666,15 @@ namespace ShapeGameServer
                 }*/
 
                 int room = ServerTCP.TempPlayers[ConnectionID].Room;
-                if (RoomInstance._room[room].SpectatorIDs.Count != 0)
-                {
-                    foreach (int c in RoomInstance._room[room].SpectatorIDs)
-                    {
+                if (RoomInstance._room[room].SpectatorIDs.Count != 0) {
+                    foreach (int c in RoomInstance._room[room].SpectatorIDs) {
                         ServerTCP.PACKET_Emotes(c, ID, Username);
                     }
                 }
             }
             buffer.Dispose();
         }
-        private static void HandleAddingFriend(int ConnectionID, byte[] data)
-        {
+        private static void HandleAddingFriend(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             string Code = buffer.ReadString();
@@ -767,12 +684,9 @@ namespace ShapeGameServer
             string[] List = Friends.Split(',');
 
             if (Friend == "") { ServerTCP.PACKET_SendMessage(ConnectionID, "IC"); }
-            else
-            {
-                foreach (string c in List)
-                {
-                    if (c == Friend)
-                    {
+            else {
+                foreach (string c in List) {
+                    if (c == Friend) {
                         ServerTCP.PACKET_SendMessage(ConnectionID, "FAA");
                         buffer.Dispose();
                         return;
@@ -785,8 +699,7 @@ namespace ShapeGameServer
             }
             buffer.Dispose();
         }
-        private static void HandleFriendList(int ConnectionID, byte[] data)
-        {
+        private static void HandleFriendList(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             string Username = buffer.ReadString();
@@ -794,8 +707,7 @@ namespace ShapeGameServer
             ServerTCP.PACKET_GiveList(ConnectionID, Friends);
             buffer.Dispose();
         }
-        private static void HandleFriendCheck(int ConnectionID, byte[] data)
-        {
+        private static void HandleFriendCheck(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             string Username = buffer.ReadString();
@@ -809,31 +721,27 @@ namespace ShapeGameServer
 
             string[] Friends = Database.GetFriends(Username, true).Split(',');
             buffer.Dispose();
-            foreach (string c in Friends)
-            {
-                if (c == PlayerUsername)
-                {
+            foreach (string c in Friends) {
+                if (c == PlayerUsername) {
                     ServerTCP.PACKET_SendMessage(ConnectionID, "Yes");
                     return;
                 }
             }
             ServerTCP.PACKET_SendMessage(ConnectionID, "No");
         }
-        private static void HandleSpectate(int ConnectionID, byte[] data)
-        {
+        private static void HandleSpectate(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             string Username = buffer.ReadString();      //Username of the in-game player
             int ConnID = ClientObject.ConnectionIDs[Username];
 
-            if (ServerTCP.TempPlayers[ConnID].inMatch)
-            {
+            if (ServerTCP.TempPlayers[ConnID].inMatch) {
                 int RoomNum = ServerTCP.TempPlayers[ConnID].Room;
                 Room curR = RoomInstance._room[RoomNum];
                 if (curR.ConnectionID[0] == ConnID)
                     ServerTCP.PACKET_Spectate(ConnectionID, curR.Usernames[ConnID], curR.Usernames[curR.ConnectionID[1]],
                         ConnID, curR.ConnectionID[1], curR.ShapeChosenIDs[ConnID], curR.ShapeChosenIDs[curR.ConnectionID[1]],
-                        curR.PPs[0], curR.PPs[1], curR.Levels[0], curR.Levels[1], curR.Bot? curR.BotAbilities : "");
+                        curR.PPs[0], curR.PPs[1], curR.Levels[0], curR.Levels[1], curR.Bot ? curR.BotAbilities : "");
                 else
                     ServerTCP.PACKET_Spectate(ConnectionID, curR.Usernames[ConnID], curR.Usernames[curR.ConnectionID[0]],
                         ConnID, curR.ConnectionID[0], curR.ShapeChosenIDs[ConnID], curR.ShapeChosenIDs[curR.ConnectionID[0]],
@@ -847,19 +755,17 @@ namespace ShapeGameServer
             else { ServerTCP.PACKET_SendMessage(ConnectionID, "NIG"); }
             buffer.Dispose();
         }
-        private static void HandleLP(int ConnectionID, byte[] data)
-        {
+        private static void HandleLP(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             int LP1 = buffer.ReadInteger();
             int LP2 = buffer.ReadInteger();
             int ConnID = buffer.ReadInteger();
             string ReconnectString = buffer.ReadString();
-            ServerTCP.PACKET_LP(ConnID, LP1, LP2, ReconnectString,buffer.ReadInteger(),buffer.ReadInteger(),buffer.ReadInteger(),buffer.ReadInteger());
+            ServerTCP.PACKET_LP(ConnID, LP1, LP2, ReconnectString, buffer.ReadInteger(), buffer.ReadInteger(), buffer.ReadInteger(), buffer.ReadInteger());
             buffer.Dispose();
         }
-        private static void HandleChest(int ConnectionID, byte[] data)
-        {
+        private static void HandleChest(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             int Time = buffer.ReadInteger();
@@ -868,8 +774,7 @@ namespace ShapeGameServer
             Database.SetChest(Username, Time, ChestNum);
             buffer.Dispose();
         }
-        private static void HandleChestOpening(int ConnectionID, byte[] data)
-        {            
+        private static void HandleChestOpening(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             string Username = buffer.ReadString();
@@ -906,8 +811,7 @@ namespace ShapeGameServer
             Database.SetPassives(Username, Passives);
             buffer.Dispose();
         }
-        private static void HandleReconnecting(int ConnectionID, byte[] data)
-        {
+        private static void HandleReconnecting(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             int OtherLife = buffer.ReadInteger();
@@ -915,14 +819,12 @@ namespace ShapeGameServer
             int Index = 0;
 
             Room room = RoomInstance._room[ServerTCP.TempPlayers[ConnectionID].Room];
-            foreach (int ID in room.ConnectionID)
-            {
+            foreach (int ID in room.ConnectionID) {
                 if (ID != ConnectionID) { OtherID = ID; break; }
                 else { Index++; }
             }
             room.Usernames.TryGetValue(OtherID, out string Username);
-            if (OtherLife == -1)
-            {
+            if (OtherLife == -1) {
                 ClientObject.UsernamesDisc.TryRemove(Username, out int[] aba);
                 return;
             }
@@ -946,14 +848,13 @@ namespace ShapeGameServer
             int ShapeID = room.ShapeChosenIDs[OtherID];
             room.ShapeChosenIDs.Remove(OtherID);
             room.ShapeChosenIDs.Add(ConnID, ShapeID);
-            ServerTCP.PACKET_Reconnect(ConnID, Life, OtherLife, EP, OtherEP, Round, Choices, OtherChoices, Probs, OtherProbs, Mode, Index, Username2, ConnectionID,ReconnectString,ChoiceID);
+            ServerTCP.PACKET_Reconnect(ConnID, Life, OtherLife, EP, OtherEP, Round, Choices, OtherChoices, Probs, OtherProbs, Mode, Index, Username2, ConnectionID, ReconnectString, ChoiceID);
             ClientObject.UsernamesDisc.TryRemove(Username, out int[] aa);
             ServerTCP.TempPlayers[ConnID].inMatch = true;
             ServerTCP.TempPlayers[ConnID].Room = ServerTCP.TempPlayers[ConnectionID].Room;
             buffer.Dispose();
         }
-        private static void HandleAdReward(int ConnectionID, byte[] data)
-        {
+        private static void HandleAdReward(int ConnectionID, byte[] data) {
             ByteBuffer buffer = new ByteBuffer();
             buffer.WriteBytes(data);
             string Username = buffer.ReadString();
