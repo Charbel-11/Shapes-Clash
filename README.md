@@ -21,4 +21,13 @@ FEATURES
 <br/>● Replay previous battles to learn from your mistakes
 <br/>● Practice offline against bots
 
+<img src=https://github.com/Charbel-11/Shapes-Clash/assets/61922252/a4ab5573-1fd3-46ce-bb15-0f666f97864c width="300">
+<img src=https://github.com/Charbel-11/Shapes-Clash/assets/61922252/e54921f1-0074-4fac-8b44-80c1cebe23d4 width="300">
+<img src=https://github.com/Charbel-11/Shapes-Clash/assets/61922252/220f3f30-102f-4960-af6d-3522f52e3b04 width="300">
+<img src=https://github.com/Charbel-11/Shapes-Clash/assets/61922252/74286dbf-c08b-4b03-a94b-fee0840d915b width="300">
+<img src=https://github.com/Charbel-11/Shapes-Clash/assets/61922252/03842e23-29af-49cc-ad46-52444cf1404f width="300">
+<img src=https://github.com/Charbel-11/Shapes-Clash/assets/61922252/864b73ca-ac52-4f9e-87cf-d064f1ffd290 width="300">
+<img src=https://github.com/Charbel-11/Shapes-Clash/assets/61922252/1e29ca84-0cc3-4f72-a63f-a54b622e6cab width="300">
+
+
 Win Battles and earn prestige as you pave your way through a glorious journey. Glory awaits!
