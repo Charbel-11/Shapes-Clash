@@ -1,5 +1,5 @@
 # Shapes Clash
-Select your preferred Shape and jump into battle! 
+Select your preferred Shape and jump into battle! This game was built entirely from scratch by Jad Haidamous and me, using Unity.
 
 Shapes Clash is a fast paced strategic game divided into rounds where you have a few seconds to think and choose an ability to use. 
 Take your pick from over 60 different abilities and 4 different shapes, predict your opponent's next move and think about yours wisely.
