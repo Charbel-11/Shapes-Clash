@@ -38,6 +38,8 @@ https://github.com/Charbel-11/Shapes-Clash/assets/61922252/2ced6a76-a4fc-45f9-bb
 https://github.com/Charbel-11/Shapes-Clash/assets/61922252/a53ed48b-4aff-4eca-8cd0-68380d6660f6
 
 ## Gameplay
+https://github.com/Charbel-11/Shapes-Clash/assets/61922252/fbe9d154-e808-44bc-bd43-f1e0bd33d658
+
 
 
 Win Battles and earn prestige as you pave your way through a glorious journey. Glory awaits!
