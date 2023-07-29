@@ -31,12 +31,11 @@ Choose wisely from a wide variety of offensive, defensive and other support orie
 <img src="Repo Readme/7.png" width="300">
 
 ## Tutorial
-https://github.com/Charbel-11/Shapes-Clash/assets/61922252/2ced6a76-a4fc-45f9-bbd8-34bb8f557f72
+https://github.com/Charbel-11/Shapes-Clash/assets/61922252/cc74df22-fe99-4040-bd1a-f045add51128
 
 ## Game Preparation
-https://github.com/Charbel-11/Shapes-Clash/assets/61922252/a53ed48b-4aff-4eca-8cd0-68380d6660f6
+https://github.com/Charbel-11/Shapes-Clash/assets/61922252/e161ecab-9f61-45dc-bb4e-8ab923803c5c
 
-<video src='Repo Readme/Media1.mp4' width=180/>
 ## Gameplay
 https://github.com/Charbel-11/Shapes-Clash/assets/61922252/67608eb8-ca96-4a57-b6aa-e10eaa8d29da
 
