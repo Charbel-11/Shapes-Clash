@@ -1,5 +1,5 @@
 # Shapes Clash
-Select your preferred Shape and jump into battle! This game was built entirely from scratch by Jad Haidamous and me, using Unity.
+Select your preferred Shape and jump into battle! This mobile game was built entirely from scratch by Jad Haidamous and me, using Unity.
 
 ## Description
 Shapes Clash is a fast paced strategic game divided into rounds where you have a few seconds to think and choose an ability to use. 
